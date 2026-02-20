@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en-ZA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RSAcraft +27 | South African Minecraft Servers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #22c55e; 
+            border-radius: 2px;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.15) 50%
+            );
+            background-size: 100% 3px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.4;
+        }
+
+        .mc-btn {
+            background-color: #777;
+            border-top: 3px solid #999;
+            border-left: 3px solid #999;
+            border-bottom: 3px solid #555;
+            border-right: 3px solid #555;
+            color: white;
+            text-shadow: 1px 1px 0px #3f3f3f;
+            transition: all 0.05s;
+            cursor: pointer;
+            image-rendering: pixelated;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .mc-btn:active {
+            border-top: 3px solid #555;
+            border-left: 3px solid #555;
+            border-bottom: 3px solid #999;
+            border-right: 3px solid #999;
+            transform: translateY(2px);
+        }
+
+        .mc-btn.active-green {
+            background-color: #5a9e34;
+            border-top: 3px solid #7bc45a;
+            border-left: 3px solid #7bc45a;
+            border-bottom: 3px solid #3a6e1f;
+            border-right: 3px solid #3a6e1f;
+        }
+
+        .mc-btn-red {
+            background-color: #b91c1c;
+            border-top: 3px solid #ef4444;
+            border-left: 3px solid #ef4444;
+            border-bottom: 3px solid #7f1d1d;
+            border-right: 3px solid #7f1d1d;
+        }
+
+        .mc-btn-blue {
+            background-color: #1e40af;
+            border-top: 3px solid #3b82f6;
+            border-left: 3px solid #3b82f6;
+            border-bottom: 3px solid #1e3a8a;
+            border-right: 3px solid #1e3a8a;
+        }
+
+        .mc-btn-gold {
+            background-color: #FFB612;
+            border-top: 3px solid #ffd700;
+            border-left: 3px solid #ffd700;
+            border-bottom: 3px solid #b8860b;
+            border-right: 3px solid #b8860b;
+            color: #000;
+            text-shadow: none;
+            font-weight: bold;
+        }
+
+        .mc-btn-gold:active {
+            border-top: 3px solid #b8860b;
+            border-left: 3px solid #b8860b;
+            border-bottom: 3px solid #ffd700;
+            border-right: 3px solid #ffd700;
+        }
+
+        .sa-flag-brick {
+            width: 48px;
+            height: 48px;
+            position: relative;
+            image-rendering: pixelated;
+            box-shadow: 
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.1),
+                2px 2px 0 rgba(0,0,0,0.5);
+        }
+
+        .sa-flag-brick::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, transparent 40%, #007749 40%, #007749 60%, transparent 60%),
+                linear-gradient(45deg, transparent 40%, #007749 40%, #007749 60%, transparent 60%),
+                linear-gradient(to right, #DE3831 0%, #DE3831 35%, transparent 35%),
+                linear-gradient(to left, #002395 0%, #002395 35%, transparent 35%),
+                linear-gradient(135deg, transparent 45%, white 45%, white 55%, transparent 55%),
+                linear-gradient(45deg, transparent 45%, white 45%, white 55%, transparent 55%),
+                linear-gradient(135deg, transparent 48%, black 48%, black 52%, transparent 52%),
+                linear-gradient(45deg, transparent 48%, black 48%, black 52%, transparent 52%),
+                #FFB612;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+        }
+
+        .plus-27 {
+            background: #FFB612;
+            color: #000;
+            font-weight: bold;
+            padding: 2px 6px;
+            border: 2px solid #000;
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+            font-size: 0.7rem;
+            display: inline-block;
+            transform: rotate(-5deg);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        .floating-element {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(34, 197, 94, 0); }
+        }
+        .pulse-cta {
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .slide-in {
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .mc-input {
+            background-color: #000;
+            border: 2px solid #555;
+            color: #fff;
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            -webkit-appearance: none;
+            border-radius: 0;
+        }
+        .mc-input:focus {
+            outline: none;
+            border-color: #22c55e;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            height: 44px;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px;
+            width: 28px;
+            background: #22c55e;
+            border: 3px solid white;
+            cursor: pointer;
+            margin-top: -12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .terminal-line { 
+            margin-bottom: 2px; 
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+        @media (min-width: 768px) {
+            .terminal-line { font-size: 13px; }
+        }
+
+        .server-card {
+            transition: transform 0.2s;
+            touch-action: pan-y;
+        }
+        .server-card:active {
+            transform: scale(0.98);
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0a0a0a;
+            border-top: 3px solid #22c55e;
+            z-index: 40;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 4px;
+            color: #666;
+            transition: color 0.2s;
+        }
+        .nav-item.active {
+            color: #22c55e;
+        }
+        .nav-item:active {
+            color: #4ade80;
+        }
+
+        .safe-bottom {
+            padding-bottom: calc(80px + env(safe-area-inset-bottom));
+        }
+
+        @keyframes modalSlideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-animate {
+            animation: modalSlideUp 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .chat-message {
+            animation: slideInLeft 0.2s ease-out;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .crafting-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 4px solid;
+            border-color: #007749 #002d14 #002d14 #007749;
+            box-shadow: 
+                0 0 30px rgba(0, 119, 73, 0.3),
+                inset 0 0 60px rgba(0,0,0,0.5);
+        }
+
+        .crafting-grid-container {
+            background: #c6c6c6;
+            border: 3px solid;
+            border-color: #fff #373737 #373737 #fff;
+            box-shadow: inset 2px 2px 0 #8b8b8b;
+            padding: 8px;
+        }
+
+        .crafting-slot {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #8b8b8b;
+            border: 3px solid;
+            border-color: #373737 #fff #fff #373737;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .crafting-slot:active {
+            border-color: #fff #373737 #373737 #fff;
+            background: #7b7b7b;
+        }
+
+        .crafting-slot.filled {
+            background: #c6c6c6;
+            border-color: #fff #555 #555 #fff;
+        }
+
+        .crafting-slot.selected {
+            box-shadow: inset 0 0 0 3px #FFB612;
+            animation: pulse 1s infinite;
+        }
+
+        .crafting-slot::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .crafting-arrow {
+            width: 0;
+            height: 0;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            border-left: 18px solid #FFB612;
+            margin: 0 12px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.5));
+            position: relative;
+        }
+
+        .crafting-arrow::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: -8px;
+            width: 4px;
+            height: 16px;
+            background: #FFB612;
+        }
+
+        .crafting-result {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #8b8b8b;
+            border: 4px solid;
+            border-color: #373737 #fff #fff #373737;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .crafting-result.has-result {
+            background: #c6c6c6;
+            border-color: #007749 #004d2e #004d2e #007749;
+            box-shadow: 0 0 20px rgba(0, 119, 73, 0.6);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 119, 73, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(0, 119, 73, 0.9), 0 0 60px rgba(255, 182, 18, 0.3); }
+        }
+
+        .crafting-result::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .inventory-slot {
+            width: 48px;
+            height: 48px;
+            background: #8b8b8b;
+            border: 3px solid;
+            border-color: #fff #373737 #373737 #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.1s;
+            position: relative;
+        }
+
+        .inventory-slot:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .inventory-slot:active {
+            border-color: #373737 #fff #fff #373737;
+            transform: translateY(0);
+        }
+
+        .inventory-slot.selected {
+            box-shadow: 0 0 0 3px #FFB612, 0 4px 12px rgba(255, 182, 18, 0.4);
+            transform: translateY(-4px);
+            z-index: 10;
+        }
+
+        .recipe-hint {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s;
+        }
+
+        .recipe-hint.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .craft-btn-container {
+            position: relative;
+        }
+
+        .craft-btn-container::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: linear-gradient(45deg, #007749, #FFB612, #007749);
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: -1;
+        }
+
+        .craft-btn-container.active::before {
+            opacity: 1;
+            animation: rotate 2s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .clear-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 32px;
+            height: 32px;
+            background: #b91c1c;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+
+        .clear-btn:active {
+            transform: scale(0.9);
+        }
+
+        .item-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 100;
+            border: 1px solid #555;
+        }
+
+        .inventory-slot:hover .item-tooltip {
+            opacity: 1;
+        }
+
+        .mc-icon {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+
+        .mc-icon-small {
+            width: 24px;
+            height: 24px;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
+
+    <div class="scanlines"></div>
+
+    <header class="fixed top-0 w-full z-40 bg-black/95 border-b-4 border-[#007749] backdrop-blur-sm">
+        <div class="flex items-center justify-between px-3 py-2 h-14">
+            <div class="flex items-center gap-2" onclick="app.navigate('home')">
+                <div class="sa-flag-brick shrink-0"></div>
+                <div class="flex flex-col">
+                    <h1 class="text-xl text-white leading-none tracking-tight">
+                        RSA<span class="text-[#FFB612]">craft</span>
+                    </h1>
+                    <span class="plus-27 text-[10px] leading-none mt-0.5">+27</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <button onclick="app.navigate('servers')" class="mc-btn active-green px-3 py-1.5 text-sm font-bold">
+                    SERVERS
+                </button>
+                <button onclick="app.showCreateModal()" class="mc-btn px-3 py-1.5 text-sm">
+                    <span class="text-lg leading-none">+</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main id="app-container" class="flex-grow pt-14 safe-bottom px-3 z-10"></main>
+
+    <nav class="mobile-nav">
+        <div class="flex justify-around items-center max-w-md mx-auto">
+            <button onclick="app.navigate('home')" class="nav-item active" data-nav="home">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span class="text-xs">Home</span>
+            </button>
+            <button onclick="app.navigate('servers')" class="nav-item" data-nav="servers">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z"/>
+                </svg>
+                <span class="text-xs">Servers</span>
+            </button>
+            <button onclick="app.navigate('games')" class="nav-item" data-nav="games">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+                <span class="text-xs">Games</span>
+            </button>
+            <button onclick="app.navigate('chat')" class="nav-item" data-nav="chat">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs">Chat</span>
+                <span id="chat-badge" class="absolute top-1 right-20 w-2 h-2 bg-red-500 rounded-full hidden"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="createModal" class="fixed inset-0 bg-black/95 z-50 hidden">
+        <div class="h-full flex flex-col modal-animate">
+            <div class="flex items-center justify-between p-3 border-b-2 border-[#007749] bg-[#0a0a0a]">
+                <h2 class="text-xl text-white">Create Server</h2>
+                <button onclick="app.hideCreateModal()" class="text-gray-400 text-2xl px-2">&times;</button>
+            </div>
+            
+            <div class="flex-grow overflow-y-auto p-3 space-y-4">
+                <div>
+                    <label class="block text-gray-400 mb-1 text-sm">Server Name</label>
+                    <input type="text" id="srv-name" class="mc-input w-full px-3 py-3 text-lg" placeholder="My RSA Server">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-gray-400 mb-1 text-sm">Type</label>
+                        <select id="srv-type" class="mc-input w-full px-2 py-2 text-base">
+                            <option value="vanilla">Vanilla 1.8</option>
+                            <option value="spigot">Spigot</option>
+                            <option value="paper">Paper</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 text-sm">Mode</label>
+                        <select id="srv-mode" class="mc-input w-full px-2 py-2 text-base">
+                            <option value="Survival">Survival</option>
+                            <option value="Creative">Creative</option>
+                            <option value="Adventure">Adventure</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 mb-1 text-sm">Region</label>
+                    <select id="srv-region" class="mc-input w-full px-2 py-2 text-base">
+                        <option value="jhb">🇿🇦 Johannesburg</option>
+                        <option value="cpt">🇿🇦 Cape Town</option>
+                        <option value="dur">🇿🇦 Durban</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 mb-1 text-sm flex justify-between">
+                        <span>Max Players</span>
+                        <span id="player-display" class="text-[#FFB612]">20</span>
+                    </label>
+                    <input type="range" id="srv-players" min="5" max="100" value="20" 
+                        oninput="document.getElementById('player-display').textContent = this.value">
+                </div>
+
+                <div class="bg-[#111] p-3 border-2 border-[#333]">
+                    <h4 class="text-[#007749] mb-2 text-sm font-bold">FEATURES</h4>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="feat-pvp" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">PvP</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="feat-animals" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Animals</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="feat-monsters" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Monsters</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="feat-flight" class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Flight</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="app.createServer()" class="mc-btn active-green w-full py-4 text-xl font-bold mt-4">
+                    CREATE SERVER
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="consoleModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
+        <div class="flex items-center justify-between p-3 border-b-2 border-[#007749] bg-[#0a0a0a] shrink-0">
+            <div>
+                <h2 id="console-title" class="text-lg text-white leading-tight">Server</h2>
+                <p id="console-ip" class="text-xs text-gray-500 font-mono">192.168.1.1:25565</p>
+            </div>
+            <div class="flex gap-2">
+                <button id="console-start" onclick="app.startServer()" class="mc-btn active-green px-3 py-1 text-sm hidden">START</button>
+                <button id="console-stop" onclick="app.stopServer()" class="mc-btn mc-btn-red px-3 py-1 text-sm hidden">STOP</button>
+                <button onclick="app.hideConsole()" class="text-gray-400 text-xl px-2">&times;</button>
+            </div>
+        </div>
+
+        <div class="flex-grow flex flex-col min-h-0">
+            <div id="console-output" class="flex-grow overflow-y-auto p-2 bg-black font-mono text-xs">
+                <div class="text-gray-600">Server offline. Press START to boot.</div>
+            </div>
+            
+            <div class="shrink-0 border-t border-[#333] bg-[#0a0a0a] p-2">
+                <div class="flex gap-2">
+                    <span class="text-[#007749] font-mono py-2">></span>
+                    <input type="text" id="console-cmd" disabled placeholder="Server offline..." 
+                        class="flex-grow bg-transparent border-none text-white font-mono text-sm focus:outline-none disabled:text-gray-600"
+                        onkeydown="if(event.key==='Enter') app.sendCommand(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <div class="shrink-0 bg-[#111] border-t border-[#333] max-h-32 overflow-y-auto">
+            <div class="p-2 text-xs text-gray-500 border-b border-[#222] flex justify-between">
+                <span>PLAYERS</span>
+                <span id="player-count">0/20</span>
+            </div>
+            <div id="player-list" class="p-2 flex flex-wrap gap-2"></div>
+        </div>
+    </div>
+
+    <script>
+        const mcIcons = {
+            wood: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#8B4513"/><rect x="4" y="4" width="24" height="8" fill="#A0522D"/><rect x="4" y="14" width="24" height="6" fill="#8B4513"/><rect x="4" y="22" width="24" height="6" fill="#A0522D"/><rect x="6" y="6" width="4" height="4" fill="#CD853F"/><rect x="14" y="16" width="4" height="2" fill="#CD853F"/></svg>`,
+            
+            stone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#808080"/><rect x="4" y="4" width="10" height="10" fill="#696969"/><rect x="16" y="4" width="12" height="8" fill="#A9A9A9"/><rect x="4" y="16" width="12" height="12" fill="#A9A9A9"/><rect x="18" y="14" width="10" height="10" fill="#696969"/><rect x="20" y="6" width="4" height="4" fill="#C0C0C0"/></svg>`,
+            
+            iron: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#C0C0C0" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#D3D3D3" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#A9A9A9"/><rect x="18" y="18" width="6" height="6" fill="#A9A9A9"/><line x1="8" y1="8" x2="26" y2="26" stroke="#808080" stroke-width="1"/></svg>`,
+            
+            diamond: `<svg viewBox="0 0 32 32" class="mc-icon"><polygon points="16,2 30,16 16,30 2,16" fill="#00CED1"/><polygon points="16,6 26,16 16,26 6,16" fill="#40E0D0"/><polygon points="16,10 22,16 16,22 10,16" fill="#00FFFF"/><line x1="16" y1="2" x2="16" y2="30" stroke="#008B8B" stroke-width="1"/><line x1="2" y1="16" x2="30" y2="16" stroke="#008B8B" stroke-width="1"/></svg>`,
+            
+            coal: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#2F4F4F" rx="3"/><rect x="6" y="6" width="8" height="8" fill="#000000"/><rect x="16" y="14" width="8" height="8" fill="#1C1C1C"/><rect x="8" y="18" width="6" height="6" fill="#000000"/></svg>`,
+            
+            stick: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="14" y="2" width="4" height="28" fill="#8B4513" rx="1"/><rect x="15" y="4" width="2" height="24" fill="#A0522D"/></svg>`,
+            
+            dirt: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#8B4513"/><rect x="4" y="4" width="24" height="12" fill="#654321"/><rect x="4" y="18" width="24" height="10" fill="#8B4513"/><circle cx="10" cy="10" r="2" fill="#A0522D"/><circle cx="22" cy="22" r="3" fill="#5D4037"/></svg>`,
+            
+            wool: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#F5F5F5" rx="2"/><rect x="4" y="4" width="24" height="24" fill="#FFFFFF" rx="1"/><circle cx="10" cy="10" r="3" fill="#E8E8E8"/><circle cx="22" cy="14" r="4" fill="#E8E8E8"/><circle cx="12" cy="24" r="3" fill="#E8E8E8"/></svg>`,
+            
+            chest: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="8" width="24" height="20" fill="#8B4513" rx="1"/><rect x="6" y="10" width="20" height="16" fill="#A0522D"/><rect x="14" y="12" width="4" height="6" fill="#654321"/><rect x="6" y="6" width="20" height="4" fill="#8B4513"/></svg>`,
+            
+            door: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="6" y="2" width="20" height="28" fill="#8B4513" rx="1"/><rect x="8" y="4" width="16" height="24" fill="#654321"/><rect x="10" y="6" width="6" height="10" fill="#8B4513"/><rect x="10" y="18" width="6" height="8" fill="#8B4513"/><circle cx="20" cy="16" r="1.5" fill="#FFD700"/></svg>`,
+            
+            redstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#8B0000" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FF0000" rx="1"/><line x1="10" y1="10" x2="22" y2="22" stroke="#FF4500" stroke-width="2"/><line x1="22" y1="10" x2="10" y2="22" stroke="#FF4500" stroke-width="2"/></svg>`,
+            
+            glowstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#F0E68C" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FFFACD" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#FFFFE0"/><rect x="18" y="18" width="6" height="6" fill="#FFFFE0"/><circle cx="16" cy="16" r="4" fill="#FFFFFF" opacity="0.5"/></svg>`
+        };
+
+        const app = {
+            currentView: 'home',
+            servers: [],
+            currentServer: null,
+            chatUsers: ['Steve', 'Alex', 'Notch', 'Herobrine', 'DiamondMiner_ZA', 'CapeTown_Crafter', 'Joburg_Builder', 
+                       'Durban_Destroyer', 'Springbok_Gamer', 'BraaiMaster', 'Eish_Man', 'Lekker_Player', 
+                       'Mzansi_Miner', 'Kasi_King', 'Vuvuzela_Vic', 'Biltong_Bob', 'Nandos_Ninja'],
+            
+            saPhrases: ['Howzit!', 'Lekker bru!', 'Eish, lag!', 'Sharp sharp!', 'Yebo yes!', 'Now now', 'Just now', 
+                       'Ag shame man', 'Hayi suka!', 'Heita!', 'Aweh!', 'Izit?', 'Kiff stuff', 'Boet, check this', 
+                       'Yoh! That was close', 'Lekker mining today', 'This server is kiff', 'Eish, the lag', 
+                       'Sharp server bru', 'Howzit everybody', 'Mzansi represent!', 'Springbok power!'],
+
+            craftingGrid: [['', '', ''], ['', '', ''], ['', '', '']],
+
+            inventoryItems: [
+                { icon: 'wood', name: 'Oak Wood', id: 'wood' },
+                { icon: 'stone', name: 'Cobblestone', id: 'stone' },
+                { icon: 'iron', name: 'Iron Ingot', id: 'iron' },
+                { icon: 'diamond', name: 'Diamond', id: 'diamond' },
+                { icon: 'coal', name: 'Coal', id: 'coal' },
+                { icon: 'stick', name: 'Stick', id: 'stick' },
+                { icon: 'dirt', name: 'Dirt', id: 'dirt' },
+                { icon: 'wool', name: 'Wool', id: 'wool' },
+                { icon: 'chest', name: 'Chest', id: 'chest' },
+                { icon: 'door', name: 'Door', id: 'door' },
+                { icon: 'redstone', name: 'Redstone', id: 'redstone' },
+                { icon: 'glowstone', name: 'Glowstone', id: 'glowstone' }
+            ],
+
+            craftingRecipes: {
+                'pickaxe': { pattern: ['xxx', ' s ', ' s '], result: '⛏️', name: 'Diamond Pickaxe', desc: 'Mine faster, go deeper', items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'] },
+                'sword': { pattern: [' x ', ' x ', ' s '], result: '🗡️', name: 'Diamond Sword', desc: 'PvP ready server', items: ['diamond', 'diamond', 'stick'] },
+                'axe': { pattern: ['xx ', 'xs ', ' s '], result: '🪓', name: 'Diamond Axe', desc: 'Chop through lag', items: ['diamond', 'diamond', 'stick', 'diamond'] },
+                'shovel': { pattern: [' x ', ' s ', ' s '], result: '🔨', name: 'Iron Shovel', desc: 'Dig your foundation', items: ['iron', 'stick', 'stick'] },
+                'hoe': { pattern: ['xx ', ' s ', ' s '], result: '🔱', name: 'Diamond Hoe', desc: 'Farm-friendly server', items: ['diamond', 'diamond', 'stick', 'stick'] },
+                'chest': { pattern: ['xxx', 'x x', 'xxx'], result: '📦', name: 'Storage Server', desc: 'Extra inventory space', items: ['wood', 'wood', 'wood', 'wood', 'wood', 'wood', 'wood', 'wood'] },
+                'furnace': { pattern: ['xxx', 'x x', 'xxx'], result: '🔥', name: 'Furnace Server', desc: 'Smelt ores faster', items: ['stone', 'stone', 'stone', 'stone', 'stone', 'stone', 'stone', 'stone'] },
+                'table': { pattern: ['xx ', 'xx ', '   '], result: '🔧', name: 'Crafting Server', desc: 'Full creative mode', items: ['wood', 'wood', 'wood', 'wood'] }
+            },
+
+            init() {
+                this.servers = [
+                    { id: '1', name: '🇿🇦 Hypixel SA', type: 'spigot', mode: 'Minigames', players: 1247, max: 5000, status: 'Online', ip: 'hypixel.co.za', region: 'jhb' },
+                    { id: '2', name: '🇿🇦 Joburg PvP', type: 'paper', mode: 'Factions', players: 89, max: 200, status: 'Online', ip: 'jhb-pvp.co.za', region: 'jhb' },
+                    { id: '3', name: '🇿🇦 Cape Craft', type: 'vanilla', mode: 'Survival', players: 34, max: 100, status: 'Online', ip: 'capecraft.co.za', region: 'cpt' },
+                    { id: '4', name: '🇿🇦 Durban Duels', type: 'spigot', mode: 'PvP', players: 12, max: 50, status: 'Online', ip: 'durban.duels', region: 'dur' }
+                ];
+                
+                this.navigate('home');
+                this.startLiveChat();
+            },
+
+            navigate(view) {
+                this.currentView = view;
+                
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.querySelector(`[data-nav="${view}"]`)?.classList.add('active');
+                
+                const container = document.getElementById('app-container');
+                
+                switch(view) {
+                    case 'home':
+                        container.innerHTML = this.renderHome();
+                        this.initCrafting();
+                        break;
+                    case 'servers':
+                        container.innerHTML = this.renderServers();
+                        break;
+                    case 'games':
+                        container.innerHTML = this.renderGames();
+                        break;
+                    case 'chat':
+                        container.innerHTML = this.renderChat();
+                        break;
+                }
+                
+                window.scrollTo(0, 0);
+            },
+
+            renderHome() {
+                return `
+                    <div class="slide-in space-y-4 pt-2">
+                        <div class="crafting-container rounded-lg p-4 relative overflow-hidden">
+                            <div class="text-center mb-4 relative z-10">
+                                <div class="inline-flex items-center gap-2 mb-2">
+                                    <span class="text-3xl">⚒️</span>
+                                    <h2 class="text-2xl text-white font-bold tracking-wide">CRAFT YOUR SERVER</h2>
+                                    <span class="text-3xl">⚒️</span>
+                                </div>
+                                <p class="text-[#FFB612] text-sm">Combine resources to create your perfect South African server</p>
+                            </div>
+
+                            <div class="flex flex-col items-center gap-4 relative z-10">
+                                <div class="flex items-center gap-3">
+                                    <div class="crafting-grid-container">
+                                        <div class="grid grid-cols-3 gap-1">
+                                            ${[0,1,2,3,4,5,6,7,8].map(i => `
+                                                <div class="crafting-slot w-12 h-12 sm:w-14 sm:h-14" data-slot="${i}" onclick="app.craftClick(${i})"></div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="crafting-arrow"></div>
+                                    
+                                    <div class="w-16 sm:w-20">
+                                        <div class="crafting-result" id="craft-result"></div>
+                                        <p class="text-[#FFB612] text-xs text-center mt-1 font-bold truncate" id="craft-name"></p>
+                                    </div>
+                                </div>
+
+                                <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center">
+                                    <p class="text-gray-400 text-xs" id="hint-text">Select items from inventory to craft</p>
+                                </div>
+
+                                <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
+                            </div>
+
+                            <div class="mt-6 bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
+                                <div class="flex items-center justify-between mb-2">
+                                    <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
+                                    <span class="text-[#373737] text-xs">Tap item to select</span>
+                                </div>
+                                <div class="flex gap-2 flex-wrap justify-center">
+                                    ${this.inventoryItems.map(item => `
+                                        <button onclick="app.selectItem('${item.id}', '${item.name}')" 
+                                            class="inventory-slot" data-item="${item.id}">
+                                            ${mcIcons[item.icon]}
+                                            <span class="item-tooltip">${item.name}</span>
+                                        </button>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="craft-btn-container mt-4 relative z-10" id="craft-btn-container">
+                                <button onclick="app.craftServer()" id="craft-btn" class="mc-btn-gold w-full py-4 text-xl font-bold opacity-50" disabled>
+                                    <span class="flex items-center justify-center gap-2">
+                                        <span>⚡</span>
+                                        <span>FORGE SERVER</span>
+                                        <span>⚡</span>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div class="absolute top-2 left-2 text-4xl opacity-20">⛏️</div>
+                            <div class="absolute bottom-2 right-2 text-4xl opacity-20">🗡️</div>
+                            <div class="absolute top-1/2 left-1 w-2 h-2 bg-[#007749] rounded-full animate-pulse"></div>
+                            <div class="absolute top-1/3 right-2 w-2 h-2 bg-[#FFB612] rounded-full animate-pulse delay-75"></div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="bg-[#111] border-2 border-[#333] p-3 text-center rounded">
+                                <div class="text-[#007749] text-2xl font-bold">${this.servers.length + 4}</div>
+                                <div class="text-gray-500 text-xs">Servers</div>
+                            </div>
+                            <div class="bg-[#111] border-2 border-[#333] p-3 text-center rounded">
+                                <div class="text-[#FFB612] text-2xl font-bold">1.4k</div>
+                                <div class="text-gray-500 text-xs">Players</div>
+                            </div>
+                            <div class="bg-[#111] border-2 border-[#333] p-3 text-center rounded">
+                                <div class="text-[#DE3831] text-2xl font-bold">12ms</div>
+                                <div class="text-gray-500 text-xs">Ping</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between px-1 mb-2">
+                                <h3 class="text-[#FFB612] text-sm font-bold">FEATURED SERVERS</h3>
+                                <button onclick="app.navigate('servers')" class="text-[#007749] text-xs">View All →</button>
+                            </div>
+                            <div class="space-y-2">
+                                ${this.servers.slice(0, 3).map(s => this.renderServerCard(s)).join('')}
+                            </div>
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
+                            <h3 class="text-white text-sm font-bold mb-3">SERVER TYPES</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('PvP')">
+                                    <span class="text-2xl">⚔️</span>
+                                    <div>
+                                        <div class="text-white text-sm font-bold">PvP</div>
+                                        <div class="text-gray-500 text-xs">Player vs Player</div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Survival')">
+                                    <span class="text-2xl">🏠</span>
+                                    <div>
+                                        <div class="text-white text-sm font-bold">Survival</div>
+                                        <div class="text-gray-500 text-xs">Classic mode</div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Creative')">
+                                    <span class="text-2xl">🎨</span>
+                                    <div>
+                                        <div class="text-white text-sm font-bold">Creative</div>
+                                        <div class="text-gray-500 text-xs">Build freely</div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Minigames')">
+                                    <span class="text-2xl">🎮</span>
+                                    <div>
+                                        <div class="text-white text-sm font-bold">Minigames</div>
+                                        <div class="text-gray-500 text-xs">Fast fun</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
+                            <h3 class="text-[#007749] text-sm font-bold mb-2">📰 LATEST NEWS</h3>
+                            <div class="space-y-2">
+                                <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#FFB612] rounded">
+                                    <div class="text-white text-sm font-bold">New Joburg Datacenter</div>
+                                    <div class="text-gray-400 text-xs">Lower latency for GP players!</div>
+                                    <div class="text-gray-600 text-xs mt-1">2 hours ago</div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#007749] rounded">
+                                    <div class="text-white text-sm font-bold">Springbok Skin Pack</div>
+                                    <div class="text-gray-400 text-xs">Free for all +27 players</div>
+                                    <div class="text-gray-600 text-xs mt-1">1 day ago</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
+                            <h3 class="text-white text-sm font-bold mb-2">QUICK JOIN</h3>
+                            <div class="flex gap-2">
+                                <input type="text" placeholder="Enter server IP..." class="mc-input flex-grow px-3 py-2 text-base rounded">
+                                <button class="mc-btn mc-btn-blue px-4 py-2 rounded">JOIN</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderServerCard(server) {
+                const isOnline = server.status === 'Online';
+                return `
+                    <div class="server-card bg-[#161616] border-2 border-[#333] p-3 flex items-center gap-3 rounded" onclick="app.openConsole('${server.id}')">
+                        <div class="w-12 h-12 bg-[#0a0a0a] border-2 border-[#444] flex items-center justify-center text-2xl rounded shrink-0">
+                            ${server.region === 'jhb' ? '🏙️' : server.region === 'cpt' ? '🏔️' : '🌊'}
+                        </div>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center gap-2">
+                                <h4 class="text-white font-bold truncate text-base">${server.name}</h4>
+                                <div class="w-2 h-2 rounded-full ${isOnline ? 'bg-[#007749] animate-pulse' : 'bg-red-600'} shrink-0"></div>
+                            </div>
+                            <p class="text-gray-500 text-xs font-mono truncate">${server.ip}</p>
+                            <div class="flex gap-3 text-xs mt-1">
+                                <span class="text-[#FFB612]">${server.mode}</span>
+                                <span class="text-gray-400">${server.players}/${server.max}</span>
+                            </div>
+                        </div>
+                        <button class="mc-btn px-3 py-1 text-xs shrink-0 rounded">
+                            ${server.id.length > 6 ? 'MANAGE' : 'JOIN'}
+                        </button>
+                    </div>
+                `;
+            },
+
+            renderServers() {
+                return `
+                    <div class="slide-in space-y-3 pt-2">
+                        <div class="flex items-center justify-between px-1">
+                            <h2 class="text-xl text-white">All Servers</h2>
+                            <span class="text-gray-500 text-sm">${this.servers.length} total</span>
+                        </div>
+                        
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                            <button class="mc-btn active-green px-3 py-1 text-sm whitespace-nowrap rounded">All</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Survival</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Creative</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Minigames</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">PvP</button>
+                        </div>
+
+                        <div class="space-y-2">
+                            ${this.servers.map(s => this.renderServerCard(s)).join('')}
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderGames() {
+                const games = [
+                    { name: 'SkyBlock', icon: '🏝️', color: 'border-blue-500', players: 234 },
+                    { name: 'Bed Wars', icon: '🛏️', color: 'border-red-500', players: 567 },
+                    { name: 'SkyWars', icon: '⚔️', color: 'border-purple-500', players: 189 },
+                    { name: 'Murder', icon: '🔪', color: 'border-yellow-500', players: 89 },
+                    { name: 'Duels', icon: '🤺', color: 'border-orange-500', players: 45 },
+                    { name: 'Build Battle', icon: '🔨', color: 'border-cyan-500', players: 123 }
+                ];
+
+                return `
+                    <div class="slide-in space-y-3 pt-2">
+                        <h2 class="text-xl text-white px-1">Minigames</h2>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            ${games.map(g => `
+                                <div class="bg-[#111] border-2 ${g.color} p-3 text-center active:scale-95 transition-transform rounded" onclick="app.playGame('${g.name}')">
+                                    <div class="text-4xl mb-2">${g.icon}</div>
+                                    <h3 class="text-white font-bold text-sm">${g.name}</h3>
+                                    <p class="text-[#007749] text-xs">${g.players} playing</p>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-4 mt-4 text-center rounded">
+                            <p class="text-gray-400 text-sm mb-3">Can't decide?</p>
+                            <button onclick="app.randomGame()" class="mc-btn mc-btn-blue w-full py-3 text-lg rounded">
+                                🎲 Quick Match
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderChat() {
+                return `
+                    <div class="slide-in flex flex-col h-[calc(100vh-140px)]">
+                        <div class="flex items-center justify-between mb-2 px-1">
+                            <h2 class="text-xl text-white">Live Chat</h2>
+                            <span class="flex items-center gap-1 text-[#007749] text-xs">
+                                <span class="w-2 h-2 bg-[#007749] rounded-full animate-pulse"></span>
+                                1,247 online
+                            </span>
+                        </div>
+                        
+                        <div id="chat-container" class="flex-grow overflow-y-auto space-y-2 mb-2 pr-1">
+                        </div>
+
+                        <div class="shrink-0 flex gap-2">
+                            <input type="text" id="chat-input" placeholder="Say something..." 
+                                class="mc-input flex-grow px-3 py-3 text-base rounded"
+                                onkeydown="if(event.key==='Enter') app.sendChat()">
+                            <button onclick="app.sendChat()" class="mc-btn active-green px-4 py-2 rounded">
+                                ➤
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            selectedItem: null,
+            selectedItemId: null,
+            selectedItemName: null,
+
+            initCrafting() {
+                this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
+                this.selectedItem = null;
+                this.selectedItemId = null;
+                this.selectedItemName = null;
+                this.updateCraftingGrid();
+                this.updateHint('Select items from inventory to start crafting');
+            },
+
+            selectItem(id, name) {
+                document.querySelectorAll('.inventory-slot').forEach(el => {
+                    el.classList.remove('selected');
+                });
+                
+                const slot = document.querySelector(`.inventory-slot[data-item="${id}"]`);
+                if (this.selectedItemId === id) {
+                    this.selectedItem = null;
+                    this.selectedItemId = null;
+                    this.selectedItemName = null;
+                } else {
+                    this.selectedItem = id;
+                    this.selectedItemId = id;
+                    this.selectedItemName = name;
+                    slot.classList.add('selected');
+                }
+                
+                this.updateHint(this.selectedItem ? `Tap grid slots to place ${name}` : 'Select items from inventory to start crafting');
+            },
+
+            craftClick(slotIndex) {
+                const row = Math.floor(slotIndex / 3);
+                const col = slotIndex % 3;
+                
+                if (this.selectedItem) {
+                    this.craftingGrid[row][col] = this.selectedItemId;
+                    this.updateCraftingGrid();
+                    this.checkRecipe();
+                } else if (this.craftingGrid[row][col]) {
+                    this.craftingGrid[row][col] = '';
+                    this.updateCraftingGrid();
+                    this.checkRecipe();
+                }
+            },
+
+            updateCraftingGrid() {
+                const slots = document.querySelectorAll('.crafting-slot[data-slot]');
+                slots.forEach((slot, index) => {
+                    const row = Math.floor(index / 3);
+                    const col = index % 3;
+                    const itemId = this.craftingGrid[row][col];
+                    
+                    if (itemId) {
+                        const item = this.inventoryItems.find(i => i.id === itemId);
+                        slot.innerHTML = item ? mcIcons[item.icon] : '';
+                        slot.classList.add('filled');
+                    } else {
+                        slot.innerHTML = '';
+                        slot.classList.remove('filled');
+                    }
+                });
+            },
+
+            checkRecipe() {
+                const resultEl = document.getElementById('craft-result');
+                const nameEl = document.getElementById('craft-name');
+                const craftBtn = document.getElementById('craft-btn');
+                const craftBtnContainer = document.getElementById('craft-btn-container');
+                
+                const pattern = this.craftingGrid.map(row => 
+                    row.map(cell => cell ? 'x' : ' ').join('')
+                );
+                
+                let matched = null;
+                for (const [key, recipe] of Object.entries(this.craftingRecipes)) {
+                    if (this.matchesPattern(pattern, recipe.pattern)) {
+                        matched = recipe;
+                        break;
+                    }
+                }
+                
+                if (matched) {
+                    resultEl.textContent = matched.result;
+                    resultEl.classList.add('has-result');
+                    nameEl.textContent = matched.name;
+                    craftBtn.disabled = false;
+                    craftBtn.classList.remove('opacity-50');
+                    craftBtnContainer.classList.add('active');
+                    this.updateHint(`✨ ${matched.desc} ✨`);
+                } else {
+                    resultEl.textContent = '';
+                    resultEl.classList.remove('has-result');
+                    nameEl.textContent = '';
+                    craftBtn.disabled = true;
+                    craftBtn.classList.add('opacity-50');
+                    craftBtnContainer.classList.remove('active');
+                    
+                    const hasItems = this.craftingGrid.some(row => row.some(cell => cell));
+                    this.updateHint(hasItems ? 'Keep trying different combinations!' : 'Select items from inventory to start crafting');
+                }
+            },
+
+            matchesPattern(grid, pattern) {
+                for (let i = 0; i < 3; i++) {
+                    if (grid[i] !== pattern[i]) return false;
+                }
+                return true;
+            },
+
+            clearGrid() {
+                this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
+                this.updateCraftingGrid();
+                this.checkRecipe();
+                this.updateHint('Grid cleared. Start crafting again!');
+            },
+
+            updateHint(text) {
+                const hintEl = document.getElementById('recipe-hint');
+                const hintText = document.getElementById('hint-text');
+                hintText.textContent = text;
+                hintEl.classList.add('visible');
+            },
+
+            craftServer() {
+                const recipes = Object.values(this.craftingRecipes);
+                const matched = recipes.find(r => {
+                    const pattern = this.craftingGrid.map(row => row.map(cell => cell ? 'x' : ' ').join(''));
+                    return this.matchesPattern(pattern, r.pattern);
+                });
+                
+                if (matched) {
+                    this.showCreateModal();
+                    const nameInput = document.getElementById('srv-name');
+                    nameInput.value = `${matched.name} SA`;
+                    this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
+                }
+            },
+
+            showCreateModal() {
+                document.getElementById('createModal').classList.remove('hidden');
+            },
+
+            hideCreateModal() {
+                document.getElementById('createModal').classList.add('hidden');
+            },
+
+            createServer() {
+                const name = document.getElementById('srv-name').value || 'RSA Server';
+                const region = document.getElementById('srv-region').value;
+                const max = document.getElementById('srv-players').value;
+                
+                const regionData = {
+                    jhb: { ip: '197.84', flag: '🏙️' },
+                    cpt: { ip: '102.67', flag: '🏔️' },
+                    dur: { ip: '165.73', flag: '🌊' }
+                };
+                
+                const newServer = {
+                    id: Date.now().toString(),
+                    name: `${regionData[region].flag} ${name}`,
+                    type: document.getElementById('srv-type').value,
+                    mode: document.getElementById('srv-mode').value,
+                    players: 0,
+                    max: parseInt(max),
+                    status: 'Offline',
+                    ip: `${regionData[region].ip}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`,
+                    region: region,
+                    consoleLogs: [],
+                    playerList: []
+                };
+                
+                this.servers.unshift(newServer);
+                this.hideCreateModal();
+                this.currentServer = newServer;
+                this.openConsole(newServer.id);
+            },
+
+            openConsole(serverId) {
+                const server = this.servers.find(s => s.id === serverId);
+                if (!server) return;
+                
+                this.currentServer = server;
+                document.getElementById('console-title').textContent = server.name;
+                document.getElementById('console-ip').textContent = `${server.ip}:25565`;
+                document.getElementById('consoleModal').classList.remove('hidden');
+                
+                this.updateConsoleUI();
+                this.renderConsole();
+            },
+
+            hideConsole() {
+                document.getElementById('consoleModal').classList.add('hidden');
+            },
+
+            updateConsoleUI() {
+                const s = this.currentServer;
+                const startBtn = document.getElementById('console-start');
+                const stopBtn = document.getElementById('console-stop');
+                const input = document.getElementById('console-cmd');
+                
+                if (s.status === 'Online') {
+                    startBtn.classList.add('hidden');
+                    stopBtn.classList.remove('hidden');
+                    input.disabled = false;
+                    input.placeholder = 'Enter command...';
+                } else if (s.status === 'Starting') {
+                    startBtn.classList.add('hidden');
+                    stopBtn.classList.add('hidden');
+                    input.disabled = true;
+                    input.placeholder = 'Starting...';
+                } else {
+                    startBtn.classList.remove('hidden');
+                    stopBtn.classList.add('hidden');
+                    input.disabled = true;
+                    input.placeholder = 'Server offline. Press START.';
+                }
+                
+                document.getElementById('player-count').textContent = `${s.players}/${s.max}`;
+                
+                const pList = document.getElementById('player-list');
+                if (s.playerList.length === 0) {
+                    pList.innerHTML = '<span class="text-gray-600 text-xs">No players</span>';
+                } else {
+                    pList.innerHTML = s.playerList.map(p => `
+                        <div class="flex items-center gap-1 bg-[#222] px-2 py-1 rounded text-xs">
+                            <img src="https://mc-heads.net/avatar/${p}/16" class="w-4 h-4 rounded">
+                            <span class="text-gray-300">${p}</span>
+                        </div>
+                    `).join('');
+                }
+            },
+
+            renderConsole() {
+                const output = document.getElementById('console-output');
+                const logs = this.currentServer.consoleLogs;
+                
+                if (logs.length === 0) {
+                    output.innerHTML = '<div class="text-gray-600">Server offline. Press START to boot.</div>';
+                    return;
+                }
+                
+                output.innerHTML = logs.map(l => {
+                    let color = 'text-gray-400';
+                    if (l.type === 'success') color = 'text-[#007749]';
+                    if (l.type === 'warn') color = 'text-[#FFB612]';
+                    if (l.type === 'error') color = 'text-[#DE3831]';
+                    if (l.type === 'cmd') color = 'text-blue-400';
+                    return `<div class="terminal-line ${color}">[${l.time}] ${l.msg}</div>`;
+                }).join('');
+                
+                output.scrollTop = output.scrollHeight;
+            },
+
+            startServer() {
+                const s = this.currentServer;
+                s.status = 'Starting';
+                s.consoleLogs = [];
+                this.updateConsoleUI();
+                
+                const bootSeq = [
+                    { msg: 'Starting minecraft server version 1.8.9', d: 300 },
+                    { msg: 'Loading properties', d: 600 },
+                    { msg: `Default game type: ${s.mode}`, d: 900 },
+                    { msg: 'Generating keypair', d: 1200 },
+                    { msg: `Starting Minecraft server on ${s.ip}:25565`, d: 1500 },
+                    { msg: 'Preparing level "world"', d: 2000 },
+                    { msg: 'Preparing spawn area: 0%', d: 2500 },
+                    { msg: 'Preparing spawn area: 32%', d: 2800 },
+                    { msg: 'Preparing spawn area: 68%', d: 3100 },
+                    { msg: 'Preparing spawn area: 100%', d: 3400 },
+                    { msg: `Done (3.2s)! For help, type "help"`, d: 3800, type: 'success' }
+                ];
+                
+                bootSeq.forEach(step => {
+                    setTimeout(() => {
+                        s.consoleLogs.push({
+                            msg: step.msg,
+                            type: step.type || 'info',
+                            time: new Date().toLocaleTimeString('en-ZA', {hour12:false})
+                        });
+                        this.renderConsole();
+                        
+                        if (step.type === 'success') {
+                            s.status = 'Online';
+                            this.updateConsoleUI();
+                            setTimeout(() => this.addPlayer('Steve_ZA'), 500);
+                            setTimeout(() => this.addPlayer('BraaiMaster'), 1500);
+                        }
+                    }, step.d);
+                });
+            },
+
+            stopServer() {
+                const s = this.currentServer;
+                this.log('Stopping the server...', 'warn');
+                setTimeout(() => this.log('Saving chunks...', 'info'), 400);
+                setTimeout(() => this.log('Player data saved', 'info'), 800);
+                setTimeout(() => {
+                    this.log('Server closed', 'error');
+                    s.status = 'Offline';
+                    s.players = 0;
+                    s.playerList = [];
+                    this.updateConsoleUI();
+                }, 1200);
+            },
+
+            log(msg, type) {
+                this.currentServer.consoleLogs.push({
+                    msg, type,
+                    time: new Date().toLocaleTimeString('en-ZA', {hour12:false})
+                });
+                this.renderConsole();
+            },
+
+            sendCommand(cmd) {
+                if (!cmd) return;
+                this.log(`> ${cmd}`, 'cmd');
+                document.getElementById('console-cmd').value = '';
+                
+                setTimeout(() => {
+                    if (cmd === 'help') {
+                        this.log('Commands: help, stop, list, kick <player>, op <player>', 'info');
+                    } else if (cmd === 'stop') {
+                        this.stopServer();
+                    } else if (cmd === 'list') {
+                        const list = this.currentServer.playerList.join(', ') || 'No players';
+                        this.log(`Players: ${list}`, 'info');
+                    } else if (cmd.startsWith('kick')) {
+                        const p = cmd.split(' ')[1];
+                        if (p && this.currentServer.playerList.includes(p)) {
+                            this.currentServer.playerList = this.currentServer.playerList.filter(x => x !== p);
+                            this.currentServer.players--;
+                            this.log(`Kicked ${p}`, 'warn');
+                            this.updateConsoleUI();
+                        }
+                    } else {
+                        this.log('Unknown command', 'error');
+                    }
+                }, 200);
+            },
+
+            addPlayer(name) {
+                const s = this.currentServer;
+                if (!s.playerList.includes(name)) {
+                    s.playerList.push(name);
+                    s.players++;
+                    this.log(`${name} joined the game`, 'success');
+                    this.updateConsoleUI();
+                }
+            },
+
+            playGame(game) {
+                alert(`Connecting to ${game}...\nFinding South African server...`);
+            },
+
+            randomGame() {
+                const games = ['SkyBlock', 'Bed Wars', 'SkyWars', 'Murder', 'Duels', 'Build Battle'];
+                this.playGame(games[Math.floor(Math.random() * games.length)]);
+            },
+
+            filterByType(type) {
+                alert(`Filtering by ${type}...\n(Coming soon!)`);
+            },
+
+            startLiveChat() {
+                for (let i = 0; i < 8; i++) {
+                    setTimeout(() => this.addChatMessage(), i * 300);
+                }
+                setInterval(() => this.addChatMessage(), 2500);
+            },
+
+            addChatMessage() {
+                const user = this.chatUsers[Math.floor(Math.random() * this.chatUsers.length)];
+                const msg = this.saPhrases[Math.floor(Math.random() * this.saPhrases.length)];
+                const color = ['text-[#FFB612]', 'text-[#007749]', 'text-[#DE3831]', 'text-blue-400', 'text-purple-400'][Math.floor(Math.random() * 5)];
+                
+                const chatContainer = document.getElementById('chat-container');
+                if (!chatContainer) return;
+                
+                const div = document.createElement('div');
+                div.className = 'chat-message flex gap-2 items-start bg-[#111] p-2 rounded border border-[#222]';
+                div.innerHTML = `
+                    <img src="https://mc-heads.net/avatar/${user}/32" class="w-8 h-8 rounded border border-[#333] shrink-0">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="${color} font-bold text-sm">${user}</span>
+                            <span class="text-gray-600 text-xs">${new Date().toLocaleTimeString('en-ZA', {hour:'2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <p class="text-gray-300 text-sm break-words">${msg}</p>
+                    </div>
+                `;
+                
+                chatContainer.appendChild(div);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                while (chatContainer.children.length > 50) {
+                    chatContainer.removeChild(chatContainer.firstChild);
+                }
+                
+                if (this.currentView !== 'chat') {
+                    document.getElementById('chat-badge')?.classList.remove('hidden');
+                }
+            },
+
+            sendChat() {
+                const input = document.getElementById('chat-input');
+                const msg = input.value.trim();
+                if (!msg) return;
+                
+                const chatContainer = document.getElementById('chat-container');
+                const div = document.createElement('div');
+                div.className = 'chat-message flex gap-2 items-start bg-[#007749]/20 p-2 rounded border border-[#007749]';
+                div.innerHTML = `
+                    <img src="https://mc-heads.net/avatar/You/32" class="w-8 h-8 rounded border border-[#007749] shrink-0">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[#007749] font-bold text-sm">You</span>
+                            <span class="text-gray-600 text-xs">Just now</span>
+                        </div>
+                        <p class="text-white text-sm break-words">${msg}</p>
+                    </div>
+                `;
+                
+                chatContainer.appendChild(div);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                input.value = '';
+                
+                setTimeout(() => {
+                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that'];
+                    const reply = replies[Math.floor(Math.random() * replies.length)];
+                    const user = this.chatUsers[Math.floor(Math.random() * this.chatUsers.length)];
+                    
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'chat-message flex gap-2 items-start bg-[#111] p-2 rounded border border-[#222]';
+                    replyDiv.innerHTML = `
+                        <img src="https://mc-heads.net/avatar/${user}/32" class="w-8 h-8 rounded border border-[#333] shrink-0">
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[#FFB612] font-bold text-sm">${user}</span>
+                                <span class="text-gray-600 text-xs">Just now</span>
+                            </div>
+                            <p class="text-gray-300 text-sm">${reply}</p>
+                        </div>
+                    `;
+                    chatContainer.appendChild(replyDiv);
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 1000);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
