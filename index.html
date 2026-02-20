@@ -256,12 +256,20 @@
             padding: 8px 4px;
             color: #666;
             transition: color 0.2s;
+            position: relative;
         }
         .nav-item.active {
             color: #22c55e;
         }
         .nav-item:active {
             color: #4ade80;
+        }
+
+        .nav-icon-block {
+            width: 28px;
+            height: 28px;
+            margin-bottom: 4px;
+            image-rendering: pixelated;
         }
 
         .safe-bottom {
@@ -685,13 +693,14 @@
             position: fixed;
             bottom: 100px;
             right: 16px;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             border: 2px solid #FFB612;
             border-radius: 12px;
             padding: 16px;
             max-width: 280px;
             z-index: 30;
             display: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
         }
 
         .crafting-helper.visible {
@@ -699,13 +708,33 @@
             animation: slideInUp 0.3s ease-out;
         }
 
+        .helper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
         .helper-title {
             color: #FFB612;
             font-weight: bold;
-            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .close-helper {
+            background: #b91c1c;
+            border: none;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .quick-craft-btn {
@@ -718,6 +747,7 @@
             font-size: 0.9rem;
             margin-top: 8px;
             transition: all 0.2s;
+            width: 100%;
         }
 
         .quick-craft-btn:hover {
@@ -797,6 +827,84 @@
             stroke: #4a5568;
             stroke-width: 1;
         }
+
+        /* Blocks Page Styles */
+        .blocks-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .block-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 3px solid;
+            border-color: #555 #333 #333 #555;
+            border-radius: 8px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .block-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .block-card:active {
+            transform: translateY(0);
+        }
+
+        .block-icon {
+            font-size: 3rem;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .block-name {
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .block-desc {
+            color: #888;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .creeper-face {
+            width: 40px;
+            height: 40px;
+            background: #5a9e34;
+            border: 2px solid #3a6e1f;
+            border-radius: 4px;
+            position: relative;
+            margin: 0 auto 4px;
+        }
+
+        .creeper-face::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: #000;
+            box-shadow: 20px 0 0 #000, 10px 12px 0 #000;
+        }
+
+        .creeper-face::after {
+            content: '';
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 6px;
+            background: #000;
+            clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 0, 80% 100%, 100% 0);
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
@@ -848,18 +956,15 @@
                 </svg>
                 <span class="text-xs">Map</span>
             </button>
+            <button onclick="app.navigate('blocks')" class="nav-item" data-nav="blocks">
+                <div class="creeper-face nav-icon-block"></div>
+                <span class="text-xs">Blocks</span>
+            </button>
             <button onclick="app.navigate('gamedrive')" class="nav-item" data-nav="gamedrive">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
                 </svg>
                 <span class="text-xs">Game Drive</span>
-            </button>
-            <button onclick="app.navigate('chat')" class="nav-item" data-nav="chat">
-                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
-                </svg>
-                <span class="text-xs">Chat</span>
-                <span id="chat-badge" class="absolute top-1 right-20 w-2 h-2 bg-red-500 rounded-full hidden"></span>
             </button>
         </div>
     </nav>
@@ -874,14 +979,17 @@
 
     <!-- Crafting Helper -->
     <div id="craftingHelper" class="crafting-helper">
-        <div class="helper-title">
-            <span>💡</span>
-            <span>Crafting Tips</span>
+        <div class="helper-header">
+            <div class="helper-title">
+                <span>💡</span>
+                <span>Crafting Tips</span>
+            </div>
+            <button onclick="app.closeHelper()" class="close-helper">×</button>
         </div>
         <div id="helperContent" class="text-sm text-gray-300">
             Select an item from your inventory, then tap the grid to place it!
         </div>
-        <button onclick="app.showRecipeGuide()" class="quick-craft-btn w-full">View Recipe Book</button>
+        <button onclick="app.showRecipeGuide()" class="quick-craft-btn">View Recipe Book</button>
     </div>
 
     <div id="createModal" class="fixed inset-0 bg-black/95 z-50 hidden">
@@ -1016,27 +1124,27 @@
             
             stick: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="14" y="2" width="4" height="28" fill="#8B4513" rx="1"/><rect x="15" y="4" width="2" height="24" fill="#A0522D"/></svg>`,
             
-            dirt: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#8B4513"/><rect x="4" y="4" width="24" height="12" fill="#654321"/><rect x="4" y="18" width="24" height="10" fill="#8B4513"/><circle cx="10" cy="10" r="2" fill="#A0522D"/><circle cx="22" cy="22" r="3" fill="#5D4037"/></svg>`,
+            planks: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#DEB887"/><rect x="4" y="4" width="24" height="6" fill="#CD853F"/><rect x="4" y="12" width="24" height="6" fill="#DEB887"/><rect x="4" y="20" width="24" height="8" fill="#CD853F"/><line x1="4" y1="10" x2="28" y2="10" stroke="#8B4513" stroke-width="0.5"/><line x1="4" y1="18" x2="28" y2="18" stroke="#8B4513" stroke-width="0.5"/></svg>`,
             
-            wool: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#F5F5F5" rx="2"/><rect x="4" y="4" width="24" height="24" fill="#FFFFFF" rx="1"/><circle cx="10" cy="10" r="3" fill="#E8E8E8"/><circle cx="22" cy="14" r="4" fill="#E8E8E8"/><circle cx="12" cy="24" r="3" fill="#E8E8E8"/></svg>`,
+            crafting_table: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#8B4513"/><rect x="4" y="4" width="24" height="10" fill="#A0522D"/><rect x="4" y="16" width="24" height="12" fill="#DEB887"/><rect x="6" y="6" width="6" height="6" fill="#CD853F"/><rect x="20" y="6" width="6" height="6" fill="#CD853F"/></svg>`,
+            
+            furnace: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#696969" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#808080" rx="1"/><rect x="12" y="18" width="8" height="6" fill="#000"/><rect x="14" y="20" width="4" height="2" fill="#FF4500"/></svg>`,
             
             chest: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="8" width="24" height="20" fill="#8B4513" rx="1"/><rect x="6" y="10" width="20" height="16" fill="#A0522D"/><rect x="14" y="12" width="4" height="6" fill="#654321"/><rect x="6" y="6" width="20" height="4" fill="#8B4513"/></svg>`,
             
-            door: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="6" y="2" width="20" height="28" fill="#8B4513" rx="1"/><rect x="8" y="4" width="16" height="24" fill="#654321"/><rect x="10" y="6" width="6" height="10" fill="#8B4513"/><rect x="10" y="18" width="6" height="8" fill="#8B4513"/><circle cx="20" cy="16" r="1.5" fill="#FFD700"/></svg>`,
+            bed: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="12" width="28" height="16" fill="#8B4513" rx="2"/><rect x="4" y="14" width="24" height="10" fill="#FF0000"/><rect x="4" y="14" width="8" height="10" fill="#FFF"/><rect x="2" y="22" width="4" height="8" fill="#654321"/><rect x="26" y="22" width="4" height="8" fill="#654321"/></svg>`,
             
-            redstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#8B0000" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FF0000" rx="1"/><line x1="10" y1="10" x2="22" y2="22" stroke="#FF4500" stroke-width="2"/><line x1="22" y1="10" x2="10" y2="22" stroke="#FF4500" stroke-width="2"/></svg>`,
+            torch: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="14" y="14" width="4" height="16" fill="#8B4513"/><circle cx="16" cy="10" r="6" fill="#FFD700"/><circle cx="16" cy="10" r="3" fill="#FFF"/></svg>`,
             
-            glowstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#F0E68C" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FFFACD" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#FFFFE0"/><rect x="18" y="18" width="6" height="6" fill="#FFFFE0"/><circle cx="16" cy="16" r="4" fill="#FFFFFF" opacity="0.5"/></svg>`,
+            sword: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M10 2 L14 2 L14 20 L10 24 L6 20 Z" fill="#C0C0C0"/><rect x="13" y="24" width="6" height="6" fill="#8B4513"/></svg>`,
             
-            string: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M6 6 Q16 12, 26 6 M6 12 Q16 18, 26 12 M6 18 Q16 24, 26 18 M6 24 Q16 30, 26 24" stroke="#F5F5DC" stroke-width="2" fill="none"/><circle cx="10" cy="10" r="2" fill="#FFF8DC"/><circle cx="22" cy="20" r="2" fill="#FFF8DC"/></svg>`,
+            pickaxe: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M8 2 L12 2 L16 8 L20 2 L24 2 L18 12 L18 28 L14 28 L14 12 Z" fill="#C0C0C0"/></svg>`,
             
-            leather: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#8B4513" rx="4"/><rect x="6" y="6" width="20" height="20" fill="#A0522D" rx="3"/><circle cx="12" cy="12" r="3" fill="#8B4513"/><circle cx="20" cy="20" r="3" fill="#8B4513"/></svg>`,
+            axe: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M8 2 L14 2 L14 12 L20 6 L24 10 L16 18 L16 28 L12 28 L12 18 L8 14 Z" fill="#C0C0C0"/></svg>`,
             
-            feather: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M16 2 Q24 8, 24 16 Q24 24, 16 30 Q8 24, 8 16 Q8 8, 16 2" fill="#F5F5F5"/><path d="M16 6 Q20 10, 20 16 Q20 22, 16 26 Q12 22, 12 16 Q12 10, 16 6" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#DDD" stroke-width="1"/></svg>`,
+            shovel: `<svg viewBox="0 0 32 32" class="mc-icon"><ellipse cx="16" cy="8" rx="6" ry="8" fill="#C0C0C0"/><rect x="14" y="14" width="4" height="16" fill="#8B4513"/></svg>`,
             
-            flint: `<svg viewBox="0 0 32 32" class="mc-icon"><polygon points="16,4 28,12 24,28 8,28 4,12" fill="#2F4F4F"/><polygon points="16,8 24,14 22,24 10,24 8,14" fill="#696969"/><polygon points="16,12 20,16 18,20 14,20 12,16" fill="#A9A9A9"/></svg>`,
-            
-            planks: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#DEB887"/><rect x="4" y="4" width="24" height="6" fill="#CD853F"/><rect x="4" y="12" width="24" height="6" fill="#DEB887"/><rect x="4" y="20" width="24" height="8" fill="#CD853F"/><line x1="4" y1="10" x2="28" y2="10" stroke="#8B4513" stroke-width="0.5"/><line x1="4" y1="18" x2="28" y2="18" stroke="#8B4513" stroke-width="0.5"/></svg>`
+            creeper: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#5a9e34" rx="2"/><rect x="8" y="8" width="6" height="6" fill="#000"/><rect x="18" y="8" width="6" height="6" fill="#000"/><rect x="12" y="18" width="8" height="4" fill="#000"/><rect x="10" y="22" width="4" height="4" fill="#000"/><rect x="18" y="22" width="4" height="4" fill="#000"/></svg>`
         };
 
         const app = {
@@ -1068,16 +1176,10 @@
                 { icon: 'gold', name: 'Gold Ingot', id: 'gold' },
                 { icon: 'coal', name: 'Coal', id: 'coal' },
                 { icon: 'stick', name: 'Stick', id: 'stick' },
-                { icon: 'planks', name: 'Oak Planks', id: 'planks' },
-                { icon: 'string', name: 'String', id: 'string' },
-                { icon: 'leather', name: 'Leather', id: 'leather' },
-                { icon: 'feather', name: 'Feather', id: 'feather' },
-                { icon: 'flint', name: 'Flint', id: 'flint' },
-                { icon: 'redstone', name: 'Redstone', id: 'redstone' },
-                { icon: 'glowstone', name: 'Glowstone', id: 'glowstone' },
-                { icon: 'wool', name: 'Wool', id: 'wool' }
+                { icon: 'planks', name: 'Oak Planks', id: 'planks' }
             ],
 
+            // FIXED: Corrected recipes with proper patterns
             craftingRecipes: {
                 'pickaxe_wood': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1085,7 +1187,7 @@
                     name: 'Wooden Pickaxe', 
                     desc: 'Basic mining tool - good for stone!', 
                     items: ['planks', 'planks', 'planks', 'stick', 'stick'],
-                    hint: 'Place 3 planks across the top row, then 2 sticks in the middle and bottom of the middle column.'
+                    hint: '3 planks on top row, 2 sticks in middle column below'
                 },
                 'pickaxe_stone': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1093,7 +1195,7 @@
                     name: 'Stone Pickaxe', 
                     desc: 'Better than wood - mine iron ore!', 
                     items: ['stone', 'stone', 'stone', 'stick', 'stick'],
-                    hint: 'Same pattern as wooden pickaxe, but use cobblestone instead of planks.'
+                    hint: '3 stone on top, 2 sticks below in middle'
                 },
                 'pickaxe_iron': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1101,7 +1203,7 @@
                     name: 'Iron Pickaxe', 
                     desc: 'Strong tool - can mine diamonds!', 
                     items: ['iron', 'iron', 'iron', 'stick', 'stick'],
-                    hint: 'Top row: 3 iron ingots. Middle and bottom center: sticks.'
+                    hint: '3 iron on top, 2 sticks below'
                 },
                 'pickaxe_diamond': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1109,7 +1211,7 @@
                     name: 'Diamond Pickaxe', 
                     desc: 'The best! Mine obsidian!', 
                     items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'],
-                    hint: 'The ultimate pickaxe! 3 diamonds on top, 2 sticks below.'
+                    hint: '3 diamonds on top, 2 sticks below'
                 },
                 'sword_wood': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1117,7 +1219,7 @@
                     name: 'Wooden Sword', 
                     desc: 'Basic protection from mobs!', 
                     items: ['planks', 'planks', 'stick'],
-                    hint: 'Middle column: 2 planks on top, 1 stick at bottom.'
+                    hint: '2 planks in middle column, stick at bottom'
                 },
                 'sword_stone': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1125,7 +1227,7 @@
                     name: 'Stone Sword', 
                     desc: 'Better damage than wood!', 
                     items: ['stone', 'stone', 'stick'],
-                    hint: 'Same as wooden sword, but use cobblestone.'
+                    hint: '2 stone in middle column, stick at bottom'
                 },
                 'sword_iron': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1133,7 +1235,15 @@
                     name: 'Iron Sword', 
                     desc: 'Strong and durable!', 
                     items: ['iron', 'iron', 'stick'],
-                    hint: 'Middle column: 2 iron ingots + 1 stick.'
+                    hint: '2 iron in middle column, stick at bottom'
+                },
+                'sword_diamond': { 
+                    pattern: [' x ', ' x ', ' s '], 
+                    result: '🗡️', 
+                    name: 'Diamond Sword', 
+                    desc: 'Very powerful weapon!', 
+                    items: ['diamond', 'diamond', 'stick'],
+                    hint: '2 diamonds in middle column, stick at bottom'
                 },
                 'axe_wood': { 
                     pattern: ['xx ', 'xs ', ' s '], 
@@ -1141,7 +1251,23 @@
                     name: 'Wooden Axe', 
                     desc: 'Chop trees faster!', 
                     items: ['planks', 'planks', 'stick', 'planks'],
-                    hint: 'Top left 2 planks, middle left 1 plank + stick, bottom center stick.'
+                    hint: '2 planks top-left, 1 plank+stick middle-left, stick bottom'
+                },
+                'axe_stone': { 
+                    pattern: ['xx ', 'xs ', ' s '], 
+                    result: '🪓', 
+                    name: 'Stone Axe', 
+                    desc: 'Better than wooden axe!', 
+                    items: ['stone', 'stone', 'stick', 'stone'],
+                    hint: '2 stone top-left, 1 stone+stick middle-left, stick bottom'
+                },
+                'axe_iron': { 
+                    pattern: ['xx ', 'xs ', ' s '], 
+                    result: '🪓', 
+                    name: 'Iron Axe', 
+                    desc: 'Fast tree chopping!', 
+                    items: ['iron', 'iron', 'stick', 'iron'],
+                    hint: '2 iron top-left, 1 iron+stick middle-left, stick bottom'
                 },
                 'shovel_wood': { 
                     pattern: [' x ', ' s ', ' s '], 
@@ -1149,7 +1275,15 @@
                     name: 'Wooden Shovel', 
                     desc: 'Dig dirt, sand, and gravel!', 
                     items: ['planks', 'stick', 'stick'],
-                    hint: '1 plank on top, 2 sticks below in the middle column.'
+                    hint: '1 plank on top, 2 sticks below in middle column'
+                },
+                'shovel_stone': { 
+                    pattern: [' x ', ' s ', ' s '], 
+                    result: '🔨', 
+                    name: 'Stone Shovel', 
+                    desc: 'Faster digging!', 
+                    items: ['stone', 'stick', 'stick'],
+                    hint: '1 stone on top, 2 sticks below'
                 },
                 'torch': { 
                     pattern: [' c ', ' s ', '   '], 
@@ -1157,7 +1291,7 @@
                     name: 'Torch', 
                     desc: 'Light up dark places!', 
                     items: ['coal', 'stick'],
-                    hint: 'Coal on top, stick below it. Simple!'
+                    hint: 'Coal on top, stick below it'
                 },
                 'chest': { 
                     pattern: ['xxx', 'x x', 'xxx'], 
@@ -1165,7 +1299,7 @@
                     name: 'Chest', 
                     desc: 'Store your items safely!', 
                     items: ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks'],
-                    hint: 'Ring of 8 planks - leave the center empty.'
+                    hint: 'Ring of 8 planks - leave center empty'
                 }
             },
 
@@ -1292,6 +1426,21 @@
                 { name: 'Polokwane', x: 60, y: 25, province: 'Limpopo' }
             ],
 
+            minecraftBlocks: [
+                { icon: 'wood', name: 'Oak Wood', desc: 'Basic building block', tool: 'Axe' },
+                { icon: 'stone', name: 'Cobblestone', desc: 'Strong building material', tool: 'Pickaxe' },
+                { icon: 'crafting_table', name: 'Crafting Table', desc: '3x3 crafting grid', tool: 'Axe' },
+                { icon: 'furnace', name: 'Furnace', desc: 'Smelt ores and cook food', tool: 'Pickaxe' },
+                { icon: 'chest', name: 'Chest', desc: 'Store 27 items', tool: 'Axe' },
+                { icon: 'bed', name: 'Bed', desc: 'Sleep and set spawn', tool: 'Axe' },
+                { icon: 'torch', name: 'Torch', desc: 'Light up areas', tool: 'Any' },
+                { icon: 'planks', name: 'Oak Planks', desc: 'Crafting material', tool: 'Axe' },
+                { icon: 'creeper', name: 'Creeper', desc: 'Explodes when near!', tool: 'Sword' },
+                { icon: 'pickaxe', name: 'Pickaxe', desc: 'Mine stone and ores', tool: 'Crafted' },
+                { icon: 'sword', name: 'Sword', desc: 'Fight mobs', tool: 'Crafted' },
+                { icon: 'axe', name: 'Axe', desc: 'Chop wood faster', tool: 'Crafted' }
+            ],
+
             init() {
                 this.servers = [
                     { id: '1', name: '🦁 KrugerCraft SA', type: 'spigot', mode: 'Game Drive Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
@@ -1337,6 +1486,9 @@
                         break;
                     case 'map':
                         container.innerHTML = this.renderMap();
+                        break;
+                    case 'blocks':
+                        container.innerHTML = this.renderBlocks();
                         break;
                     case 'gamedrive':
                         container.innerHTML = this.renderGameDrive();
@@ -1394,16 +1546,16 @@
 
                             <!-- Recipe Guide -->
                             <div class="recipe-guide mt-4">
-                                <h4 class="text-[#FFB612] font-bold mb-2">📖 QUICK RECIPES</h4>
+                                <h4 class="text-[#FFB612] font-bold mb-2">📖 QUICK RECIPES (Tap to auto-fill)</h4>
                                 <div class="space-y-1">
-                                    ${Object.entries(this.craftingRecipes).slice(0, 4).map(([key, recipe]) => `
+                                    ${Object.entries(this.craftingRecipes).slice(0, 6).map(([key, recipe]) => `
                                         <div class="recipe-item" onclick="app.loadRecipe('${key}')">
                                             <span class="text-xl">${recipe.result}</span>
                                             <div class="flex-grow">
                                                 <div class="text-white font-bold text-sm">${recipe.name}</div>
                                                 <div class="text-gray-400 text-xs">${recipe.hint}</div>
                                             </div>
-                                            <span class="text-[#007749] text-xs">Tap to auto-fill</span>
+                                            <span class="text-[#007749] text-xs">Auto-fill</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -1483,11 +1635,11 @@
                                         <div class="text-gray-500 text-xs">Meet the animals!</div>
                                     </div>
                                 </div>
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showLandmark()">
-                                    <span class="text-2xl">⛰️</span>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('blocks')">
+                                    <span class="text-2xl">🧱</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Landmarks</div>
-                                        <div class="text-gray-500 text-xs">Famous places!</div>
+                                        <div class="text-white text-sm font-bold">Minecraft Blocks</div>
+                                        <div class="text-gray-500 text-xs">Tools & mobs!</div>
                                     </div>
                                 </div>
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showFoodFact()">
@@ -1523,6 +1675,72 @@
                                 <button class="mc-btn mc-btn-blue px-4 py-2 rounded">JOIN</button>
                             </div>
                         </div>
+                    </div>
+                `;
+            },
+
+            renderBlocks() {
+                return `
+                    <div class="slide-in space-y-4 pt-2">
+                        <div class="text-center mb-4">
+                            <h2 class="text-2xl text-[#FFB612] font-bold">🧱 MINECRAFT BLOCKS & TOOLS 🗡️</h2>
+                            <p class="text-gray-400 text-sm">Essential blocks, tools, and mobs for your adventure!</p>
+                        </div>
+
+                        <div class="blocks-grid">
+                            ${this.minecraftBlocks.map((block, idx) => `
+                                <div class="block-card" onclick="app.showBlockInfo(${idx})">
+                                    <div class="block-icon">${mcIcons[block.icon]}</div>
+                                    <div class="block-name">${block.name}</div>
+                                    <div class="block-desc">${block.desc}</div>
+                                    <div class="text-[#007749] text-xs mt-2">🔨 ${block.tool}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-4 rounded mt-4">
+                            <h3 class="text-[#FFB612] font-bold mb-3">⚔️ TOOL TIER GUIDE</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center gap-2 text-gray-300">
+                                    <span>🪵</span>
+                                    <span><strong>Wood:</strong> Basic, mines stone slowly</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-300">
+                                    <span>🪨</span>
+                                    <span><strong>Stone:</strong> Better, can mine iron</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-300">
+                                    <span>⚙️</span>
+                                    <span><strong>Iron:</strong> Strong, can mine diamond</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-300">
+                                    <span>💎</span>
+                                    <span><strong>Diamond:</strong> Best speed & durability</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-4 rounded">
+                            <h3 class="text-[#DE3831] font-bold mb-3">💀 MOB GUIDE</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3 bg-[#0a0a0a] p-2 rounded">
+                                    <div class="w-10 h-10">${mcIcons.creeper}</div>
+                                    <div>
+                                        <div class="text-white font-bold">Creeper</div>
+                                        <div class="text-gray-400 text-xs">Explodes when near! Keep distance.</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3 bg-[#0a0a0a] p-2 rounded">
+                                    <span class="text-3xl">🦁</span>
+                                    <div>
+                                        <div class="text-white font-bold">Lion (RSA Mod)</div>
+                                        <div class="text-gray-400 text-xs">Found in Kruger biome. Neutral unless provoked.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="app.navigate('home')" class="mc-btn w-full py-3 rounded mt-4">← Back to Crafting</button>
                     </div>
                 `;
             },
@@ -1801,29 +2019,25 @@
                     this.selectedItemId = null;
                     this.selectedItemName = null;
                     this.updateHint('Item deselected. Select another item or tap a recipe above.');
+                    document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
                 } else {
                     this.selectedItem = id;
                     this.selectedItemId = id;
                     this.selectedItemName = name;
                     slot.classList.add('selected');
                     this.updateHint(`Placing ${name}. Tap grid slots to place it! Tap again to remove.`);
-                    
-                    // Highlight compatible slots based on common recipes
                     this.highlightCompatibleSlots(id);
                 }
             },
 
             highlightCompatibleSlots(itemId) {
-                // Remove previous highlights
                 document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
                 
-                // If sticks are selected, highlight middle column (common for tools)
                 if (itemId === 'stick') {
                     [1, 4, 7].forEach(i => {
                         document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
                     });
                 }
-                // If planks/stone/iron/diamond, highlight top row
                 else if (['planks', 'stone', 'iron', 'diamond'].includes(itemId)) {
                     [0, 1, 2].forEach(i => {
                         document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
@@ -1839,15 +2053,12 @@
                     this.craftingGrid[row][col] = this.selectedItemId;
                     this.updateCraftingGrid();
                     this.checkRecipe();
-                    
-                    // Keep item selected for easy multi-placement
                     this.updateHint(`Placed ${this.selectedItemName}. Tap more slots or select different item.`);
                 } else if (this.craftingGrid[row][col]) {
                     const removed = this.craftingGrid[row][col];
                     this.craftingGrid[row][col] = '';
                     this.updateCraftingGrid();
                     this.checkRecipe();
-                    
                     const itemName = this.inventoryItems.find(i => i.id === removed)?.name || 'item';
                     this.updateHint(`Removed ${itemName}. Select an item to place more.`);
                 } else {
@@ -1929,18 +2140,41 @@
                 const recipe = this.craftingRecipes[recipeKey];
                 if (!recipe) return;
                 
-                // Clear grid first
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 
-                // Fill grid based on pattern
-                const items = recipe.items;
-                let itemIndex = 0;
-                
+                // Parse pattern and fill grid
                 for (let row = 0; row < 3; row++) {
                     for (let col = 0; col < 3; col++) {
-                        if (recipe.pattern[row][col] === 'x' && itemIndex < items.length) {
-                            this.craftingGrid[row][col] = items[itemIndex];
-                            itemIndex++;
+                        if (recipe.pattern[row][col] === 'x') {
+                            // Determine which item goes here based on position and recipe
+                            let item = null;
+                            if (recipeKey.includes('pickaxe')) {
+                                if (row === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : recipeKey.includes('iron') ? 'iron' : 'diamond';
+                                else if (col === 1) item = 'stick';
+                            }
+                            else if (recipeKey.includes('sword')) {
+                                if (row < 2 && col === 1) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : recipeKey.includes('iron') ? 'iron' : 'diamond';
+                                else if (row === 2 && col === 1) item = 'stick';
+                            }
+                            else if (recipeKey.includes('axe')) {
+                                if (row === 0 && col < 2) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : 'iron';
+                                else if (row === 1 && col === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : 'iron';
+                                else if (row === 1 && col === 1) item = 'stick';
+                                else if (row === 2 && col === 1) item = 'stick';
+                            }
+                            else if (recipeKey.includes('shovel')) {
+                                if (row === 0 && col === 1) item = recipeKey.includes('wood') ? 'planks' : 'stone';
+                                else if (row > 0 && col === 1) item = 'stick';
+                            }
+                            else if (recipeKey === 'torch') {
+                                if (row === 0 && col === 1) item = 'coal';
+                                else if (row === 1 && col === 1) item = 'stick';
+                            }
+                            else if (recipeKey === 'chest') {
+                                if (!(row === 1 && col === 1)) item = 'planks';
+                            }
+                            
+                            if (item) this.craftingGrid[row][col] = item;
                         }
                     }
                 }
@@ -1949,7 +2183,6 @@
                 this.checkRecipe();
                 this.updateHint(`🎯 Auto-filled: ${recipe.name}! Click CRAFT ITEM to make it.`);
                 
-                // Highlight the recipe item temporarily
                 document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
                 event.currentTarget.classList.add('active');
             },
@@ -1978,7 +2211,6 @@
                 text.textContent = `You crafted a ${this.currentRecipe.name}! ${this.currentRecipe.desc}`;
                 popup.classList.add('visible');
                 
-                // Reset grid after successful craft
                 setTimeout(() => {
                     this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                     this.updateCraftingGrid();
@@ -1989,6 +2221,10 @@
 
             closeSuccess() {
                 document.getElementById('successPopup').classList.remove('visible');
+            },
+
+            closeHelper() {
+                document.getElementById('craftingHelper').classList.remove('visible');
             },
 
             showRecipeGuide() {
@@ -2005,6 +2241,11 @@
                       `CHEST (ring of 8):\n` +
                       `📦 8 planks in circle\n\n` +
                       `Tap any recipe above to auto-fill!`);
+            },
+
+            showBlockInfo(idx) {
+                const block = this.minecraftBlocks[idx];
+                alert(`🧱 ${block.name}\n\n${block.desc}\n\n🔨 Best tool: ${block.tool}\n\n💡 Tip: Use the right tool to mine faster!`);
             },
 
             showAnimalOnMap(idx) {
@@ -2343,16 +2584,6 @@
                     chatContainer.appendChild(replyDiv);
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }, 1000);
-            },
-
-            showLandmark() {
-                const landmarks = [
-                    { name: 'Table Mountain', emoji: '⛰️', fact: 'One of the New7Wonders of Nature! The flat top looks like a table.' },
-                    { name: 'Kruger National Park', emoji: '🏞️', fact: '19,623 km² - bigger than the whole country of Israel! Home to the Big Five.' },
-                    { name: 'Boulders Beach', emoji: '🏖️', fact: 'Home to 3,000 African penguins! You can swim near them (but don\'t touch!).' }
-                ];
-                const lm = landmarks[Math.floor(Math.random() * landmarks.length)];
-                alert(`⛰️ ${lm.name} ⛰️\n\n${lm.fact}`);
             },
 
             showFoodFact() {
