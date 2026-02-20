@@ -339,6 +339,11 @@
             animation: pulse 1s infinite;
         }
 
+        .crafting-slot.highlight {
+            box-shadow: inset 0 0 0 3px #22c55e;
+            background: #c6c6c6;
+        }
+
         .crafting-slot::after {
             content: '';
             position: absolute;
@@ -543,11 +548,6 @@
             margin: 8px 0;
         }
 
-        .landmark-icon {
-            font-size: 3rem;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 18, 0.5));
-        }
-
         /* Map Styles */
         .sa-map-container {
             background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
@@ -649,6 +649,154 @@
             padding: 16px;
             margin-top: 16px;
         }
+
+        /* Recipe Guide Styles */
+        .recipe-guide {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid #FFB612;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .recipe-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .recipe-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+
+        .recipe-item.active {
+            background: rgba(0, 119, 73, 0.3);
+            border: 1px solid #007749;
+        }
+
+        .crafting-helper {
+            position: fixed;
+            bottom: 100px;
+            right: 16px;
+            background: rgba(0,0,0,0.9);
+            border: 2px solid #FFB612;
+            border-radius: 12px;
+            padding: 16px;
+            max-width: 280px;
+            z-index: 30;
+            display: none;
+        }
+
+        .crafting-helper.visible {
+            display: block;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .helper-title {
+            color: #FFB612;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-craft-btn {
+            background: linear-gradient(135deg, #007749 0%, #005a37 100%);
+            border: 2px solid #FFB612;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            transition: all 0.2s;
+        }
+
+        .quick-craft-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 119, 73, 0.4);
+        }
+
+        .tutorial-step {
+            background: rgba(255, 182, 18, 0.1);
+            border-left: 3px solid #FFB612;
+            padding: 8px 12px;
+            margin: 8px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.9rem;
+        }
+
+        .success-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #007749 0%, #005a37 100%);
+            border: 4px solid #FFB612;
+            border-radius: 16px;
+            padding: 24px;
+            z-index: 100;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 40px rgba(0, 119, 73, 0.6);
+        }
+
+        .success-popup.visible {
+            display: block;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .city-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            z-index: 5;
+        }
+
+        .city-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        .city-label {
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: #fff;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .river-path {
+            fill: none;
+            stroke: #4a90e2;
+            stroke-width: 2;
+            opacity: 0.6;
+        }
+
+        .mountain-range {
+            fill: #2d3748;
+            stroke: #4a5568;
+            stroke-width: 1;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
@@ -715,6 +863,26 @@
             </button>
         </div>
     </nav>
+
+    <!-- Success Popup -->
+    <div id="successPopup" class="success-popup">
+        <div class="text-4xl mb-2">🎉</div>
+        <h3 class="text-xl font-bold text-white mb-2">Crafted Successfully!</h3>
+        <p id="successText" class="text-gray-200 mb-4">You made a Wooden Pickaxe!</p>
+        <button onclick="app.closeSuccess()" class="mc-btn-gold px-6 py-2 rounded">Awesome!</button>
+    </div>
+
+    <!-- Crafting Helper -->
+    <div id="craftingHelper" class="crafting-helper">
+        <div class="helper-title">
+            <span>💡</span>
+            <span>Crafting Tips</span>
+        </div>
+        <div id="helperContent" class="text-sm text-gray-300">
+            Select an item from your inventory, then tap the grid to place it!
+        </div>
+        <button onclick="app.showRecipeGuide()" class="quick-craft-btn w-full">View Recipe Book</button>
+    </div>
 
     <div id="createModal" class="fixed inset-0 bg-black/95 z-50 hidden">
         <div class="h-full flex flex-col modal-animate">
@@ -887,6 +1055,10 @@
                        'Check the Big Five!', 'Table Mountain view!'],
 
             craftingGrid: [['', '', ''], ['', '', ''], ['', '', '']],
+            selectedItem: null,
+            selectedItemId: null,
+            selectedItemName: null,
+            currentRecipe: null,
 
             inventoryItems: [
                 { icon: 'wood', name: 'Oak Wood', id: 'wood' },
@@ -912,133 +1084,88 @@
                     result: '⛏️', 
                     name: 'Wooden Pickaxe', 
                     desc: 'Basic mining tool - good for stone!', 
-                    items: ['planks', 'planks', 'planks', 'stick', 'stick'] 
+                    items: ['planks', 'planks', 'planks', 'stick', 'stick'],
+                    hint: 'Place 3 planks across the top row, then 2 sticks in the middle and bottom of the middle column.'
                 },
                 'pickaxe_stone': { 
                     pattern: ['xxx', ' s ', ' s '], 
                     result: '⛏️', 
                     name: 'Stone Pickaxe', 
                     desc: 'Better than wood - mine iron ore!', 
-                    items: ['stone', 'stone', 'stone', 'stick', 'stick'] 
+                    items: ['stone', 'stone', 'stone', 'stick', 'stick'],
+                    hint: 'Same pattern as wooden pickaxe, but use cobblestone instead of planks.'
                 },
                 'pickaxe_iron': { 
                     pattern: ['xxx', ' s ', ' s '], 
                     result: '⛏️', 
                     name: 'Iron Pickaxe', 
                     desc: 'Strong tool - can mine diamonds!', 
-                    items: ['iron', 'iron', 'iron', 'stick', 'stick'] 
+                    items: ['iron', 'iron', 'iron', 'stick', 'stick'],
+                    hint: 'Top row: 3 iron ingots. Middle and bottom center: sticks.'
                 },
                 'pickaxe_diamond': { 
                     pattern: ['xxx', ' s ', ' s '], 
                     result: '⛏️', 
                     name: 'Diamond Pickaxe', 
                     desc: 'The best! Mine obsidian!', 
-                    items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'] 
+                    items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'],
+                    hint: 'The ultimate pickaxe! 3 diamonds on top, 2 sticks below.'
                 },
                 'sword_wood': { 
                     pattern: [' x ', ' x ', ' s '], 
                     result: '🗡️', 
                     name: 'Wooden Sword', 
                     desc: 'Basic protection from mobs!', 
-                    items: ['planks', 'planks', 'stick'] 
+                    items: ['planks', 'planks', 'stick'],
+                    hint: 'Middle column: 2 planks on top, 1 stick at bottom.'
                 },
                 'sword_stone': { 
                     pattern: [' x ', ' x ', ' s '], 
                     result: '🗡️', 
                     name: 'Stone Sword', 
                     desc: 'Better damage than wood!', 
-                    items: ['stone', 'stone', 'stick'] 
+                    items: ['stone', 'stone', 'stick'],
+                    hint: 'Same as wooden sword, but use cobblestone.'
                 },
                 'sword_iron': { 
                     pattern: [' x ', ' x ', ' s '], 
                     result: '🗡️', 
                     name: 'Iron Sword', 
                     desc: 'Strong and durable!', 
-                    items: ['iron', 'iron', 'stick'] 
-                },
-                'sword_diamond': { 
-                    pattern: [' x ', ' x ', ' s '], 
-                    result: '🗡️', 
-                    name: 'Diamond Sword', 
-                    desc: 'Very powerful weapon!', 
-                    items: ['diamond', 'diamond', 'stick'] 
+                    items: ['iron', 'iron', 'stick'],
+                    hint: 'Middle column: 2 iron ingots + 1 stick.'
                 },
                 'axe_wood': { 
                     pattern: ['xx ', 'xs ', ' s '], 
                     result: '🪓', 
                     name: 'Wooden Axe', 
                     desc: 'Chop trees faster!', 
-                    items: ['planks', 'planks', 'stick', 'planks'] 
-                },
-                'axe_stone': { 
-                    pattern: ['xx ', 'xs ', ' s '], 
-                    result: '🪓', 
-                    name: 'Stone Axe', 
-                    desc: 'Better than wooden axe!', 
-                    items: ['stone', 'stone', 'stick', 'stone'] 
+                    items: ['planks', 'planks', 'stick', 'planks'],
+                    hint: 'Top left 2 planks, middle left 1 plank + stick, bottom center stick.'
                 },
                 'shovel_wood': { 
                     pattern: [' x ', ' s ', ' s '], 
                     result: '🔨', 
                     name: 'Wooden Shovel', 
                     desc: 'Dig dirt, sand, and gravel!', 
-                    items: ['planks', 'stick', 'stick'] 
-                },
-                'shovel_stone': { 
-                    pattern: [' x ', ' s ', ' s '], 
-                    result: '🔨', 
-                    name: 'Stone Shovel', 
-                    desc: 'Faster digging!', 
-                    items: ['stone', 'stick', 'stick'] 
-                },
-                'hoe_wood': { 
-                    pattern: ['xx ', ' s ', ' s '], 
-                    result: '🔱', 
-                    name: 'Wooden Hoe', 
-                    desc: 'Prepare soil for farming!', 
-                    items: ['planks', 'planks', 'stick', 'stick'] 
-                },
-                'hoe_stone': { 
-                    pattern: ['xx ', ' s ', ' s '], 
-                    result: '🔱', 
-                    name: 'Stone Hoe', 
-                    desc: 'Better for big farms!', 
-                    items: ['stone', 'stone', 'stick', 'stick'] 
-                },
-                'fishing_rod': { 
-                    pattern: ['  s', ' sx', 's x'], 
-                    result: '🎣', 
-                    name: 'Fishing Rod', 
-                    desc: 'Catch fish for food!', 
-                    items: ['stick', 'stick', 'stick', 'string', 'string'] 
-                },
-                'flint_steel': { 
-                    pattern: [' f ', ' i ', '   '], 
-                    result: '🔥', 
-                    name: 'Flint and Steel', 
-                    desc: 'Start fires and open portals!', 
-                    items: ['flint', 'iron'] 
+                    items: ['planks', 'stick', 'stick'],
+                    hint: '1 plank on top, 2 sticks below in the middle column.'
                 },
                 'torch': { 
                     pattern: [' c ', ' s ', '   '], 
                     result: '🔦', 
                     name: 'Torch', 
                     desc: 'Light up dark places!', 
-                    items: ['coal', 'stick'] 
+                    items: ['coal', 'stick'],
+                    hint: 'Coal on top, stick below it. Simple!'
                 },
                 'chest': { 
                     pattern: ['xxx', 'x x', 'xxx'], 
                     result: '📦', 
                     name: 'Chest', 
                     desc: 'Store your items safely!', 
-                    items: ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks'] 
-                },
-                'compass': { 
-                    pattern: [' i ', ' i ', ' i '], 
-                    result: '🧭', 
-                    name: 'Compass', 
-                    desc: 'Points to spawn point!', 
-                    items: ['iron', 'iron', 'iron', 'redstone', 'iron', 'iron', 'iron'] 
+                    items: ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks'],
+                    hint: 'Ring of 8 planks - leave the center empty.'
                 }
             },
 
@@ -1047,14 +1174,18 @@
                     name: 'Kruger National Park',
                     province: 'Limpopo & Mpumalanga',
                     animals: ['Lion', 'Leopard', 'Elephant', 'Rhino', 'Buffalo'],
-                    description: 'Famous Big Five reserve! 20,000 km² of wild bush.',
+                    description: 'Famous Big Five reserve! 19,623 km² of wild bush.',
+                    camps: ['Skukuza', 'Satara', 'Lower Sabie', 'Letaba', 'Olifants'],
+                    gates: ['Paul Kruger', 'Phalaborwa', 'Orpen', 'Crocodile Bridge'],
                     color: '#007749'
                 },
                 {
                     name: 'Addo Elephant Park',
                     province: 'Eastern Cape',
                     animals: ['Elephant', 'Buffalo', 'Lion', 'Black Rhino', 'Penguin'],
-                    description: 'Home to over 550 elephants! Also has the Big 7 including whales and sharks.',
+                    description: 'Home to over 550 elephants! Also has the Big 7.',
+                    camps: ['Main Camp', 'Camp Matyholweni'],
+                    gates: ['Addo', 'Matyholweni'],
                     color: '#FFB612'
                 },
                 {
@@ -1062,6 +1193,8 @@
                     province: 'Northern Cape',
                     animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah'],
                     description: 'Red sand dunes and desert animals. Springbok antelope live here!',
+                    camps: ['Twee Rivieren', ' Mata-Mata', '!Xaus'],
+                    gates: ['Twee Rivieren'],
                     color: '#DE3831'
                 },
                 {
@@ -1069,6 +1202,8 @@
                     province: 'Western Cape',
                     animals: ['Penguin', 'Dassie', 'Baboon', 'Eland'],
                     description: 'Famous flat-top mountain! Boulders Beach has African penguins.',
+                    camps: ['Orangekloof', 'Smitswinkel'],
+                    gates: ['Silvermine', 'Cape Point'],
                     color: '#002395'
                 }
             ],
@@ -1079,69 +1214,101 @@
                     emoji: '🦁',
                     x: 65, y: 35,
                     region: 'Kruger National Park',
+                    camp: 'Satara',
                     fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions!',
-                    bestTime: 'Dawn or dusk'
+                    bestTime: 'Dawn or dusk',
+                    diet: 'Carnivore'
                 },
                 {
                     name: 'Elephant',
                     emoji: '🐘',
                     x: 70, y: 40,
                     region: 'Kruger National Park',
+                    camp: 'Letaba',
                     fact: 'Also found at Addo! Drink 200 liters of water per day.',
-                    bestTime: 'Early morning'
+                    bestTime: 'Early morning',
+                    diet: 'Herbivore'
                 },
                 {
                     name: 'Springbok',
-                    emoji: '🦌',
+                    emoji: '🐐',
                     x: 25, y: 25,
                     region: 'Kgalagadi Transfrontier Park',
+                    camp: 'Twee Rivieren',
                     fact: 'National animal! Can jump 3 meters high - called "pronking".',
-                    bestTime: 'All day'
+                    bestTime: 'All day',
+                    diet: 'Herbivore'
                 },
                 {
                     name: 'Penguin',
                     emoji: '🐧',
                     x: 20, y: 85,
                     region: 'Table Mountain National Park',
+                    camp: 'Boulders Beach',
                     fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa!',
-                    bestTime: 'Morning (fewer crowds)'
+                    bestTime: 'Morning (fewer crowds)',
+                    diet: 'Fish & squid'
                 },
                 {
                     name: 'Meerkat',
                     emoji: '🦦',
                     x: 30, y: 30,
                     region: 'Kgalagadi Transfrontier Park',
+                    camp: 'Mata-Mata',
                     fact: 'Live in families called "mobs". One always stands guard!',
-                    bestTime: 'Early morning'
+                    bestTime: 'Early morning',
+                    diet: 'Insects & small animals'
                 },
                 {
                     name: 'Rhino',
                     emoji: '🦏',
                     x: 60, y: 45,
                     region: 'Kruger National Park',
+                    camp: 'Pretoriuskop',
                     fact: '85% of white rhinos live in southern Kruger. Love mud baths!',
-                    bestTime: 'Early morning'
+                    bestTime: 'Early morning',
+                    diet: 'Herbivore'
                 },
                 {
                     name: 'African Penguin',
                     emoji: '🐧',
                     x: 75, y: 75,
                     region: 'Addo Elephant Park',
+                    camp: 'Marine Section',
                     fact: 'Marine section has penguins! Addo is the only Big 7 park.',
-                    bestTime: 'All year'
+                    bestTime: 'All year',
+                    diet: 'Fish'
                 }
+            ],
+
+            cities: [
+                { name: 'Johannesburg', x: 55, y: 45, province: 'Gauteng' },
+                { name: 'Cape Town', x: 18, y: 88, province: 'Western Cape' },
+                { name: 'Durban', x: 72, y: 65, province: 'KwaZulu-Natal' },
+                { name: 'Pretoria', x: 58, y: 40, province: 'Gauteng' },
+                { name: 'Port Elizabeth', x: 70, y: 78, province: 'Eastern Cape' },
+                { name: 'Bloemfontein', x: 45, y: 60, province: 'Free State' },
+                { name: 'Kimberley', x: 35, y: 50, province: 'Northern Cape' },
+                { name: 'Polokwane', x: 60, y: 25, province: 'Limpopo' }
             ],
 
             init() {
                 this.servers = [
-                    { id: '1', name: '🇿🇦 KrugerCraft SA', type: 'spigot', mode: 'Game Drive Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
-                    { id: '2', name: '🇿🇦 Table Mountain SMP', type: 'paper', mode: 'Survival', players: 89, max: 200, status: 'Online', ip: 'tablemtn.co.za', region: 'cpt' },
-                    { id: '3', name: '🇿🇦 Springbok Creative', type: 'vanilla', mode: 'Creative', players: 34, max: 100, status: 'Online', ip: 'springbok.build', region: 'cpt' },
-                    { id: '4', name: '🇿🇦 Durban Diving', type: 'spigot', mode: 'Adventure', players: 12, max: 50, status: 'Online', ip: 'durban.dive', region: 'dur' }
+                    { id: '1', name: '🦁 KrugerCraft SA', type: 'spigot', mode: 'Game Drive Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
+                    { id: '2', name: '⛰️ Table Mountain SMP', type: 'paper', mode: 'Survival', players: 89, max: 200, status: 'Online', ip: 'tablemtn.co.za', region: 'cpt' },
+                    { id: '3', name: '🐐 Springbok Creative', type: 'vanilla', mode: 'Creative', players: 34, max: 100, status: 'Online', ip: 'springbok.build', region: 'cpt' },
+                    { id: '4', name: '🌊 Durban Diving', type: 'spigot', mode: 'Adventure', players: 12, max: 50, status: 'Online', ip: 'durban.dive', region: 'dur' }
                 ];
                 
                 this.navigate('home');
                 this.startLiveChat();
+                
+                // Show crafting helper after 2 seconds
+                setTimeout(() => {
+                    if (this.currentView === 'home') {
+                        document.getElementById('craftingHelper')?.classList.add('visible');
+                    }
+                }, 2000);
             },
 
             navigate(view) {
@@ -1151,6 +1318,14 @@
                 document.querySelector(`[data-nav="${view}"]`)?.classList.add('active');
                 
                 const container = document.getElementById('app-container');
+                const helper = document.getElementById('craftingHelper');
+                
+                // Hide helper on non-home pages
+                if (view !== 'home') {
+                    helper?.classList.remove('visible');
+                } else {
+                    setTimeout(() => helper?.classList.add('visible'), 500);
+                }
                 
                 switch(view) {
                     case 'home':
@@ -1184,7 +1359,12 @@
                                     <h2 class="text-2xl text-white font-bold tracking-wide">CRAFT YOUR TOOLS</h2>
                                     <span class="text-3xl">⚒️</span>
                                 </div>
-                                <p class="text-[#FFB612] text-sm">Craft real Minecraft tools like Pickaxes, Swords & more!</p>
+                                <p class="text-[#FFB612] text-sm">Craft real Minecraft tools! Tap items, then tap grid slots.</p>
+                            </div>
+
+                            <!-- Tutorial Steps -->
+                            <div class="tutorial-step mb-4">
+                                <strong class="text-[#FFB612]">How to Craft:</strong> 1) Select item from inventory below → 2) Tap grid slots to place → 3) Match recipe pattern → 4) Click CRAFT ITEM!
                             </div>
 
                             <div class="flex flex-col items-center gap-4 relative z-10">
@@ -1205,17 +1385,34 @@
                                     </div>
                                 </div>
 
-                                <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center">
-                                    <p class="text-gray-400 text-xs" id="hint-text">Select items and place them in the grid to craft!</p>
+                                <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center w-full">
+                                    <p class="text-gray-400 text-xs" id="hint-text">👆 Select an item from inventory, then tap grid slots to place it!</p>
                                 </div>
 
                                 <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
                             </div>
 
-                            <div class="mt-6 bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
+                            <!-- Recipe Guide -->
+                            <div class="recipe-guide mt-4">
+                                <h4 class="text-[#FFB612] font-bold mb-2">📖 QUICK RECIPES</h4>
+                                <div class="space-y-1">
+                                    ${Object.entries(this.craftingRecipes).slice(0, 4).map(([key, recipe]) => `
+                                        <div class="recipe-item" onclick="app.loadRecipe('${key}')">
+                                            <span class="text-xl">${recipe.result}</span>
+                                            <div class="flex-grow">
+                                                <div class="text-white font-bold text-sm">${recipe.name}</div>
+                                                <div class="text-gray-400 text-xs">${recipe.hint}</div>
+                                            </div>
+                                            <span class="text-[#007749] text-xs">Tap to auto-fill</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <div class="mt-4 bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
                                 <div class="flex items-center justify-between mb-2">
                                     <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
-                                    <span class="text-[#373737] text-xs">Tap item, then tap grid</span>
+                                    <span class="text-[#373737] text-xs">Tap item to select</span>
                                 </div>
                                 <div class="flex gap-2 flex-wrap justify-center">
                                     ${this.inventoryItems.map(item => `
@@ -1335,69 +1532,120 @@
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
                             <h2 class="text-2xl text-[#FFB612] font-bold">🗺️ SOUTH AFRICA ANIMAL MAP 🗺️</h2>
-                            <p class="text-gray-400 text-sm">Tap animals to see where they live!</p>
+                            <p class="text-gray-400 text-sm">Explore parks, cities, and where animals live!</p>
                         </div>
 
                         <div class="sa-map-container rounded-lg p-4">
                             <div class="relative" style="padding-bottom: 120%;">
                                 <svg class="sa-map-svg absolute inset-0 w-full h-full" viewBox="0 0 100 120" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Province backgrounds -->
+                                    <path class="map-region" d="M45,20 L65,15 L75,25 L70,40 L50,45 L40,35 Z" fill="#1a2f1a" opacity="0.5"/>
+                                    <path class="map-region" d="M65,15 L85,20 L90,40 L70,40 L75,25 Z" fill="#1a1a2f" opacity="0.5"/>
+                                    <path class="map-region" d="M40,35 L50,45 L70,40 L75,55 L60,70 L35,60 Z" fill="#2f1a1a" opacity="0.5"/>
+                                    <path class="map-region" d="M35,60 L60,70 L70,85 L50,95 L25,80 Z" fill="#1a2f2f" opacity="0.5"/>
+                                    
                                     <!-- South Africa outline -->
                                     <path class="map-region" d="M20,10 L80,10 L85,30 L90,50 L85,70 L80,90 L70,100 L60,110 L40,115 L30,110 L20,100 L15,80 L10,60 L15,40 L20,10 Z" 
                                           fill="#1a1a1a" stroke="#007749" stroke-width="2"
                                           onclick="app.showRegionInfo('south-africa')"/>
                                     
-                                    <!-- Province boundaries (simplified) -->
-                                    <path d="M20,10 L50,10 L50,40 L20,40 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
-                                    <path d="M50,10 L80,10 L85,30 L50,40 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
-                                    <path d="M20,40 L50,40 L55,60 L20,60 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
-                                    <path d="M50,40 L85,30 L90,50 L55,60 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
+                                    <!-- Major Rivers -->
+                                    <path class="river-path" d="M60,20 Q65,40 62,60 Q60,80 65,100" />
+                                    <path class="river-path" d="M30,50 Q40,55 50,50 Q60,45 70,50" />
+                                    <text x="62" y="75" fill="#4a90e2" font-size="2.5" opacity="0.7">Orange River</text>
                                     
-                                    <!-- Kruger National Park area -->
-                                    <ellipse cx="70" cy="35" rx="12" ry="8" fill="#007749" opacity="0.3" stroke="#007749" stroke-width="1"/>
-                                    <text x="70" y="37" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323">Kruger NP</text>
+                                    <!-- Mountain ranges -->
+                                    <path class="mountain-range" d="M15,85 L25,80 L35,85 L30,90 L20,92 Z" />
+                                    <text x="25" y="88" fill="#718096" font-size="2">Cape Mountains</text>
                                     
-                                    <!-- Addo area -->
-                                    <ellipse cx="78" cy="75" rx="8" ry="6" fill="#FFB612" opacity="0.3" stroke="#FFB612" stroke-width="1"/>
-                                    <text x="78" y="77" text-anchor="middle" fill="#FFB612" font-size="3" font-family="VT323">Addo</text>
+                                    <path class="mountain-range" d="M55,15 L65,12 L75,15 L70,20 L60,18 Z" />
+                                    <text x="65" y="25" fill="#718096" font-size="2">Soutpansberg</text>
                                     
-                                    <!-- Kgalagadi area -->
-                                    <ellipse cx="25" cy="25" rx="10" ry="8" fill="#DE3831" opacity="0.3" stroke="#DE3831" stroke-width="1"/>
-                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="3" font-family="VT323">Kgalagadi</text>
+                                    <!-- Kruger National Park -->
+                                    <ellipse cx="70" cy="35" rx="12" ry="10" fill="#007749" opacity="0.3" stroke="#007749" stroke-width="1.5"/>
+                                    <text x="70" y="32" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323" font-weight="bold">KRUGER NP</text>
+                                    <text x="70" y="36" text-anchor="middle" fill="#007749" font-size="2">19,623 km²</text>
                                     
-                                    <!-- Table Mountain area -->
-                                    <ellipse cx="20" cy="85" rx="6" ry="5" fill="#002395" opacity="0.3" stroke="#002395" stroke-width="1"/>
-                                    <text x="20" y="87" text-anchor="middle" fill="#002395" font-size="3" font-family="VT323">Table Mtn</text>
+                                    <!-- Kruger camps -->
+                                    <circle cx="68" cy="30" r="1.5" fill="#FFB612" opacity="0.8"/>
+                                    <text x="68" y="28" text-anchor="middle" fill="#FFB612" font-size="1.8">Satara</text>
+                                    <circle cx="72" cy="38" r="1.5" fill="#FFB612" opacity="0.8"/>
+                                    <text x="72" y="42" text-anchor="middle" fill="#FFB612" font-size="1.8">Skukuza</text>
+                                    
+                                    <!-- Addo -->
+                                    <ellipse cx="78" cy="75" rx="8" ry="6" fill="#FFB612" opacity="0.3" stroke="#FFB612" stroke-width="1.5"/>
+                                    <text x="78" y="76" text-anchor="middle" fill="#FFB612" font-size="2.5" font-weight="bold">ADDO</text>
+                                    
+                                    <!-- Kgalagadi -->
+                                    <ellipse cx="25" cy="25" rx="10" ry="12" fill="#DE3831" opacity="0.3" stroke="#DE3831" stroke-width="1.5"/>
+                                    <text x="25" y="23" text-anchor="middle" fill="#DE3831" font-size="2.5" font-weight="bold">KGALAGADI</text>
+                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="1.8">Transfrontier</text>
+                                    
+                                    <!-- Table Mountain -->
+                                    <ellipse cx="20" cy="85" rx="6" ry="5" fill="#002395" opacity="0.3" stroke="#002395" stroke-width="1.5"/>
+                                    <text x="20" y="86" text-anchor="middle" fill="#002395" font-size="2" font-weight="bold">TABLE MTN</text>
+                                    
+                                    <!-- Scale -->
+                                    <line x1="75" y1="105" x2="90" y2="105" stroke="#666" stroke-width="1"/>
+                                    <line x1="75" y1="104" x2="75" y2="106" stroke="#666" stroke-width="1"/>
+                                    <line x1="90" y1="104" x2="90" y2="106" stroke="#666" stroke-width="1"/>
+                                    <text x="82.5" y="108" text-anchor="middle" fill="#666" font-size="2">300 km</text>
                                 </svg>
 
-                                <!-- Animal markers positioned absolutely -->
+                                <!-- City markers -->
+                                ${this.cities.map(city => `
+                                    <div class="city-marker" style="left: ${city.x}%; top: ${city.y}%;" onclick="app.showCityInfo('${city.name}')">
+                                        <div class="city-dot"></div>
+                                        <div class="city-label">${city.name}</div>
+                                    </div>
+                                `).join('')}
+
+                                <!-- Animal markers -->
                                 ${this.animalLocations.map((animal, idx) => `
                                     <div class="animal-marker" style="left: ${animal.x}%; top: ${animal.y}%;" onclick="app.showAnimalOnMap(${idx})">
                                         <div class="marker-icon">${animal.emoji}</div>
                                         <div class="marker-tooltip">
                                             <strong>${animal.name}</strong><br>
-                                            ${animal.region}
+                                            📍 ${animal.camp}<br>
+                                            🕐 ${animal.bestTime}
                                         </div>
                                     </div>
                                 `).join('')}
                             </div>
                         </div>
 
-                        <div class="map-legend">
-                            <h4 class="text-[#FFB612] font-bold mb-2">📍 PARKS & REGIONS</h4>
-                            ${this.saRegions.map(region => `
-                                <div class="legend-item">
-                                    <div class="w-3 h-3 rounded-full" style="background: ${region.color}"></div>
-                                    <div>
-                                        <span class="text-white font-bold">${region.name}</span>
-                                        <span class="text-gray-400 text-xs"> - ${region.province}</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="map-legend">
+                                <h4 class="text-[#FFB612] font-bold mb-2 text-sm">🏕️ PARKS</h4>
+                                ${this.saRegions.map(region => `
+                                    <div class="legend-item">
+                                        <div class="w-3 h-3 rounded-full" style="background: ${region.color}"></div>
+                                        <div>
+                                            <span class="text-white font-bold text-xs">${region.name}</span>
+                                        </div>
                                     </div>
+                                `).join('')}
+                            </div>
+                            <div class="map-legend">
+                                <h4 class="text-[#007749] font-bold mb-2 text-sm">🏙️ CITIES</h4>
+                                <div class="legend-item">
+                                    <div class="w-2 h-2 rounded-full bg-white"></div>
+                                    <span class="text-gray-300 text-xs">Major Cities</span>
                                 </div>
-                            `).join('')}
+                                <div class="legend-item">
+                                    <div class="w-3 h-0.5 bg-blue-400"></div>
+                                    <span class="text-gray-300 text-xs">Rivers</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="w-3 h-3 bg-gray-600" style="clip-path: polygon(50% 0%, 100% 100%, 0% 100%)"></div>
+                                    <span class="text-gray-300 text-xs">Mountains</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="region-info" id="region-info" style="display: none;">
                             <h4 class="text-[#007749] font-bold mb-2">ℹ️ REGION INFO</h4>
-                            <p class="text-gray-300 text-sm" id="region-text">Tap on a park region to learn more!</p>
+                            <p class="text-gray-300 text-sm" id="region-text">Tap on a park, city, or animal to learn more!</p>
                         </div>
 
                         <button onclick="app.navigate('home')" class="mc-btn w-full py-3 rounded mt-4">← Back to Home</button>
@@ -1421,12 +1669,14 @@
                                         <div>
                                             <h3 class="text-white font-bold text-lg">${animal.name}</h3>
                                             <span class="text-[#007749] text-xs">📍 ${animal.region}</span>
+                                            <span class="text-[#FFB612] text-xs ml-2">🏕️ ${animal.camp}</span>
                                         </div>
                                     </div>
                                     <p class="text-gray-300 text-sm mb-2">${animal.fact}</p>
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2 flex-wrap">
                                         <span class="bg-[#FFB612]/20 text-[#FFB612] px-2 py-1 rounded text-xs">🕐 ${animal.bestTime}</span>
-                                        <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">Tap for map!</span>
+                                        <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">🍽️ ${animal.diet}</span>
+                                        <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">Tap for map!</span>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1530,17 +1780,14 @@
                 `;
             },
 
-            selectedItem: null,
-            selectedItemId: null,
-            selectedItemName: null,
-
             initCrafting() {
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 this.selectedItem = null;
                 this.selectedItemId = null;
                 this.selectedItemName = null;
+                this.currentRecipe = null;
                 this.updateCraftingGrid();
-                this.updateHint('Try crafting a Pickaxe: 3 Wood/Stone/Iron/Diamond on top, 2 Sticks below!');
+                this.updateHint('👆 Select an item from inventory, then tap grid slots to place it!');
             },
 
             selectItem(id, name) {
@@ -1553,14 +1800,35 @@
                     this.selectedItem = null;
                     this.selectedItemId = null;
                     this.selectedItemName = null;
+                    this.updateHint('Item deselected. Select another item or tap a recipe above.');
                 } else {
                     this.selectedItem = id;
                     this.selectedItemId = id;
                     this.selectedItemName = name;
                     slot.classList.add('selected');
+                    this.updateHint(`Placing ${name}. Tap grid slots to place it! Tap again to remove.`);
+                    
+                    // Highlight compatible slots based on common recipes
+                    this.highlightCompatibleSlots(id);
                 }
+            },
+
+            highlightCompatibleSlots(itemId) {
+                // Remove previous highlights
+                document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
                 
-                this.updateHint(this.selectedItem ? `Tap grid slots to place ${name}` : 'Select items from inventory to start crafting');
+                // If sticks are selected, highlight middle column (common for tools)
+                if (itemId === 'stick') {
+                    [1, 4, 7].forEach(i => {
+                        document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
+                    });
+                }
+                // If planks/stone/iron/diamond, highlight top row
+                else if (['planks', 'stone', 'iron', 'diamond'].includes(itemId)) {
+                    [0, 1, 2].forEach(i => {
+                        document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
+                    });
+                }
             },
 
             craftClick(slotIndex) {
@@ -1571,10 +1839,19 @@
                     this.craftingGrid[row][col] = this.selectedItemId;
                     this.updateCraftingGrid();
                     this.checkRecipe();
+                    
+                    // Keep item selected for easy multi-placement
+                    this.updateHint(`Placed ${this.selectedItemName}. Tap more slots or select different item.`);
                 } else if (this.craftingGrid[row][col]) {
+                    const removed = this.craftingGrid[row][col];
                     this.craftingGrid[row][col] = '';
                     this.updateCraftingGrid();
                     this.checkRecipe();
+                    
+                    const itemName = this.inventoryItems.find(i => i.id === removed)?.name || 'item';
+                    this.updateHint(`Removed ${itemName}. Select an item to place more.`);
+                } else {
+                    this.updateHint('⚠️ Select an item from inventory first!');
                 }
             },
 
@@ -1621,7 +1898,8 @@
                     craftBtn.disabled = false;
                     craftBtn.classList.remove('opacity-50');
                     craftBtnContainer.classList.add('active');
-                    this.updateHint(`✨ ${matched.desc} ✨`);
+                    this.currentRecipe = matched;
+                    this.updateHint(`✨ Ready to craft: ${matched.name}! Click CRAFT ITEM button.`);
                 } else {
                     resultEl.textContent = '';
                     resultEl.classList.remove('has-result');
@@ -1629,9 +1907,14 @@
                     craftBtn.disabled = true;
                     craftBtn.classList.add('opacity-50');
                     craftBtnContainer.classList.remove('active');
+                    this.currentRecipe = null;
                     
                     const hasItems = this.craftingGrid.some(row => row.some(cell => cell));
-                    this.updateHint(hasItems ? 'Hmm, that recipe doesn\'t work. Try 3 materials on top + 2 sticks below for tools!' : 'Select items from inventory to start crafting');
+                    if (hasItems) {
+                        this.updateHint('🤔 Pattern doesn\'t match a recipe. Check the Quick Recipes guide above!');
+                    } else {
+                        this.updateHint('👆 Select an item from inventory, then tap grid slots to place it!');
+                    }
                 }
             },
 
@@ -1642,11 +1925,42 @@
                 return true;
             },
 
+            loadRecipe(recipeKey) {
+                const recipe = this.craftingRecipes[recipeKey];
+                if (!recipe) return;
+                
+                // Clear grid first
+                this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
+                
+                // Fill grid based on pattern
+                const items = recipe.items;
+                let itemIndex = 0;
+                
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        if (recipe.pattern[row][col] === 'x' && itemIndex < items.length) {
+                            this.craftingGrid[row][col] = items[itemIndex];
+                            itemIndex++;
+                        }
+                    }
+                }
+                
+                this.updateCraftingGrid();
+                this.checkRecipe();
+                this.updateHint(`🎯 Auto-filled: ${recipe.name}! Click CRAFT ITEM to make it.`);
+                
+                // Highlight the recipe item temporarily
+                document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+            },
+
             clearGrid() {
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 this.updateCraftingGrid();
                 this.checkRecipe();
-                this.updateHint('Grid cleared. Try making a Pickaxe or Sword!');
+                this.updateHint('Grid cleared. Try making a Pickaxe or Sword! Tap a recipe above to auto-fill.');
+                document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
             },
 
             updateHint(text) {
@@ -1657,23 +1971,64 @@
             },
 
             craftServer() {
-                const recipes = Object.values(this.craftingRecipes);
-                const matched = recipes.find(r => {
-                    const pattern = this.craftingGrid.map(row => row.map(cell => cell ? 'x' : ' ').join(''));
-                    return this.matchesPattern(pattern, r.pattern);
-                });
+                if (!this.currentRecipe) return;
                 
-                if (matched) {
-                    alert(`You crafted a ${matched.name}! ${matched.desc}`);
+                const popup = document.getElementById('successPopup');
+                const text = document.getElementById('successText');
+                text.textContent = `You crafted a ${this.currentRecipe.name}! ${this.currentRecipe.desc}`;
+                popup.classList.add('visible');
+                
+                // Reset grid after successful craft
+                setTimeout(() => {
                     this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                     this.updateCraftingGrid();
                     this.checkRecipe();
-                }
+                    document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+                }, 300);
+            },
+
+            closeSuccess() {
+                document.getElementById('successPopup').classList.remove('visible');
+            },
+
+            showRecipeGuide() {
+                alert(`📖 MINECRAFT CRAFTING GUIDE 📖\n\n` +
+                      `PICKAXES (3 top + 2 sticks middle):\n` +
+                      `⛏️ Wood: 3 planks + 2 sticks\n` +
+                      `⛏️ Stone: 3 cobblestone + 2 sticks\n` +
+                      `⛏️ Iron: 3 iron + 2 sticks\n` +
+                      `⛏️ Diamond: 3 diamonds + 2 sticks\n\n` +
+                      `SWORDS (middle column):\n` +
+                      `🗡️ 2 materials + 1 stick below\n\n` +
+                      `AXES (L-shape + stick):\n` +
+                      `🪓 3 planks + 2 sticks\n\n` +
+                      `CHEST (ring of 8):\n` +
+                      `📦 8 planks in circle\n\n` +
+                      `Tap any recipe above to auto-fill!`);
             },
 
             showAnimalOnMap(idx) {
                 const animal = this.animalLocations[idx];
-                alert(`🦁 ${animal.name} - ${animal.region}\n\n${animal.fact}\n\n🕐 Best time to see: ${animal.bestTime}`);
+                const info = document.getElementById('region-info');
+                const text = document.getElementById('region-text');
+                
+                text.innerHTML = `<strong>${animal.emoji} ${animal.name}</strong><br>` +
+                               `📍 ${animal.region} - ${animal.camp}<br>` +
+                               `🕐 Best time: ${animal.bestTime}<br>` +
+                               `🍽️ Diet: ${animal.diet}<br>` +
+                               `💡 ${animal.fact}`;
+                info.style.display = 'block';
+            },
+
+            showCityInfo(cityName) {
+                const city = this.cities.find(c => c.name === cityName);
+                const info = document.getElementById('region-info');
+                const text = document.getElementById('region-text');
+                
+                text.innerHTML = `<strong>🏙️ ${city.name}</strong><br>` +
+                               `📍 Province: ${city.province}<br>` +
+                               `🌍 Major city in South Africa`;
+                info.style.display = 'block';
             },
 
             showRegionInfo(regionId) {
@@ -1681,14 +2036,19 @@
                 const text = document.getElementById('region-text');
                 
                 if (regionId === 'south-africa') {
-                    text.innerHTML = '<strong>South Africa</strong> has many national parks! The Big Five (Lion, Leopard, Rhino, Elephant, Buffalo) live in Kruger National Park. Tap the animal icons to see where each animal lives!';
+                    text.innerHTML = '<strong>🇿🇦 South Africa</strong><br>Home to the Big Five and many amazing animals! Tap animal icons to see where they live, or tap cities to learn about them.';
                     info.style.display = 'block';
                 }
             },
 
             showAnimalDetail(idx) {
                 const animal = this.animalLocations[idx];
-                alert(`🦁 ${animal.name} - ${animal.region}\n\n${animal.fact}\n\n🕐 Best time to see: ${animal.bestTime}\n\n🗺️ Check the Map to see where ${animal.name}s live!`);
+                alert(`🦁 ${animal.name} - ${animal.region}\n\n` +
+                      `🏕️ Best camp: ${animal.camp}\n` +
+                      `🕐 Best time: ${animal.bestTime}\n` +
+                      `🍽️ Diet: ${animal.diet}\n\n` +
+                      `${animal.fact}\n\n` +
+                      `🗺️ Check the Map to see where ${animal.name}s live!`);
             },
 
             showCreateModal() {
@@ -1988,7 +2348,7 @@
             showLandmark() {
                 const landmarks = [
                     { name: 'Table Mountain', emoji: '⛰️', fact: 'One of the New7Wonders of Nature! The flat top looks like a table.' },
-                    { name: 'Kruger National Park', emoji: '🏞️', fact: 'Bigger than the whole country of Israel! 20,000 km² of wild animals.' },
+                    { name: 'Kruger National Park', emoji: '🏞️', fact: '19,623 km² - bigger than the whole country of Israel! Home to the Big Five.' },
                     { name: 'Boulders Beach', emoji: '🏖️', fact: 'Home to 3,000 African penguins! You can swim near them (but don\'t touch!).' }
                 ];
                 const lm = landmarks[Math.floor(Math.random() * landmarks.length)];
