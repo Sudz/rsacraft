@@ -524,6 +524,29 @@
             height: 24px;
             image-rendering: pixelated;
         }
+
+        .animal-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 3px solid;
+            border-color: #007749 #002d14 #002d14 #007749;
+            transition: all 0.3s;
+        }
+
+        .animal-card:active {
+            transform: scale(0.98);
+        }
+
+        .fact-box {
+            background: rgba(0, 119, 73, 0.1);
+            border-left: 4px solid #FFB612;
+            padding: 12px;
+            margin: 8px 0;
+        }
+
+        .landmark-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 18, 0.5));
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
@@ -569,11 +592,11 @@
                 </svg>
                 <span class="text-xs">Servers</span>
             </button>
-            <button onclick="app.navigate('games')" class="nav-item" data-nav="games">
+            <button onclick="app.navigate('safari')" class="nav-item" data-nav="safari">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
                 </svg>
-                <span class="text-xs">Games</span>
+                <span class="text-xs">Safari</span>
             </button>
             <button onclick="app.navigate('chat')" class="nav-item" data-nav="chat">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
@@ -602,7 +625,7 @@
                     <div>
                         <label class="block text-gray-400 mb-1 text-sm">Type</label>
                         <select id="srv-type" class="mc-input w-full px-2 py-2 text-base">
-                            <option value="vanilla">Vanilla 1.8</option>
+                            <option value="vanilla">Vanilla 1.20</option>
                             <option value="spigot">Spigot</option>
                             <option value="paper">Paper</option>
                         </select>
@@ -620,9 +643,9 @@
                 <div>
                     <label class="block text-gray-400 mb-1 text-sm">Region</label>
                     <select id="srv-region" class="mc-input w-full px-2 py-2 text-base">
-                        <option value="jhb">🇿🇦 Johannesburg</option>
-                        <option value="cpt">🇿🇦 Cape Town</option>
-                        <option value="dur">🇿🇦 Durban</option>
+                        <option value="jhb">🇿🇦 Johannesburg (JHB)</option>
+                        <option value="cpt">🇿🇦 Cape Town (CPT)</option>
+                        <option value="dur">🇿🇦 Durban (DUR)</option>
                     </select>
                 </div>
 
@@ -636,23 +659,23 @@
                 </div>
 
                 <div class="bg-[#111] p-3 border-2 border-[#333]">
-                    <h4 class="text-[#007749] mb-2 text-sm font-bold">FEATURES</h4>
+                    <h4 class="text-[#007749] mb-2 text-sm font-bold">SA FEATURES</h4>
                     <div class="grid grid-cols-2 gap-2 text-sm">
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="feat-pvp" checked class="w-4 h-4 accent-[#007749]">
-                            <span class="text-gray-300">PvP</span>
+                            <input type="checkbox" id="feat-big5" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Big Five Mobs</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="feat-animals" checked class="w-4 h-4 accent-[#007749]">
-                            <span class="text-gray-300">Animals</span>
+                            <input type="checkbox" id="feat-fynbos" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Fynbos Biome</span>
+                        </label>
+                        <label class="checkbox" class="flex items-center gap-2">
+                            <input type="checkbox" id="feat-braai" checked class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Braai Stands</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="feat-monsters" checked class="w-4 h-4 accent-[#007749]">
-                            <span class="text-gray-300">Monsters</span>
-                        </label>
-                        <label class="flex items-center gap-2">
-                            <input type="checkbox" id="feat-flight" class="w-4 h-4 accent-[#007749]">
-                            <span class="text-gray-300">Flight</span>
+                            <input type="checkbox" id="feat-safari" class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Safari Tours</span>
                         </label>
                     </div>
                 </div>
@@ -711,6 +734,8 @@
             
             diamond: `<svg viewBox="0 0 32 32" class="mc-icon"><polygon points="16,2 30,16 16,30 2,16" fill="#00CED1"/><polygon points="16,6 26,16 16,26 6,16" fill="#40E0D0"/><polygon points="16,10 22,16 16,22 10,16" fill="#00FFFF"/><line x1="16" y1="2" x2="16" y2="30" stroke="#008B8B" stroke-width="1"/><line x1="2" y1="16" x2="30" y2="16" stroke="#008B8B" stroke-width="1"/></svg>`,
             
+            gold: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#FFD700" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FFE135" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#DAA520"/><rect x="18" y="18" width="6" height="6" fill="#DAA520"/><circle cx="16" cy="16" r="4" fill="#FFFFE0" opacity="0.6"/></svg>`,
+            
             coal: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#2F4F4F" rx="3"/><rect x="6" y="6" width="8" height="8" fill="#000000"/><rect x="16" y="14" width="8" height="8" fill="#1C1C1C"/><rect x="8" y="18" width="6" height="6" fill="#000000"/></svg>`,
             
             stick: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="14" y="2" width="4" height="28" fill="#8B4513" rx="1"/><rect x="15" y="4" width="2" height="24" fill="#A0522D"/></svg>`,
@@ -725,21 +750,33 @@
             
             redstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#8B0000" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FF0000" rx="1"/><line x1="10" y1="10" x2="22" y2="22" stroke="#FF4500" stroke-width="2"/><line x1="22" y1="10" x2="10" y2="22" stroke="#FF4500" stroke-width="2"/></svg>`,
             
-            glowstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#F0E68C" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FFFACD" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#FFFFE0"/><rect x="18" y="18" width="6" height="6" fill="#FFFFE0"/><circle cx="16" cy="16" r="4" fill="#FFFFFF" opacity="0.5"/></svg>`
+            glowstone: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#F0E68C" rx="2"/><rect x="6" y="6" width="20" height="20" fill="#FFFACD" rx="1"/><rect x="8" y="8" width="6" height="6" fill="#FFFFE0"/><rect x="18" y="18" width="6" height="6" fill="#FFFFE0"/><circle cx="16" cy="16" r="4" fill="#FFFFFF" opacity="0.5"/></svg>`,
+            
+            string: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M6 6 Q16 12, 26 6 M6 12 Q16 18, 26 12 M6 18 Q16 24, 26 18 M6 24 Q16 30, 26 24" stroke="#F5F5DC" stroke-width="2" fill="none"/><circle cx="10" cy="10" r="2" fill="#FFF8DC"/><circle cx="22" cy="20" r="2" fill="#FFF8DC"/></svg>`,
+            
+            leather: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="4" y="4" width="24" height="24" fill="#8B4513" rx="4"/><rect x="6" y="6" width="20" height="20" fill="#A0522D" rx="3"/><circle cx="12" cy="12" r="3" fill="#8B4513"/><circle cx="20" cy="20" r="3" fill="#8B4513"/></svg>`,
+            
+            feather: `<svg viewBox="0 0 32 32" class="mc-icon"><path d="M16 2 Q24 8, 24 16 Q24 24, 16 30 Q8 24, 8 16 Q8 8, 16 2" fill="#F5F5F5"/><path d="M16 6 Q20 10, 20 16 Q20 22, 16 26 Q12 22, 12 16 Q12 10, 16 6" fill="#FFFFFF"/><line x1="16" y1="6" x2="16" y2="26" stroke="#DDD" stroke-width="1"/></svg>`,
+            
+            flint: `<svg viewBox="0 0 32 32" class="mc-icon"><polygon points="16,4 28,12 24,28 8,28 4,12" fill="#2F4F4F"/><polygon points="16,8 24,14 22,24 10,24 8,14" fill="#696969"/><polygon points="16,12 20,16 18,20 14,20 12,16" fill="#A9A9A9"/></svg>`,
+            
+            planks: `<svg viewBox="0 0 32 32" class="mc-icon"><rect x="2" y="2" width="28" height="28" fill="#DEB887"/><rect x="4" y="4" width="24" height="6" fill="#CD853F"/><rect x="4" y="12" width="24" height="6" fill="#DEB887"/><rect x="4" y="20" width="24" height="8" fill="#CD853F"/><line x1="4" y1="10" x2="28" y2="10" stroke="#8B4513" stroke-width="0.5"/><line x1="4" y1="18" x2="28" y2="18" stroke="#8B4513" stroke-width="0.5"/></svg>`
         };
 
         const app = {
             currentView: 'home',
             servers: [],
             currentServer: null,
-            chatUsers: ['Steve', 'Alex', 'Notch', 'Herobrine', 'DiamondMiner_ZA', 'CapeTown_Crafter', 'Joburg_Builder', 
-                       'Durban_Destroyer', 'Springbok_Gamer', 'BraaiMaster', 'Eish_Man', 'Lekker_Player', 
-                       'Mzansi_Miner', 'Kasi_King', 'Vuvuzela_Vic', 'Biltong_Bob', 'Nandos_Ninja'],
             
-            saPhrases: ['Howzit!', 'Lekker bru!', 'Eish, lag!', 'Sharp sharp!', 'Yebo yes!', 'Now now', 'Just now', 
-                       'Ag shame man', 'Hayi suka!', 'Heita!', 'Aweh!', 'Izit?', 'Kiff stuff', 'Boet, check this', 
-                       'Yoh! That was close', 'Lekker mining today', 'This server is kiff', 'Eish, the lag', 
-                       'Sharp server bru', 'Howzit everybody', 'Mzansi represent!', 'Springbok power!'],
+            chatUsers: ['LionKid_za', 'ElephantFan', 'SpringbokRider', 'TableMountain', 'KrugerExplorer', 
+                       'CapeTown_Crafter', 'Joburg_Builder', 'Durban_Diver', 'Biltong_Bob', 'Nandos_Ninja',
+                       'PenguinPal', 'MeerkatMate', 'RhinoRanger', 'ZebraZoomer', 'Mzansi_Miner'],
+            
+            saPhrases: ['Howzit!', 'Lekker mining!', 'Eish, that was close!', 'Sharp sharp!', 'Yebo!', 
+                       'Now now', 'Just now', 'Ag shame', 'Hayi bo!', 'Heita!', 'Aweh!', 'Izit?', 
+                       'Kiff server!', 'Boet, check this', 'Yoh! Amazing!', 'Lekker day for crafting', 
+                       'This is the best!', 'Mzansi magic!', 'Springbok power!', 'Braai time soon?',
+                       'Check the Big Five!', 'Table Mountain view!'],
 
             craftingGrid: [['', '', ''], ['', '', ''], ['', '', '']],
 
@@ -748,33 +785,220 @@
                 { icon: 'stone', name: 'Cobblestone', id: 'stone' },
                 { icon: 'iron', name: 'Iron Ingot', id: 'iron' },
                 { icon: 'diamond', name: 'Diamond', id: 'diamond' },
+                { icon: 'gold', name: 'Gold Ingot', id: 'gold' },
                 { icon: 'coal', name: 'Coal', id: 'coal' },
                 { icon: 'stick', name: 'Stick', id: 'stick' },
-                { icon: 'dirt', name: 'Dirt', id: 'dirt' },
-                { icon: 'wool', name: 'Wool', id: 'wool' },
-                { icon: 'chest', name: 'Chest', id: 'chest' },
-                { icon: 'door', name: 'Door', id: 'door' },
+                { icon: 'planks', name: 'Oak Planks', id: 'planks' },
+                { icon: 'string', name: 'String', id: 'string' },
+                { icon: 'leather', name: 'Leather', id: 'leather' },
+                { icon: 'feather', name: 'Feather', id: 'feather' },
+                { icon: 'flint', name: 'Flint', id: 'flint' },
                 { icon: 'redstone', name: 'Redstone', id: 'redstone' },
-                { icon: 'glowstone', name: 'Glowstone', id: 'glowstone' }
+                { icon: 'glowstone', name: 'Glowstone', id: 'glowstone' },
+                { icon: 'wool', name: 'Wool', id: 'wool' }
             ],
 
             craftingRecipes: {
-                'pickaxe': { pattern: ['xxx', ' s ', ' s '], result: '⛏️', name: 'Diamond Pickaxe', desc: 'Mine faster, go deeper', items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'] },
-                'sword': { pattern: [' x ', ' x ', ' s '], result: '🗡️', name: 'Diamond Sword', desc: 'PvP ready server', items: ['diamond', 'diamond', 'stick'] },
-                'axe': { pattern: ['xx ', 'xs ', ' s '], result: '🪓', name: 'Diamond Axe', desc: 'Chop through lag', items: ['diamond', 'diamond', 'stick', 'diamond'] },
-                'shovel': { pattern: [' x ', ' s ', ' s '], result: '🔨', name: 'Iron Shovel', desc: 'Dig your foundation', items: ['iron', 'stick', 'stick'] },
-                'hoe': { pattern: ['xx ', ' s ', ' s '], result: '🔱', name: 'Diamond Hoe', desc: 'Farm-friendly server', items: ['diamond', 'diamond', 'stick', 'stick'] },
-                'chest': { pattern: ['xxx', 'x x', 'xxx'], result: '📦', name: 'Storage Server', desc: 'Extra inventory space', items: ['wood', 'wood', 'wood', 'wood', 'wood', 'wood', 'wood', 'wood'] },
-                'furnace': { pattern: ['xxx', 'x x', 'xxx'], result: '🔥', name: 'Furnace Server', desc: 'Smelt ores faster', items: ['stone', 'stone', 'stone', 'stone', 'stone', 'stone', 'stone', 'stone'] },
-                'table': { pattern: ['xx ', 'xx ', '   '], result: '🔧', name: 'Crafting Server', desc: 'Full creative mode', items: ['wood', 'wood', 'wood', 'wood'] }
+                'pickaxe_wood': { 
+                    pattern: ['xxx', ' s ', ' s '], 
+                    result: '⛏️', 
+                    name: 'Wooden Pickaxe', 
+                    desc: 'Basic mining tool - good for stone!', 
+                    items: ['planks', 'planks', 'planks', 'stick', 'stick'] 
+                },
+                'pickaxe_stone': { 
+                    pattern: ['xxx', ' s ', ' s '], 
+                    result: '⛏️', 
+                    name: 'Stone Pickaxe', 
+                    desc: 'Better than wood - mine iron ore!', 
+                    items: ['stone', 'stone', 'stone', 'stick', 'stick'] 
+                },
+                'pickaxe_iron': { 
+                    pattern: ['xxx', ' s ', ' s '], 
+                    result: '⛏️', 
+                    name: 'Iron Pickaxe', 
+                    desc: 'Strong tool - can mine diamonds!', 
+                    items: ['iron', 'iron', 'iron', 'stick', 'stick'] 
+                },
+                'pickaxe_diamond': { 
+                    pattern: ['xxx', ' s ', ' s '], 
+                    result: '⛏️', 
+                    name: 'Diamond Pickaxe', 
+                    desc: 'The best! Mine obsidian!', 
+                    items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'] 
+                },
+                'sword_wood': { 
+                    pattern: [' x ', ' x ', ' s '], 
+                    result: '🗡️', 
+                    name: 'Wooden Sword', 
+                    desc: 'Basic protection from mobs!', 
+                    items: ['planks', 'planks', 'stick'] 
+                },
+                'sword_stone': { 
+                    pattern: [' x ', ' x ', ' s '], 
+                    result: '🗡️', 
+                    name: 'Stone Sword', 
+                    desc: 'Better damage than wood!', 
+                    items: ['stone', 'stone', 'stick'] 
+                },
+                'sword_iron': { 
+                    pattern: [' x ', ' x ', ' s '], 
+                    result: '🗡️', 
+                    name: 'Iron Sword', 
+                    desc: 'Strong and durable!', 
+                    items: ['iron', 'iron', 'stick'] 
+                },
+                'sword_diamond': { 
+                    pattern: [' x ', ' x ', ' s '], 
+                    result: '🗡️', 
+                    name: 'Diamond Sword', 
+                    desc: 'Very powerful weapon!', 
+                    items: ['diamond', 'diamond', 'stick'] 
+                },
+                'axe_wood': { 
+                    pattern: ['xx ', 'xs ', ' s '], 
+                    result: '🪓', 
+                    name: 'Wooden Axe', 
+                    desc: 'Chop trees faster!', 
+                    items: ['planks', 'planks', 'stick', 'planks'] 
+                },
+                'axe_stone': { 
+                    pattern: ['xx ', 'xs ', ' s '], 
+                    result: '🪓', 
+                    name: 'Stone Axe', 
+                    desc: 'Better than wooden axe!', 
+                    items: ['stone', 'stone', 'stick', 'stone'] 
+                },
+                'shovel_wood': { 
+                    pattern: [' x ', ' s ', ' s '], 
+                    result: '🔨', 
+                    name: 'Wooden Shovel', 
+                    desc: 'Dig dirt, sand, and gravel!', 
+                    items: ['planks', 'stick', 'stick'] 
+                },
+                'shovel_stone': { 
+                    pattern: [' x ', ' s ', ' s '], 
+                    result: '🔨', 
+                    name: 'Stone Shovel', 
+                    desc: 'Faster digging!', 
+                    items: ['stone', 'stick', 'stick'] 
+                },
+                'hoe_wood': { 
+                    pattern: ['xx ', ' s ', ' s '], 
+                    result: '🔱', 
+                    name: 'Wooden Hoe', 
+                    desc: 'Prepare soil for farming!', 
+                    items: ['planks', 'planks', 'stick', 'stick'] 
+                },
+                'hoe_stone': { 
+                    pattern: ['xx ', ' s ', ' s '], 
+                    result: '🔱', 
+                    name: 'Stone Hoe', 
+                    desc: 'Better for big farms!', 
+                    items: ['stone', 'stone', 'stick', 'stick'] 
+                },
+                'fishing_rod': { 
+                    pattern: ['  s', ' sx', 's x'], 
+                    result: '🎣', 
+                    name: 'Fishing Rod', 
+                    desc: 'Catch fish for food!', 
+                    items: ['stick', 'stick', 'stick', 'string', 'string'] 
+                },
+                'flint_steel': { 
+                    pattern: [' f ', ' i ', '   '], 
+                    result: '🔥', 
+                    name: 'Flint and Steel', 
+                    desc: 'Start fires and open portals!', 
+                    items: ['flint', 'iron'] 
+                },
+                'torch': { 
+                    pattern: [' c ', ' s ', '   '], 
+                    result: '🔦', 
+                    name: 'Torch', 
+                    desc: 'Light up dark places!', 
+                    items: ['coal', 'stick'] 
+                },
+                'chest': { 
+                    pattern: ['xxx', 'x x', 'xxx'], 
+                    result: '📦', 
+                    name: 'Chest', 
+                    desc: 'Store your items safely!', 
+                    items: ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks'] 
+                },
+                'compass': { 
+                    pattern: [' i ', ' i ', ' i '], 
+                    result: '🧭', 
+                    name: 'Compass', 
+                    desc: 'Points to spawn point!', 
+                    items: ['iron', 'iron', 'iron', 'redstone', 'iron', 'iron', 'iron'] 
+                }
             },
+
+            safariAnimals: [
+                {
+                    name: 'Lion',
+                    emoji: '🦁',
+                    fact: 'Lions are the only cats that live in groups called prides! Female lions do most of the hunting.',
+                    location: 'Kruger National Park',
+                    diet: 'Carnivore',
+                    funFact: 'A lion\'s roar can be heard from 8 kilometers away!'
+                },
+                {
+                    name: 'Elephant',
+                    emoji: '🐘',
+                    fact: 'Elephants are the largest land animals! They use their trunks like hands to eat and drink.',
+                    location: 'Addo Elephant Park',
+                    diet: 'Herbivore',
+                    funFact: 'Elephants can live up to 70 years and have amazing memories!'
+                },
+                {
+                    name: 'Springbok',
+                    emoji: '🦌',
+                    fact: 'The Springbok is South Africa\'s national animal! They can run up to 88 km/h.',
+                    location: 'Kalahari Desert',
+                    diet: 'Herbivore',
+                    funFact: 'Springboks can jump 3 meters high when excited - called "pronking"!'
+                },
+                {
+                    name: 'Penguin',
+                    emoji: '🐧',
+                    fact: 'African Penguins live on the Cape coast! They are also called "jackass penguins" because of their braying sound.',
+                    location: 'Boulders Beach, Cape Town',
+                    diet: 'Fish & squid',
+                    funFact: 'They have pink glands above their eyes to cool down!'
+                },
+                {
+                    name: 'Meerkat',
+                    emoji: '🦦',
+                    fact: 'Meerkats live in underground burrows and work together to find food and watch for danger.',
+                    location: 'Kalahari',
+                    diet: 'Insects & small animals',
+                    funFact: 'One meerkat always stands guard while others eat!'
+                },
+                {
+                    name: 'Rhino',
+                    emoji: '🦏',
+                    fact: 'Rhinos have thick skin but are gentle giants! They love mud baths to cool off.',
+                    location: 'Hluhluwe-Imfolozi Park',
+                    diet: 'Herbivore',
+                    funFact: 'A rhino\'s horn is made of keratin - same as your fingernails!'
+                }
+            ],
+
+            saLandmarks: [
+                { name: 'Table Mountain', emoji: '⛰️', city: 'Cape Town', fact: 'One of the New7Wonders of Nature! Flat top looks like a table.' },
+                { name: 'Kruger National Park', emoji: '🏞️', city: 'Limpopo/MP', fact: 'Bigger than the whole of Israel! Home to the Big Five.' },
+                { name: 'Union Buildings', emoji: '🏛️', city: 'Pretoria', fact: 'Where the President works! Beautiful gardens to visit.' },
+                { name: 'Valley of Desolation', emoji: '🌄', city: 'Graaff-Reinet', fact: 'Amazing rock formations in the Camdeboo National Park.' },
+                { name: 'Cradle of Humankind', emoji: '🦴', city: 'Johannesburg', fact: 'Where early humans lived! UNESCO World Heritage Site.' }
+            ],
 
             init() {
                 this.servers = [
-                    { id: '1', name: '🇿🇦 Hypixel SA', type: 'spigot', mode: 'Minigames', players: 1247, max: 5000, status: 'Online', ip: 'hypixel.co.za', region: 'jhb' },
-                    { id: '2', name: '🇿🇦 Joburg PvP', type: 'paper', mode: 'Factions', players: 89, max: 200, status: 'Online', ip: 'jhb-pvp.co.za', region: 'jhb' },
-                    { id: '3', name: '🇿🇦 Cape Craft', type: 'vanilla', mode: 'Survival', players: 34, max: 100, status: 'Online', ip: 'capecraft.co.za', region: 'cpt' },
-                    { id: '4', name: '🇿🇦 Durban Duels', type: 'spigot', mode: 'PvP', players: 12, max: 50, status: 'Online', ip: 'durban.duels', region: 'dur' }
+                    { id: '1', name: '🇿🇦 KrugerCraft SA', type: 'spigot', mode: 'Safari Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
+                    { id: '2', name: '🇿🇦 Table Mountain SMP', type: 'paper', mode: 'Survival', players: 89, max: 200, status: 'Online', ip: 'tablemtn.co.za', region: 'cpt' },
+                    { id: '3', name: '🇿🇦 Springbok Creative', type: 'vanilla', mode: 'Creative', players: 34, max: 100, status: 'Online', ip: 'springbok.build', region: 'cpt' },
+                    { id: '4', name: '🇿🇦 Durban Diving', type: 'spigot', mode: 'Adventure', players: 12, max: 50, status: 'Online', ip: 'durban.dive', region: 'dur' }
                 ];
                 
                 this.navigate('home');
@@ -797,8 +1021,8 @@
                     case 'servers':
                         container.innerHTML = this.renderServers();
                         break;
-                    case 'games':
-                        container.innerHTML = this.renderGames();
+                    case 'safari':
+                        container.innerHTML = this.renderSafari();
                         break;
                     case 'chat':
                         container.innerHTML = this.renderChat();
@@ -815,10 +1039,10 @@
                             <div class="text-center mb-4 relative z-10">
                                 <div class="inline-flex items-center gap-2 mb-2">
                                     <span class="text-3xl">⚒️</span>
-                                    <h2 class="text-2xl text-white font-bold tracking-wide">CRAFT YOUR SERVER</h2>
+                                    <h2 class="text-2xl text-white font-bold tracking-wide">CRAFT YOUR TOOLS</h2>
                                     <span class="text-3xl">⚒️</span>
                                 </div>
-                                <p class="text-[#FFB612] text-sm">Combine resources to create your perfect South African server</p>
+                                <p class="text-[#FFB612] text-sm">Craft real Minecraft tools like Pickaxes, Swords & more!</p>
                             </div>
 
                             <div class="flex flex-col items-center gap-4 relative z-10">
@@ -840,7 +1064,7 @@
                                 </div>
 
                                 <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center">
-                                    <p class="text-gray-400 text-xs" id="hint-text">Select items from inventory to craft</p>
+                                    <p class="text-gray-400 text-xs" id="hint-text">Select items and place them in the grid to craft!</p>
                                 </div>
 
                                 <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
@@ -849,7 +1073,7 @@
                             <div class="mt-6 bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
                                 <div class="flex items-center justify-between mb-2">
                                     <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
-                                    <span class="text-[#373737] text-xs">Tap item to select</span>
+                                    <span class="text-[#373737] text-xs">Tap item, then tap grid</span>
                                 </div>
                                 <div class="flex gap-2 flex-wrap justify-center">
                                     ${this.inventoryItems.map(item => `
@@ -866,7 +1090,7 @@
                                 <button onclick="app.craftServer()" id="craft-btn" class="mc-btn-gold w-full py-4 text-xl font-bold opacity-50" disabled>
                                     <span class="flex items-center justify-center gap-2">
                                         <span>⚡</span>
-                                        <span>FORGE SERVER</span>
+                                        <span>CRAFT ITEM</span>
                                         <span>⚡</span>
                                     </span>
                                 </button>
@@ -895,7 +1119,7 @@
 
                         <div>
                             <div class="flex items-center justify-between px-1 mb-2">
-                                <h3 class="text-[#FFB612] text-sm font-bold">FEATURED SERVERS</h3>
+                                <h3 class="text-[#FFB612] text-sm font-bold">FEATURED SA SERVERS</h3>
                                 <button onclick="app.navigate('servers')" class="text-[#007749] text-xs">View All →</button>
                             </div>
                             <div class="space-y-2">
@@ -904,50 +1128,50 @@
                         </div>
 
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-white text-sm font-bold mb-3">SERVER TYPES</h3>
+                            <h3 class="text-white text-sm font-bold mb-3">LEARN ABOUT SOUTH AFRICA!</h3>
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('PvP')">
-                                    <span class="text-2xl">⚔️</span>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('safari')">
+                                    <span class="text-2xl">🦁</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">PvP</div>
-                                        <div class="text-gray-500 text-xs">Player vs Player</div>
+                                        <div class="text-white text-sm font-bold">Big Five</div>
+                                        <div class="text-gray-500 text-xs">Meet the animals!</div>
                                     </div>
                                 </div>
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Survival')">
-                                    <span class="text-2xl">🏠</span>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showLandmark()">
+                                    <span class="text-2xl">⛰️</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Survival</div>
-                                        <div class="text-gray-500 text-xs">Classic mode</div>
+                                        <div class="text-white text-sm font-bold">Landmarks</div>
+                                        <div class="text-gray-500 text-xs">Famous places!</div>
                                     </div>
                                 </div>
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Creative')">
-                                    <span class="text-2xl">🎨</span>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showFoodFact()">
+                                    <span class="text-2xl">🥘</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Creative</div>
-                                        <div class="text-gray-500 text-xs">Build freely</div>
+                                        <div class="text-white text-sm font-bold">Yummy Food</div>
+                                        <div class="text-gray-500 text-xs">Bobotie & more!</div>
                                     </div>
                                 </div>
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.filterByType('Minigames')">
-                                    <span class="text-2xl">🎮</span>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showLanguage()">
+                                    <span class="text-2xl">🇿🇦</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Minigames</div>
-                                        <div class="text-gray-500 text-xs">Fast fun</div>
+                                        <div class="text-white text-sm font-bold">SA Words</div>
+                                        <div class="text-gray-500 text-xs">Learn slang!</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-[#007749] text-sm font-bold mb-2">📰 LATEST NEWS</h3>
+                            <h3 class="text-[#007749] text-sm font-bold mb-2">📰 RSA NEWS</h3>
                             <div class="space-y-2">
                                 <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#FFB612] rounded">
-                                    <div class="text-white text-sm font-bold">New Joburg Datacenter</div>
-                                    <div class="text-gray-400 text-xs">Lower latency for GP players!</div>
-                                    <div class="text-gray-600 text-xs mt-1">2 hours ago</div>
+                                    <div class="text-white text-sm font-bold">New Springbok Skin Pack!</div>
+                                    <div class="text-gray-400 text-xs">Free for all South African players</div>
+                                    <div class="text-gray-600 text-xs mt-1">Just now</div>
                                 </div>
                                 <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#007749] rounded">
-                                    <div class="text-white text-sm font-bold">Springbok Skin Pack</div>
-                                    <div class="text-gray-400 text-xs">Free for all +27 players</div>
+                                    <div class="text-white text-sm font-bold">Table Mountain Build Contest</div>
+                                    <div class="text-gray-400 text-xs">Build the famous flat-top mountain!</div>
                                     <div class="text-gray-600 text-xs mt-1">1 day ago</div>
                                 </div>
                             </div>
@@ -964,12 +1188,51 @@
                 `;
             },
 
+            renderSafari() {
+                return `
+                    <div class="slide-in space-y-4 pt-2">
+                        <div class="text-center mb-4">
+                            <h2 class="text-2xl text-[#FFB612] font-bold">🦁 SA SAFARI ADVENTURE 🦓</h2>
+                            <p class="text-gray-400 text-sm">Learn about South Africa's amazing animals!</p>
+                        </div>
+
+                        <div class="space-y-3">
+                            ${this.safariAnimals.map((animal, idx) => `
+                                <div class="animal-card rounded-lg p-4" onclick="app.showAnimalDetail(${idx})">
+                                    <div class="flex items-center gap-3 mb-2">
+                                        <span class="text-4xl">${animal.emoji}</span>
+                                        <div>
+                                            <h3 class="text-white font-bold text-lg">${animal.name}</h3>
+                                            <span class="text-[#007749] text-xs">📍 ${animal.location}</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-300 text-sm mb-2">${animal.fact}</p>
+                                    <div class="flex gap-2">
+                                        <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">${animal.diet}</span>
+                                        <span class="bg-[#FFB612]/20 text-[#FFB612] px-2 py-1 rounded text-xs">Tap for more!</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded mt-4">
+                            <h3 class="text-white text-sm font-bold mb-2">🎯 DID YOU KNOW?</h3>
+                            <div class="fact-box rounded">
+                                <p class="text-gray-300 text-sm">South Africa is home to the <strong class="text-[#FFB612]">Big Five</strong>: Lion, Leopard, Rhino, Elephant, and Buffalo! This name comes from being the hardest animals to hunt on foot (but we just take photos now!).</p>
+                            </div>
+                        </div>
+
+                        <button onclick="app.navigate('home')" class="mc-btn w-full py-3 rounded mt-4">← Back to Home</button>
+                    </div>
+                `;
+            },
+
             renderServerCard(server) {
                 const isOnline = server.status === 'Online';
                 return `
                     <div class="server-card bg-[#161616] border-2 border-[#333] p-3 flex items-center gap-3 rounded" onclick="app.openConsole('${server.id}')">
                         <div class="w-12 h-12 bg-[#0a0a0a] border-2 border-[#444] flex items-center justify-center text-2xl rounded shrink-0">
-                            ${server.region === 'jhb' ? '🏙️' : server.region === 'cpt' ? '🏔️' : '🌊'}
+                            ${server.region === 'jhb' ? '🦁' : server.region === 'cpt' ? '⛰️' : '🌊'}
                         </div>
                         <div class="flex-grow min-w-0">
                             <div class="flex items-center gap-2">
@@ -999,48 +1262,13 @@
                         
                         <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                             <button class="mc-btn active-green px-3 py-1 text-sm whitespace-nowrap rounded">All</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Survival</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Safari</button>
                             <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Creative</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Minigames</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">PvP</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Survival</button>
                         </div>
 
                         <div class="space-y-2">
                             ${this.servers.map(s => this.renderServerCard(s)).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-
-            renderGames() {
-                const games = [
-                    { name: 'SkyBlock', icon: '🏝️', color: 'border-blue-500', players: 234 },
-                    { name: 'Bed Wars', icon: '🛏️', color: 'border-red-500', players: 567 },
-                    { name: 'SkyWars', icon: '⚔️', color: 'border-purple-500', players: 189 },
-                    { name: 'Murder', icon: '🔪', color: 'border-yellow-500', players: 89 },
-                    { name: 'Duels', icon: '🤺', color: 'border-orange-500', players: 45 },
-                    { name: 'Build Battle', icon: '🔨', color: 'border-cyan-500', players: 123 }
-                ];
-
-                return `
-                    <div class="slide-in space-y-3 pt-2">
-                        <h2 class="text-xl text-white px-1">Minigames</h2>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            ${games.map(g => `
-                                <div class="bg-[#111] border-2 ${g.color} p-3 text-center active:scale-95 transition-transform rounded" onclick="app.playGame('${g.name}')">
-                                    <div class="text-4xl mb-2">${g.icon}</div>
-                                    <h3 class="text-white font-bold text-sm">${g.name}</h3>
-                                    <p class="text-[#007749] text-xs">${g.players} playing</p>
-                                </div>
-                            `).join('')}
-                        </div>
-
-                        <div class="bg-[#111] border-2 border-[#333] p-4 mt-4 text-center rounded">
-                            <p class="text-gray-400 text-sm mb-3">Can't decide?</p>
-                            <button onclick="app.randomGame()" class="mc-btn mc-btn-blue w-full py-3 text-lg rounded">
-                                🎲 Quick Match
-                            </button>
                         </div>
                     </div>
                 `;
@@ -1082,7 +1310,7 @@
                 this.selectedItemId = null;
                 this.selectedItemName = null;
                 this.updateCraftingGrid();
-                this.updateHint('Select items from inventory to start crafting');
+                this.updateHint('Try crafting a Pickaxe: 3 Wood/Stone/Iron/Diamond on top, 2 Sticks below!');
             },
 
             selectItem(id, name) {
@@ -1173,7 +1401,7 @@
                     craftBtnContainer.classList.remove('active');
                     
                     const hasItems = this.craftingGrid.some(row => row.some(cell => cell));
-                    this.updateHint(hasItems ? 'Keep trying different combinations!' : 'Select items from inventory to start crafting');
+                    this.updateHint(hasItems ? 'Hmm, that recipe doesn\'t work. Try 3 materials on top + 2 sticks below for tools!' : 'Select items from inventory to start crafting');
                 }
             },
 
@@ -1188,7 +1416,7 @@
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 this.updateCraftingGrid();
                 this.checkRecipe();
-                this.updateHint('Grid cleared. Start crafting again!');
+                this.updateHint('Grid cleared. Try making a Pickaxe or Sword!');
             },
 
             updateHint(text) {
@@ -1206,11 +1434,44 @@
                 });
                 
                 if (matched) {
-                    this.showCreateModal();
-                    const nameInput = document.getElementById('srv-name');
-                    nameInput.value = `${matched.name} SA`;
+                    alert(`You crafted a ${matched.name}! ${matched.desc}`);
                     this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
+                    this.updateCraftingGrid();
+                    this.checkRecipe();
                 }
+            },
+
+            showAnimalDetail(idx) {
+                const animal = this.safariAnimals[idx];
+                alert(`🦁 ${animal.name} Fun Fact! 🦁\n\n${animal.funFact}\n\nLocation: ${animal.location}\nDiet: ${animal.diet}`);
+            },
+
+            showLandmark() {
+                const lm = this.saLandmarks[Math.floor(Math.random() * this.saLandmarks.length)];
+                alert(`⛰️ ${lm.name} ⛰️\n\n${lm.fact}\n\nLocation: ${lm.city}`);
+            },
+
+            showFoodFact() {
+                const foods = [
+                    { name: 'Bobotie', desc: 'A yummy dish with spiced minced meat and egg custard on top! Like a shepherd\'s pie but South African style.' },
+                    { name: 'Biltong', desc: 'Dried meat snacks - like beef jerky but better! Made with special spices.' },
+                    { name: 'Boerewors', desc: 'Special South African sausage - the name means "farmer\'s sausage" in Afrikaans!' },
+                    { name: 'Malva Pudding', desc: 'A sweet, sticky sponge cake served warm with custard. Delicious!' }
+                ];
+                const food = foods[Math.floor(Math.random() * foods.length)];
+                alert(`🍽️ ${food.name} 🍽️\n\n${food.desc}`);
+            },
+
+            showLanguage() {
+                const words = [
+                    { word: 'Howzit', meaning: 'Hello! How are you?' },
+                    { word: 'Lekker', meaning: 'Nice, good, or tasty!' },
+                    { word: 'Braai', meaning: 'BBQ or grill - very important in SA!' },
+                    { word: 'Eish', meaning: 'Oh no! / Wow! (expression of surprise)' },
+                    { word: 'Yebo', meaning: 'Yes!' }
+                ];
+                const word = words[Math.floor(Math.random() * words.length)];
+                alert(`🇿🇦 South African Slang 🇿🇦\n\n"${word.word}" means:\n${word.meaning}`);
             },
 
             showCreateModal() {
@@ -1227,8 +1488,8 @@
                 const max = document.getElementById('srv-players').value;
                 
                 const regionData = {
-                    jhb: { ip: '197.84', flag: '🏙️' },
-                    cpt: { ip: '102.67', flag: '🏔️' },
+                    jhb: { ip: '197.84', flag: '🦁' },
+                    cpt: { ip: '102.67', flag: '⛰️' },
                     dur: { ip: '165.73', flag: '🌊' }
                 };
                 
@@ -1335,17 +1596,17 @@
                 this.updateConsoleUI();
                 
                 const bootSeq = [
-                    { msg: 'Starting minecraft server version 1.8.9', d: 300 },
-                    { msg: 'Loading properties', d: 600 },
+                    { msg: 'Starting minecraft server version 1.20.1', d: 300 },
+                    { msg: 'Loading RSA properties...', d: 600 },
                     { msg: `Default game type: ${s.mode}`, d: 900 },
-                    { msg: 'Generating keypair', d: 1200 },
+                    { msg: 'Generating RSA world seed...', d: 1200 },
                     { msg: `Starting Minecraft server on ${s.ip}:25565`, d: 1500 },
                     { msg: 'Preparing level "world"', d: 2000 },
+                    { msg: 'Loading Big Five mobs...', d: 2200 },
                     { msg: 'Preparing spawn area: 0%', d: 2500 },
-                    { msg: 'Preparing spawn area: 32%', d: 2800 },
-                    { msg: 'Preparing spawn area: 68%', d: 3100 },
-                    { msg: 'Preparing spawn area: 100%', d: 3400 },
-                    { msg: `Done (3.2s)! For help, type "help"`, d: 3800, type: 'success' }
+                    { msg: 'Preparing spawn area: 50%', d: 2800 },
+                    { msg: 'Preparing spawn area: 100%', d: 3100 },
+                    { msg: `Done (3.2s)! Welcome to RSAcraft!`, d: 3500, type: 'success' }
                 ];
                 
                 bootSeq.forEach(step => {
@@ -1360,8 +1621,8 @@
                         if (step.type === 'success') {
                             s.status = 'Online';
                             this.updateConsoleUI();
-                            setTimeout(() => this.addPlayer('Steve_ZA'), 500);
-                            setTimeout(() => this.addPlayer('BraaiMaster'), 1500);
+                            setTimeout(() => this.addPlayer('LionKid_za'), 500);
+                            setTimeout(() => this.addPlayer('SpringbokRider'), 1500);
                         }
                     }, step.d);
                 });
@@ -1396,22 +1657,18 @@
                 
                 setTimeout(() => {
                     if (cmd === 'help') {
-                        this.log('Commands: help, stop, list, kick <player>, op <player>', 'info');
+                        this.log('Commands: help, stop, list, safari, braai', 'info');
                     } else if (cmd === 'stop') {
                         this.stopServer();
                     } else if (cmd === 'list') {
                         const list = this.currentServer.playerList.join(', ') || 'No players';
                         this.log(`Players: ${list}`, 'info');
-                    } else if (cmd.startsWith('kick')) {
-                        const p = cmd.split(' ')[1];
-                        if (p && this.currentServer.playerList.includes(p)) {
-                            this.currentServer.playerList = this.currentServer.playerList.filter(x => x !== p);
-                            this.currentServer.players--;
-                            this.log(`Kicked ${p}`, 'warn');
-                            this.updateConsoleUI();
-                        }
+                    } else if (cmd === 'safari') {
+                        this.log('🦁 Welcome to the RSA Safari! Watch for the Big Five!', 'success');
+                    } else if (cmd === 'braai') {
+                        this.log('🔥 Time for a braai! Bring the boerewors!', 'success');
                     } else {
-                        this.log('Unknown command', 'error');
+                        this.log('Unknown command. Try: help, safari, braai', 'error');
                     }
                 }, 200);
             },
@@ -1424,19 +1681,6 @@
                     this.log(`${name} joined the game`, 'success');
                     this.updateConsoleUI();
                 }
-            },
-
-            playGame(game) {
-                alert(`Connecting to ${game}...\nFinding South African server...`);
-            },
-
-            randomGame() {
-                const games = ['SkyBlock', 'Bed Wars', 'SkyWars', 'Murder', 'Duels', 'Build Battle'];
-                this.playGame(games[Math.floor(Math.random() * games.length)]);
-            },
-
-            filterByType(type) {
-                alert(`Filtering by ${type}...\n(Coming soon!)`);
             },
 
             startLiveChat() {
@@ -1503,7 +1747,7 @@
                 input.value = '';
                 
                 setTimeout(() => {
-                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that'];
+                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that', 'Check the Big Five!'];
                     const reply = replies[Math.floor(Math.random() * replies.length)];
                     const user = this.chatUsers[Math.floor(Math.random() * this.chatUsers.length)];
                     
