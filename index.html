@@ -556,19 +556,29 @@
             margin: 8px 0;
         }
 
-        /* Map Styles */
+        /* Enhanced 3D Map Styles */
         .sa-map-container {
             background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
             border: 4px solid;
             border-color: #007749 #002d14 #002d14 #007749;
             position: relative;
             overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .sa-map-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
         }
 
         .sa-map-svg {
             width: 100%;
             height: auto;
             filter: drop-shadow(0 0 20px rgba(0, 119, 73, 0.3));
+        }
+
+        .map-layer {
+            transition: all 0.3s ease;
         }
 
         .map-region {
@@ -587,6 +597,10 @@
         .map-region.active {
             fill: #FFB612;
             stroke: #FFD700;
+        }
+
+        .map-elevation {
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
         }
 
         .animal-marker {
@@ -905,6 +919,48 @@
             background: #000;
             clip-path: polygon(0 0, 20% 100%, 40% 0, 60% 0, 80% 100%, 100% 0);
         }
+
+        /* Park Zone Styles */
+        .park-zone {
+            fill-opacity: 0.4;
+            stroke-width: 2;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .park-zone:hover {
+            fill-opacity: 0.7;
+            filter: drop-shadow(0 0 15px rgba(255, 182, 18, 0.5));
+        }
+
+        .park-label {
+            font-family: 'VT323', monospace;
+            font-size: 3px;
+            fill: #fff;
+            text-anchor: middle;
+            pointer-events: none;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .terrain-layer {
+            opacity: 0.3;
+        }
+
+        .wildlife-hotspot {
+            animation: pulse-hotspot 2s infinite;
+        }
+
+        @keyframes pulse-hotspot {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .elevation-legend {
+            background: linear-gradient(to right, #2d5016, #5a9e34, #8B4513, #654321);
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
@@ -975,21 +1031,6 @@
         <h3 class="text-xl font-bold text-white mb-2">Crafted Successfully!</h3>
         <p id="successText" class="text-gray-200 mb-4">You made a Wooden Pickaxe!</p>
         <button onclick="app.closeSuccess()" class="mc-btn-gold px-6 py-2 rounded">Awesome!</button>
-    </div>
-
-    <!-- Crafting Helper -->
-    <div id="craftingHelper" class="crafting-helper">
-        <div class="helper-header">
-            <div class="helper-title">
-                <span>💡</span>
-                <span>Crafting Tips</span>
-            </div>
-            <button onclick="app.closeHelper()" class="close-helper">×</button>
-        </div>
-        <div id="helperContent" class="text-sm text-gray-300">
-            Select an item from your inventory, then tap the grid to place it!
-        </div>
-        <button onclick="app.showRecipeGuide()" class="quick-craft-btn">View Recipe Book</button>
     </div>
 
     <div id="createModal" class="fixed inset-0 bg-black/95 z-50 hidden">
@@ -1179,7 +1220,6 @@
                 { icon: 'planks', name: 'Oak Planks', id: 'planks' }
             ],
 
-            // FIXED: Corrected recipes with proper patterns
             craftingRecipes: {
                 'pickaxe_wood': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1303,45 +1343,143 @@
                 }
             },
 
+            // Expanded SA Regions with more parks
             saRegions: [
                 {
                     name: 'Kruger National Park',
                     province: 'Limpopo & Mpumalanga',
-                    animals: ['Lion', 'Leopard', 'Elephant', 'Rhino', 'Buffalo'],
-                    description: 'Famous Big Five reserve! 19,623 km² of wild bush.',
-                    camps: ['Skukuza', 'Satara', 'Lower Sabie', 'Letaba', 'Olifants'],
-                    gates: ['Paul Kruger', 'Phalaborwa', 'Orpen', 'Crocodile Bridge'],
-                    color: '#007749'
+                    animals: ['Lion', 'Leopard', 'Elephant', 'Rhino', 'Buffalo', 'Wild Dog', 'Cheetah'],
+                    description: 'Famous Big Five reserve! 19,623 km² of wild bush. Part of Greater Limpopo Transfrontier Park.',
+                    camps: ['Skukuza', 'Satara', 'Lower Sabie', 'Letaba', 'Olifants', 'Berg-en-Dal', 'Crocodile Bridge'],
+                    gates: ['Paul Kruger', 'Phalaborwa', 'Orpen', 'Crocodile Bridge', 'Malelane', 'Numbi'],
+                    color: '#007749',
+                    size: '19,623 km²',
+                    established: '1926'
                 },
                 {
-                    name: 'Addo Elephant Park',
+                    name: 'Addo Elephant National Park',
                     province: 'Eastern Cape',
-                    animals: ['Elephant', 'Buffalo', 'Lion', 'Black Rhino', 'Penguin'],
-                    description: 'Home to over 550 elephants! Also has the Big 7.',
-                    camps: ['Main Camp', 'Camp Matyholweni'],
-                    gates: ['Addo', 'Matyholweni'],
-                    color: '#FFB612'
+                    animals: ['Elephant', 'Buffalo', 'Lion', 'Black Rhino', 'Penguin', 'Great White Shark', 'Whale'],
+                    description: 'Home to over 600 elephants! Also has the Big 7 including marine life.',
+                    camps: ['Main Camp', 'Camp Matyholweni', 'Narina Bush Camp', 'Woody Cape'],
+                    gates: ['Addo', 'Matyholweni', 'Colchester'],
+                    color: '#FFB612',
+                    size: '1,640 km²',
+                    established: '1931'
                 },
                 {
                     name: 'Kgalagadi Transfrontier Park',
                     province: 'Northern Cape',
-                    animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah'],
-                    description: 'Red sand dunes and desert animals. Springbok antelope live here!',
-                    camps: ['Twee Rivieren', ' Mata-Mata', '!Xaus'],
+                    animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah', 'Gemsbok', 'Eland', 'Blue Wildebeest'],
+                    description: 'Red sand dunes and desert animals. Springbok antelope live here! Cross-border with Botswana.',
+                    camps: ['Twee Rivieren', 'Mata-Mata', '!Xaus', 'Kieliekrankie'],
                     gates: ['Twee Rivieren'],
-                    color: '#DE3831'
+                    color: '#DE3831',
+                    size: '38,000 km²',
+                    established: '1931'
                 },
                 {
                     name: 'Table Mountain National Park',
                     province: 'Western Cape',
-                    animals: ['Penguin', 'Dassie', 'Baboon', 'Eland'],
-                    description: 'Famous flat-top mountain! Boulders Beach has African penguins.',
-                    camps: ['Orangekloof', 'Smitswinkel'],
-                    gates: ['Silvermine', 'Cape Point'],
-                    color: '#002395'
+                    animals: ['Penguin', 'Dassie', 'Baboon', 'Eland', 'Bontebok', 'Cape Leopard'],
+                    description: 'Famous flat-top mountain! Boulders Beach has African penguins. Part of Cape Floral Kingdom.',
+                    camps: ['Orangekloof', 'Smitswinkel', 'Table Mountain'],
+                    gates: ['Silvermine', 'Cape Point', 'Boulders'],
+                    color: '#002395',
+                    size: '221 km²',
+                    established: '1998'
+                },
+                {
+                    name: 'Hluhluwe-iMfolozi Park',
+                    province: 'KwaZulu-Natal',
+                    animals: ['Big Five', 'Wild Dog', 'Cheetah', 'Nyala', 'Sunset'],
+                    description: 'Oldest proclaimed park in Africa! Saved the white rhino from extinction.',
+                    camps: ['Hilltop', 'Mpila', 'Munywaneni'],
+                    gates: ['Memorial Gate', 'Nyalazi Gate', 'Cengeni Gate'],
+                    color: '#FF6B35',
+                    size: '960 km²',
+                    established: '1895'
+                },
+                {
+                    name: 'Pilanesberg National Park',
+                    province: 'North West',
+                    animals: ['Big Five', 'Brown Hyena', 'Sable', 'Tsessebe', 'Wild Dog'],
+                    description: 'Ancient volcanic crater! Malaria-free and near Sun City. 200km of roads.',
+                    camps: ['Bakgatla', 'Manyane', 'Bakubung', 'Kwa Maritane'],
+                    gates: ['Bakubung', 'Kwa Maritane', 'Manyane'],
+                    color: '#8B4513',
+                    size: '572 km²',
+                    established: '1979'
+                },
+                {
+                    name: 'iSimangaliso Wetland Park',
+                    province: 'KwaZulu-Natal',
+                    animals: ['Elephant', 'Leopard', 'Hippo', 'Crocodile', 'Whale', 'Turtle', 'Flamingo'],
+                    description: 'UNESCO World Heritage Site! Lakes, forests, coral reefs, and dunes.',
+                    camps: ['Cape Vidal', 'St Lucia', 'Sodwana Bay', 'Makakatana'],
+                    gates: ['St Lucia', 'Sodwana', 'Cape Vidal'],
+                    color: '#00CED1',
+                    size: '3,280 km²',
+                    established: '1895'
+                },
+                {
+                    name: 'Mountain Zebra National Park',
+                    province: 'Eastern Cape',
+                    animals: ['Cape Mountain Zebra', 'Cheetah', 'Lion', 'Buffalo', 'Black Wildebeest'],
+                    description: 'Saved the Cape Mountain Zebra from extinction! Now home to lions and cheetahs.',
+                    camps: ['Main Rest Camp', 'Mountain Cottages'],
+                    gates: ['Cradock', 'Bloemhof'],
+                    color: '#9B59B6',
+                    size: '284 km²',
+                    established: '1937'
+                },
+                {
+                    name: 'Karoo National Park',
+                    province: 'Western Cape',
+                    animals: ['Springbok', 'Gemsbok', 'Cape Mountain Zebra', 'Black Rhino', 'Lion'],
+                    description: 'Vast open spaces and fossil trails. Semi-desert landscape with unique adaptations.',
+                    camps: ['Main Rest Camp', 'Embizweni Cottage'],
+                    gates: ['Beaufort West'],
+                    color: '#D2691E',
+                    size: '767 km²',
+                    established: '1979'
+                },
+                {
+                    name: 'Augrabies Falls National Park',
+                    province: 'Northern Cape',
+                    animals: ['Springbok', 'Gemsbok', 'Eland', 'Klipspringer', 'Giraffe', 'Leopard'],
+                    description: 'Place of Great Noise! 90m waterfall on Orange River. Moon Rock viewpoint.',
+                    camps: ['Main Rest Camp', 'Augrabies Falls'],
+                    gates: ['Kakamas'],
+                    color: '#E74C3C',
+                    size: '820 km²',
+                    established: '1966'
+                },
+                {
+                    name: 'Madikwe Game Reserve',
+                    province: 'North West',
+                    animals: ['Big Five', 'Wild Dog', 'Cheetah', 'Brown Hyena', 'Aardwolf'],
+                    description: 'Malaria-free luxury safari! One of South Africa\'s largest reserves.',
+                    camps: ['Buffalo Ridge', 'Impodimo', 'Jamala', 'Jaci\'s'],
+                    gates: ['Derdepoort', 'Wonderboom'],
+                    color: '#F39C12',
+                    size: '750 km²',
+                    established: '1991'
+                },
+                {
+                    name: 'Marakele National Park',
+                    province: 'Limpopo',
+                    animals: ['Big Five', 'Cape Vulture', 'Tsessebe', 'Sable', 'Wild Dog'],
+                    description: 'Place of Sanctuary! Home to one of world\'s largest Cape Vulture colonies.',
+                    camps: ['Bontle', 'Tlopi', 'Motswere'],
+                    gates: ['Bontle'],
+                    color: '#27AE60',
+                    size: '670 km²',
+                    established: '1994'
                 }
             ],
 
+            // Expanded animal locations with more species and accurate positioning
             animalLocations: [
                 {
                     name: 'Lion',
@@ -1349,9 +1487,10 @@
                     x: 65, y: 35,
                     region: 'Kruger National Park',
                     camp: 'Satara',
-                    fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions!',
+                    fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions! Kruger has 1,600+ lions.',
                     bestTime: 'Dawn or dusk',
-                    diet: 'Carnivore'
+                    diet: 'Carnivore',
+                    threat: 'Vulnerable'
                 },
                 {
                     name: 'Elephant',
@@ -1359,9 +1498,10 @@
                     x: 70, y: 40,
                     region: 'Kruger National Park',
                     camp: 'Letaba',
-                    fact: 'Also found at Addo! Drink 200 liters of water per day.',
+                    fact: 'Also found at Addo! Drink 200 liters of water per day. Tusks grow their whole life.',
                     bestTime: 'Early morning',
-                    diet: 'Herbivore'
+                    diet: 'Herbivore',
+                    threat: 'Endangered'
                 },
                 {
                     name: 'Springbok',
@@ -1369,19 +1509,21 @@
                     x: 25, y: 25,
                     region: 'Kgalagadi Transfrontier Park',
                     camp: 'Twee Rivieren',
-                    fact: 'National animal! Can jump 3 meters high - called "pronking".',
+                    fact: 'National animal! Can jump 3 meters high - called "pronking". Adapted to desert life.',
                     bestTime: 'All day',
-                    diet: 'Herbivore'
+                    diet: 'Herbivore',
+                    threat: 'Least Concern'
                 },
                 {
-                    name: 'Penguin',
+                    name: 'African Penguin',
                     emoji: '🐧',
                     x: 20, y: 85,
                     region: 'Table Mountain National Park',
                     camp: 'Boulders Beach',
-                    fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa!',
+                    fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa! Donkeys bray to communicate.',
                     bestTime: 'Morning (fewer crowds)',
-                    diet: 'Fish & squid'
+                    diet: 'Fish & squid',
+                    threat: 'Endangered'
                 },
                 {
                     name: 'Meerkat',
@@ -1389,41 +1531,138 @@
                     x: 30, y: 30,
                     region: 'Kgalagadi Transfrontier Park',
                     camp: 'Mata-Mata',
-                    fact: 'Live in families called "mobs". One always stands guard!',
+                    fact: 'Live in families called "mobs". One always stands guard! Immune to scorpion venom.',
                     bestTime: 'Early morning',
-                    diet: 'Insects & small animals'
+                    diet: 'Insects & small animals',
+                    threat: 'Least Concern'
                 },
                 {
-                    name: 'Rhino',
+                    name: 'White Rhino',
                     emoji: '🦏',
                     x: 60, y: 45,
                     region: 'Kruger National Park',
                     camp: 'Pretoriuskop',
-                    fact: '85% of white rhinos live in southern Kruger. Love mud baths!',
+                    fact: '85% of white rhinos live in southern Kruger. Love mud baths! Actually grey in color.',
                     bestTime: 'Early morning',
-                    diet: 'Herbivore'
+                    diet: 'Herbivore (grass)',
+                    threat: 'Near Threatened'
                 },
                 {
-                    name: 'African Penguin',
-                    emoji: '🐧',
+                    name: 'Black Rhino',
+                    emoji: '🦏',
                     x: 75, y: 75,
-                    region: 'Addo Elephant Park',
-                    camp: 'Marine Section',
-                    fact: 'Marine section has penguins! Addo is the only Big 7 park.',
-                    bestTime: 'All year',
-                    diet: 'Fish'
+                    region: 'Addo Elephant National Park',
+                    camp: 'Main Camp',
+                    fact: 'Shy browser with hooked lip. Addo has one of the densest populations!',
+                    bestTime: 'Dusk',
+                    diet: 'Herbivore (leaves)',
+                    threat: 'Critically Endangered'
+                },
+                {
+                    name: 'Cheetah',
+                    emoji: '🐆',
+                    x: 45, y: 55,
+                    region: 'Mountain Zebra National Park',
+                    camp: 'Main Rest Camp',
+                    camp: 'Main Rest Camp',
+                    fact: 'Fastest land animal! 0-100km/h in 3 seconds. Recently reintroduced here.',
+                    bestTime: 'Early morning',
+                    diet: 'Carnivore',
+                    threat: 'Vulnerable'
+                },
+                {
+                    name: 'Wild Dog',
+                    emoji: '🐕',
+                    x: 68, y: 32,
+                    region: 'Kruger National Park',
+                    camp: 'Pafuri',
+                    fact: 'Most successful hunters! 80% success rate. Live in packs with strong bonds.',
+                    bestTime: 'Early morning',
+                    diet: 'Carnivore',
+                    threat: 'Endangered'
+                },
+                {
+                    name: 'Gemsbok',
+                    emoji: '🦌',
+                    x: 22, y: 28,
+                    region: 'Kgalagadi Transfrontier Park',
+                    camp: 'Kieliekrankie',
+                    fact: 'Can survive without water! Gets moisture from food. Long straight horns.',
+                    bestTime: 'Early morning',
+                    diet: 'Herbivore',
+                    threat: 'Least Concern'
+                },
+                {
+                    name: 'Cape Vulture',
+                    emoji: '🦅',
+                    x: 52, y: 20,
+                    region: 'Marakele National Park',
+                    camp: 'Tlopi',
+                    fact: 'One of world\'s largest colonies here! 800+ breeding pairs. Wingspan up to 2.6m.',
+                    bestTime: 'Midday (thermals)',
+                    diet: 'Carrion',
+                    threat: 'Endangered'
+                },
+                {
+                    name: 'Hippo',
+                    emoji: '🦛',
+                    x: 78, y: 68,
+                    region: 'iSimangaliso Wetland Park',
+                    camp: 'St Lucia',
+                    fact: 'Kill more people than any other African animal! Stay in water by day, graze by night.',
+                    bestTime: 'Sunset boat cruise',
+                    diet: 'Herbivore (grass)',
+                    threat: 'Vulnerable'
+                },
+                {
+                    name: 'Cape Buffalo',
+                    emoji: '🐃',
+                    x: 63, y: 38,
+                    region: 'Kruger National Park',
+                    camp: 'Lower Sabie',
+                    fact: 'Most dangerous of Big Five! Never corner one. Herds of up to 1,000 animals.',
+                    bestTime: 'Early morning',
+                    diet: 'Herbivore',
+                    threat: 'Near Threatened'
+                },
+                {
+                    name: 'Leopard',
+                    emoji: '🐆',
+                    x: 66, y: 42,
+                    region: 'Kruger National Park',
+                    camp: 'Skukuza',
+                    fact: 'Most elusive Big Five! Drag prey up trees. Spots are called rosettes.',
+                    bestTime: 'Night drives',
+                    diet: 'Carnivore',
+                    threat: 'Vulnerable'
+                },
+                {
+                    name: 'Southern Right Whale',
+                    emoji: '🐋',
+                    x: 22, y: 90,
+                    region: 'Table Mountain National Park',
+                    camp: 'Hermanus',
+                    fact: 'Come to Hermanus to calve! Best land-based whale watching in the world.',
+                    bestTime: 'June-November',
+                    diet: 'Krill & plankton',
+                    threat: 'Least Concern'
                 }
             ],
 
+            // Updated cities with new names
             cities: [
-                { name: 'Johannesburg', x: 55, y: 45, province: 'Gauteng' },
-                { name: 'Cape Town', x: 18, y: 88, province: 'Western Cape' },
-                { name: 'Durban', x: 72, y: 65, province: 'KwaZulu-Natal' },
-                { name: 'Pretoria', x: 58, y: 40, province: 'Gauteng' },
-                { name: 'Port Elizabeth', x: 70, y: 78, province: 'Eastern Cape' },
-                { name: 'Bloemfontein', x: 45, y: 60, province: 'Free State' },
-                { name: 'Kimberley', x: 35, y: 50, province: 'Northern Cape' },
-                { name: 'Polokwane', x: 60, y: 25, province: 'Limpopo' }
+                { name: 'Johannesburg', x: 55, y: 45, province: 'Gauteng', population: '5.6M' },
+                { name: 'Cape Town', x: 18, y: 88, province: 'Western Cape', population: '4.6M' },
+                { name: 'Durban', x: 72, y: 65, province: 'KwaZulu-Natal', population: '3.9M' },
+                { name: 'Pretoria', x: 58, y: 40, province: 'Gauteng', population: '2.4M' },
+                { name: 'Gqeberha', x: 70, y: 78, province: 'Eastern Cape', population: '1.2M', oldName: 'Port Elizabeth' },
+                { name: 'Bloemfontein', x: 45, y: 60, province: 'Free State', population: '560K' },
+                { name: 'Kimberley', x: 35, y: 50, province: 'Northern Cape', population: '250K' },
+                { name: 'Polokwane', x: 60, y: 25, province: 'Limpopo', population: '630K' },
+                { name: 'Nelspruit', x: 68, y: 45, province: 'Mpumalanga', population: '110K', note: 'Gateway to Kruger' },
+                { name: 'Rustenburg', x: 48, y: 42, province: 'North West', population: '550K', note: 'Near Pilanesberg' },
+                { name: 'East London', x: 75, y: 82, province: 'Eastern Cape', population: '480K' },
+                { name: 'Mbombela', x: 68, y: 45, province: 'Mpumalanga', population: '110K', oldName: 'Nelspruit' }
             ],
 
             minecraftBlocks: [
@@ -1433,7 +1672,7 @@
                 { icon: 'furnace', name: 'Furnace', desc: 'Smelt ores and cook food', tool: 'Pickaxe' },
                 { icon: 'chest', name: 'Chest', desc: 'Store 27 items', tool: 'Axe' },
                 { icon: 'bed', name: 'Bed', desc: 'Sleep and set spawn', tool: 'Axe' },
-                { icon: 'torch', name: 'Torch', desc: 'Light up areas', tool: 'Any' },
+                { icon: 'torch', name: 'Torch', desc: 'Light up dark places', tool: 'Any' },
                 { icon: 'planks', name: 'Oak Planks', desc: 'Crafting material', tool: 'Axe' },
                 { icon: 'creeper', name: 'Creeper', desc: 'Explodes when near!', tool: 'Sword' },
                 { icon: 'pickaxe', name: 'Pickaxe', desc: 'Mine stone and ores', tool: 'Crafted' },
@@ -1451,13 +1690,6 @@
                 
                 this.navigate('home');
                 this.startLiveChat();
-                
-                // Show crafting helper after 2 seconds
-                setTimeout(() => {
-                    if (this.currentView === 'home') {
-                        document.getElementById('craftingHelper')?.classList.add('visible');
-                    }
-                }, 2000);
             },
 
             navigate(view) {
@@ -1467,14 +1699,6 @@
                 document.querySelector(`[data-nav="${view}"]`)?.classList.add('active');
                 
                 const container = document.getElementById('app-container');
-                const helper = document.getElementById('craftingHelper');
-                
-                // Hide helper on non-home pages
-                if (view !== 'home') {
-                    helper?.classList.remove('visible');
-                } else {
-                    setTimeout(() => helper?.classList.add('visible'), 500);
-                }
                 
                 switch(view) {
                     case 'home':
@@ -1514,12 +1738,8 @@
                                 <p class="text-[#FFB612] text-sm">Craft real Minecraft tools! Tap items, then tap grid slots.</p>
                             </div>
 
-                            <!-- Tutorial Steps -->
-                            <div class="tutorial-step mb-4">
-                                <strong class="text-[#FFB612]">How to Craft:</strong> 1) Select item from inventory below → 2) Tap grid slots to place → 3) Match recipe pattern → 4) Click CRAFT ITEM!
-                            </div>
-
-                            <div class="flex flex-col items-center gap-4 relative z-10">
+                            <div class="flex flex-col sm:flex-row gap-4 items-start justify-center relative z-10">
+                                <!-- Crafting Grid -->
                                 <div class="flex items-center gap-3">
                                     <div class="crafting-grid-container">
                                         <div class="grid grid-cols-3 gap-1">
@@ -1537,43 +1757,49 @@
                                     </div>
                                 </div>
 
-                                <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center w-full">
-                                    <p class="text-gray-400 text-xs" id="hint-text">👆 Select an item from inventory, then tap grid slots to place it!</p>
-                                </div>
-
-                                <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
-                            </div>
-
-                            <!-- Recipe Guide -->
-                            <div class="recipe-guide mt-4">
-                                <h4 class="text-[#FFB612] font-bold mb-2">📖 QUICK RECIPES (Tap to auto-fill)</h4>
-                                <div class="space-y-1">
-                                    ${Object.entries(this.craftingRecipes).slice(0, 6).map(([key, recipe]) => `
-                                        <div class="recipe-item" onclick="app.loadRecipe('${key}')">
-                                            <span class="text-xl">${recipe.result}</span>
-                                            <div class="flex-grow">
-                                                <div class="text-white font-bold text-sm">${recipe.name}</div>
-                                                <div class="text-gray-400 text-xs">${recipe.hint}</div>
-                                            </div>
-                                            <span class="text-[#007749] text-xs">Auto-fill</span>
-                                        </div>
-                                    `).join('')}
+                                <!-- Inventory -->
+                                <div class="bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10 w-full sm:w-auto">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
+                                        <span class="text-[#373737] text-xs">Tap to select</span>
+                                    </div>
+                                    <div class="flex gap-2 flex-wrap justify-center">
+                                        ${this.inventoryItems.map(item => `
+                                            <button onclick="app.selectItem('${item.id}', '${item.name}')" 
+                                                class="inventory-slot" data-item="${item.id}">
+                                                ${mcIcons[item.icon]}
+                                                <span class="item-tooltip">${item.name}</span>
+                                            </button>
+                                        `).join('')}
+                                    </div>
                                 </div>
                             </div>
 
-                            <div class="mt-4 bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
-                                <div class="flex items-center justify-between mb-2">
-                                    <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
-                                    <span class="text-[#373737] text-xs">Tap item to select</span>
-                                </div>
-                                <div class="flex gap-2 flex-wrap justify-center">
-                                    ${this.inventoryItems.map(item => `
-                                        <button onclick="app.selectItem('${item.id}', '${item.name}')" 
-                                            class="inventory-slot" data-item="${item.id}">
-                                            ${mcIcons[item.icon]}
-                                            <span class="item-tooltip">${item.name}</span>
-                                        </button>
-                                    `).join('')}
+                            <div id="recipe-hint" class="recipe-hint bg-black/50 rounded px-3 py-2 text-center w-full mt-4">
+                                <p class="text-gray-400 text-xs" id="hint-text">👆 Select an item from inventory, then tap grid slots to place it!</p>
+                            </div>
+
+                            <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
+
+                            <!-- Quick Recipes - One of each type -->
+                            <div class="mt-4 bg-[#111] border-2 border-[#333] p-3 rounded">
+                                <h4 class="text-[#FFB612] font-bold mb-3 text-center">⚡ QUICK RECIPES ⚡</h4>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button onclick="app.loadRecipe('pickaxe_wood')" class="recipe-item flex-col text-center p-3">
+                                        <span class="text-2xl mb-1">⛏️</span>
+                                        <div class="text-white font-bold text-xs">Pickaxe</div>
+                                        <div class="text-gray-400 text-[10px]">3 top + 2 sticks</div>
+                                    </button>
+                                    <button onclick="app.loadRecipe('sword_wood')" class="recipe-item flex-col text-center p-3">
+                                        <span class="text-2xl mb-1">🗡️</span>
+                                        <div class="text-white font-bold text-xs">Sword</div>
+                                        <div class="text-gray-400 text-[10px]">2 middle + stick</div>
+                                    </button>
+                                    <button onclick="app.loadRecipe('axe_wood')" class="recipe-item flex-col text-center p-3">
+                                        <span class="text-2xl mb-1">🪓</span>
+                                        <div class="text-white font-bold text-xs">Axe</span>
+                                        <div class="text-gray-400 text-[10px]">L-shape + stick</div>
+                                    </button>
                                 </div>
                             </div>
 
@@ -1589,8 +1815,6 @@
 
                             <div class="absolute top-2 left-2 text-4xl opacity-20">⛏️</div>
                             <div class="absolute bottom-2 right-2 text-4xl opacity-20">🗡️</div>
-                            <div class="absolute top-1/2 left-1 w-2 h-2 bg-[#007749] rounded-full animate-pulse"></div>
-                            <div class="absolute top-1/3 right-2 w-2 h-2 bg-[#FFB612] rounded-full animate-pulse delay-75"></div>
                         </div>
 
                         <div class="grid grid-cols-3 gap-2">
@@ -1619,13 +1843,13 @@
                         </div>
 
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-white text-sm font-bold mb-3">EXPLORE SOUTH AFRICA!</h3>
+                            <h3 class="text-white text-sm font-bold mb-2">EXPLORE SOUTH AFRICA!</h3>
                             <div class="grid grid-cols-2 gap-2">
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('map')">
                                     <span class="text-2xl">🗺️</span>
                                     <div>
                                         <div class="text-white text-sm font-bold">Animal Map</div>
-                                        <div class="text-gray-500 text-xs">Where animals live!</div>
+                                        <div class="text-gray-500 text-xs">12 parks, 15 animals!</div>
                                     </div>
                                 </div>
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('gamedrive')">
@@ -1638,8 +1862,8 @@
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('blocks')">
                                     <span class="text-2xl">🧱</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Minecraft Blocks</div>
-                                        <div class="text-gray-500 text-xs">Tools & mobs!</div>
+                                        <div class="text-white text-sm font-bold">Recipe Book</div>
+                                        <div class="text-gray-500 text-xs">All crafting recipes!</div>
                                     </div>
                                 </div>
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showFoodFact()">
@@ -1667,14 +1891,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-white text-sm font-bold mb-2">QUICK JOIN</h3>
-                            <div class="flex gap-2">
-                                <input type="text" placeholder="Enter server IP..." class="mc-input flex-grow px-3 py-2 text-base rounded">
-                                <button class="mc-btn mc-btn-blue px-4 py-2 rounded">JOIN</button>
-                            </div>
-                        </div>
                     </div>
                 `;
             },
@@ -1683,59 +1899,168 @@
                 return `
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
-                            <h2 class="text-2xl text-[#FFB612] font-bold">🧱 MINECRAFT BLOCKS & TOOLS 🗡️</h2>
-                            <p class="text-gray-400 text-sm">Essential blocks, tools, and mobs for your adventure!</p>
+                            <h2 class="text-2xl text-[#FFB612] font-bold">📖 RECIPE BOOK & BLOCKS 📖</h2>
+                            <p class="text-gray-400 text-sm">Complete crafting guide for all tools!</p>
                         </div>
 
-                        <div class="blocks-grid">
-                            ${this.minecraftBlocks.map((block, idx) => `
-                                <div class="block-card" onclick="app.showBlockInfo(${idx})">
-                                    <div class="block-icon">${mcIcons[block.icon]}</div>
-                                    <div class="block-name">${block.name}</div>
-                                    <div class="block-desc">${block.desc}</div>
-                                    <div class="text-[#007749] text-xs mt-2">🔨 ${block.tool}</div>
+                        <!-- Complete Recipe Guide -->
+                        <div class="bg-[#111] border-2 border-[#FFB612] p-4 rounded-lg">
+                            <h3 class="text-[#FFB612] font-bold mb-3 text-center text-lg">⚒️ TOOL RECIPES ⚒️</h3>
+                            
+                            <div class="space-y-4">
+                                <!-- Pickaxes -->
+                                <div class="bg-[#0a0a0a] p-3 rounded border border-[#333]">
+                                    <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                        <span>⛏️</span> Pickaxes (Mining Tools)
+                                    </h4>
+                                    <p class="text-gray-400 text-xs mb-2">Pattern: 3 materials top row + 2 sticks in middle column below</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.planks}
+                                            <span class="text-gray-300">Wood: Stone & coal</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.stone}
+                                            <span class="text-gray-300">Stone: Iron ore</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.iron}
+                                            <span class="text-gray-300">Iron: Diamond, redstone</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.diamond}
+                                            <span class="text-gray-300">Diamond: Obsidian!</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            `).join('')}
-                        </div>
 
-                        <div class="bg-[#111] border-2 border-[#333] p-4 rounded mt-4">
-                            <h3 class="text-[#FFB612] font-bold mb-3">⚔️ TOOL TIER GUIDE</h3>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex items-center gap-2 text-gray-300">
-                                    <span>🪵</span>
-                                    <span><strong>Wood:</strong> Basic, mines stone slowly</span>
+                                <!-- Swords -->
+                                <div class="bg-[#0a0a0a] p-3 rounded border border-[#333]">
+                                    <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                        <span>🗡️</span> Swords (Combat)
+                                    </h4>
+                                    <p class="text-gray-400 text-xs mb-2">Pattern: 2 materials in middle column + stick at bottom</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.planks}
+                                            <span class="text-gray-300">Wood: 5 damage</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.stone}
+                                            <span class="text-gray-300">Stone: 6 damage</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.iron}
+                                            <span class="text-gray-300">Iron: 7 damage</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.diamond}
+                                            <span class="text-gray-300">Diamond: 8 damage</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2 text-gray-300">
-                                    <span>🪨</span>
-                                    <span><strong>Stone:</strong> Better, can mine iron</span>
+
+                                <!-- Axes -->
+                                <div class="bg-[#0a0a0a] p-3 rounded border border-[#333]">
+                                    <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                        <span>🪓</span> Axes (Wood Cutting)
+                                    </h4>
+                                    <p class="text-gray-400 text-xs mb-2">Pattern: 2 materials top-left + 1 material + stick middle-left + stick bottom</p>
+                                    <div class="grid grid-cols-2 gap-2 text-xs">
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.planks}
+                                            <span class="text-gray-300">Wood: Basic chopping</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.stone}
+                                            <span class="text-gray-300">Stone: Faster</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.iron}
+                                            <span class="text-gray-300">Iron: Fast</span>
+                                        </div>
+                                        <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
+                                            ${mcIcons.diamond}
+                                            <span class="text-gray-300">Diamond: Fastest!</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2 text-gray-300">
-                                    <span>⚙️</span>
-                                    <span><strong>Iron:</strong> Strong, can mine diamond</span>
-                                </div>
-                                <div class="flex items-center gap-2 text-gray-300">
-                                    <span>💎</span>
-                                    <span><strong>Diamond:</strong> Best speed & durability</span>
+
+                                <!-- Other Recipes -->
+                                <div class="bg-[#0a0a0a] p-3 rounded border border-[#333]">
+                                    <h4 class="text-white font-bold mb-2">🔧 Other Useful Recipes</h4>
+                                    <div class="space-y-2 text-xs">
+                                        <div class="flex items-center justify-between bg-[#111] p-2 rounded">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl">🔦</span>
+                                                <span class="text-gray-300">Torch</span>
+                                            </div>
+                                            <span class="text-[#FFB612]">Coal + Stick</span>
+                                        </div>
+                                        <div class="flex items-center justify-between bg-[#111] p-2 rounded">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl">📦</span>
+                                                <span class="text-gray-300">Chest</span>
+                                            </div>
+                                            <span class="text-[#FFB612]">8 Planks (ring)</span>
+                                        </div>
+                                        <div class="flex items-center justify-between bg-[#111] p-2 rounded">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl">🛏️</span>
+                                                <span class="text-gray-300">Bed</span>
+                                            </div>
+                                            <span class="text-[#FFB612]">3 Wool + 3 Planks</span>
+                                        </div>
+                                        <div class="flex items-center justify-between bg-[#111] p-2 rounded">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl">🚪</span>
+                                                <span class="text-gray-300">Door</span>
+                                            </div>
+                                            <span class="text-[#FFB612]">6 Planks (2x3)</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Blocks Grid -->
+                        <div class="bg-[#111] border-2 border-[#333] p-4 rounded-lg">
+                            <h3 class="text-white font-bold mb-3">🧱 BLOCKS & ITEMS</h3>
+                            <div class="blocks-grid">
+                                ${this.minecraftBlocks.map((block, idx) => `
+                                    <div class="block-card" onclick="app.showBlockInfo(${idx})">
+                                        <div class="block-icon">${mcIcons[block.icon]}</div>
+                                        <div class="block-name">${block.name}</div>
+                                        <div class="block-desc">${block.desc}</div>
+                                        <div class="text-[#007749] text-xs mt-2">🔨 ${block.tool}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Tool Tier Guide -->
                         <div class="bg-[#111] border-2 border-[#333] p-4 rounded">
-                            <h3 class="text-[#DE3831] font-bold mb-3">💀 MOB GUIDE</h3>
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-3 bg-[#0a0a0a] p-2 rounded">
-                                    <div class="w-10 h-10">${mcIcons.creeper}</div>
-                                    <div>
-                                        <div class="text-white font-bold">Creeper</div>
-                                        <div class="text-gray-400 text-xs">Explodes when near! Keep distance.</div>
-                                    </div>
+                            <h3 class="text-[#FFB612] font-bold mb-3">⚔️ TOOL TIER GUIDE</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center gap-2 text-gray-300 bg-[#0a0a0a] p-2 rounded">
+                                    <span>🪵</span>
+                                    <span><strong>Wood:</strong> Basic, mines stone slowly. Durability: 60</span>
                                 </div>
-                                <div class="flex items-center gap-3 bg-[#0a0a0a] p-2 rounded">
-                                    <span class="text-3xl">🦁</span>
-                                    <div>
-                                        <div class="text-white font-bold">Lion (RSA Mod)</div>
-                                        <div class="text-gray-400 text-xs">Found in Kruger biome. Neutral unless provoked.</div>
-                                    </div>
+                                <div class="flex items-center gap-2 text-gray-300 bg-[#0a0a0a] p-2 rounded">
+                                    <span>🪨</span>
+                                    <span><strong>Stone:</strong> Better, can mine iron. Durability: 132</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-300 bg-[#0a0a0a] p-2 rounded">
+                                    <span>⚙️</span>
+                                    <span><strong>Iron:</strong> Strong, can mine diamond. Durability: 251</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-gray-300 bg-[#0a0a0a] p-2 rounded">
+                                    <span>💎</span>
+                                    <span><strong>Diamond:</strong> Best speed & durability. Durability: 1,562</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-[#FFB612] bg-[#0a0a0a] p-2 rounded">
+                                    <span>✨</span>
+                                    <span><strong>Netherite:</strong> Upgrade diamond at smithing table!</span>
                                 </div>
                             </div>
                         </div>
@@ -1749,72 +2074,141 @@
                 return `
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
-                            <h2 class="text-2xl text-[#FFB612] font-bold">🗺️ SOUTH AFRICA ANIMAL MAP 🗺️</h2>
-                            <p class="text-gray-400 text-sm">Explore parks, cities, and where animals live!</p>
+                            <h2 class="text-2xl text-[#FFB612] font-bold">🗺️ 3D SOUTH AFRICA MAP 🗺️</h2>
+                            <p class="text-gray-400 text-sm">12 National Parks • 15 Animal Species • 12 Cities</p>
                         </div>
 
                         <div class="sa-map-container rounded-lg p-4">
-                            <div class="relative" style="padding-bottom: 120%;">
+                            <div class="relative sa-map-3d" style="padding-bottom: 120%;">
                                 <svg class="sa-map-svg absolute inset-0 w-full h-full" viewBox="0 0 100 120" preserveAspectRatio="xMidYMid meet">
+                                    <!-- Terrain/Elevation Layer -->
+                                    <defs>
+                                        <linearGradient id="lowland" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#2d5016;stop-opacity:0.3" />
+                                            <stop offset="100%" style="stop-color:#3d6b1f;stop-opacity:0.3" />
+                                        </linearGradient>
+                                        <linearGradient id="highland" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#8B4513;stop-opacity:0.3" />
+                                            <stop offset="100%" style="stop-color:#654321;stop-opacity:0.3" />
+                                        </linearGradient>
+                                        <filter id="glow">
+                                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                            <feMerge>
+                                                <feMergeNode in="coloredBlur"/>
+                                                <feMergeNode in="SourceGraphic"/>
+                                            </feMerge>
+                                        </filter>
+                                    </defs>
+
+                                    <!-- Elevation Zones -->
+                                    <ellipse cx="25" cy="25" rx="15" ry="12" fill="url(#highland)" class="terrain-layer"/>
+                                    <ellipse cx="20" cy="85" rx="10" ry="8" fill="url(#highland)" class="terrain-layer"/>
+                                    <ellipse cx="55" cy="45" rx="12" ry="10" fill="url(#lowland)" class="terrain-layer"/>
+                                    <ellipse cx="72" y="65" rx="8" ry="6" fill="url(#lowland)" class="terrain-layer"/>
+
                                     <!-- Province backgrounds -->
                                     <path class="map-region" d="M45,20 L65,15 L75,25 L70,40 L50,45 L40,35 Z" fill="#1a2f1a" opacity="0.5"/>
                                     <path class="map-region" d="M65,15 L85,20 L90,40 L70,40 L75,25 Z" fill="#1a1a2f" opacity="0.5"/>
                                     <path class="map-region" d="M40,35 L50,45 L70,40 L75,55 L60,70 L35,60 Z" fill="#2f1a1a" opacity="0.5"/>
                                     <path class="map-region" d="M35,60 L60,70 L70,85 L50,95 L25,80 Z" fill="#1a2f2f" opacity="0.5"/>
                                     
-                                    <!-- South Africa outline -->
+                                    <!-- South Africa outline with 3D effect -->
                                     <path class="map-region" d="M20,10 L80,10 L85,30 L90,50 L85,70 L80,90 L70,100 L60,110 L40,115 L30,110 L20,100 L15,80 L10,60 L15,40 L20,10 Z" 
                                           fill="#1a1a1a" stroke="#007749" stroke-width="2"
-                                          onclick="app.showRegionInfo('south-africa')"/>
+                                          onclick="app.showRegionInfo('south-africa')"
+                                          filter="url(#glow)"/>
                                     
+                                    <!-- Shadow for 3D effect -->
+                                    <path d="M22,12 L82,12 L87,32 L92,52 L87,72 L82,92 L72,102 L62,112 L42,117 L32,112 L22,102 L17,82 L12,62 L17,42 L22,12 Z" 
+                                          fill="none" stroke="#000" stroke-width="3" opacity="0.3" transform="translate(2,2)"/>
+
                                     <!-- Major Rivers -->
-                                    <path class="river-path" d="M60,20 Q65,40 62,60 Q60,80 65,100" />
+                                    <path class="river-path" d="M60,20 Q65,40 62,60 Q60,80 65,100" stroke-width="3"/>
                                     <path class="river-path" d="M30,50 Q40,55 50,50 Q60,45 70,50" />
-                                    <text x="62" y="75" fill="#4a90e2" font-size="2.5" opacity="0.7">Orange River</text>
+                                    <path class="river-path" d="M45,60 Q50,70 48,85" opacity="0.5"/>
+                                    <text x="62" y="75" fill="#4a90e2" font-size="2.5" opacity="0.8" font-family="VT323">Orange River</text>
+                                    <text x="35" y="52" fill="#4a90e2" font-size="2" opacity="0.7" font-family="VT323">Limpopo River</text>
                                     
-                                    <!-- Mountain ranges -->
-                                    <path class="mountain-range" d="M15,85 L25,80 L35,85 L30,90 L20,92 Z" />
-                                    <text x="25" y="88" fill="#718096" font-size="2">Cape Mountains</text>
-                                    
-                                    <path class="mountain-range" d="M55,15 L65,12 L75,15 L70,20 L60,18 Z" />
-                                    <text x="65" y="25" fill="#718096" font-size="2">Soutpansberg</text>
-                                    
-                                    <!-- Kruger National Park -->
-                                    <ellipse cx="70" cy="35" rx="12" ry="10" fill="#007749" opacity="0.3" stroke="#007749" stroke-width="1.5"/>
-                                    <text x="70" y="32" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323" font-weight="bold">KRUGER NP</text>
-                                    <text x="70" y="36" text-anchor="middle" fill="#007749" font-size="2">19,623 km²</text>
+                                    <!-- Mountain ranges with 3D peaks -->
+                                    <path class="mountain-range" d="M15,85 L18,80 L21,85 L24,80 L27,85 L25,88 L20,90 L15,88 Z" />
+                                    <path class="mountain-range" d="M55,15 L58,10 L61,15 L64,10 L67,15 L65,18 L60,20 L55,18 Z" />
+                                    <path class="mountain-range" d="M40,85 L43,78 L46,85 L49,78 L52,85 L50,88 L45,90 L40,88 Z" />
+                                    <text x="25" y="88" fill="#718096" font-size="2" font-family="VT323">Cape Fold Mountains</text>
+                                    <text x="65" y="25" fill="#718096" font-size="2" font-family="VT323">Soutpansberg</text>
+
+                                    <!-- Kruger National Park - Enhanced -->
+                                    <ellipse cx="70" cy="35" rx="14" ry="12" fill="#007749" opacity="0.2" stroke="#007749" stroke-width="2" class="park-zone"/>
+                                    <ellipse cx="70" cy="35" rx="12" ry="10" fill="none" stroke="#007749" stroke-width="1" stroke-dasharray="2,2"/>
+                                    <text x="70" y="32" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323" font-weight="bold" class="park-label">KRUGER NATIONAL PARK</text>
+                                    <text x="70" y="36" text-anchor="middle" fill="#007749" font-size="2" font-family="VT323">19,623 km² • Est. 1926</text>
                                     
                                     <!-- Kruger camps -->
-                                    <circle cx="68" cy="30" r="1.5" fill="#FFB612" opacity="0.8"/>
-                                    <text x="68" y="28" text-anchor="middle" fill="#FFB612" font-size="1.8">Satara</text>
-                                    <circle cx="72" cy="38" r="1.5" fill="#FFB612" opacity="0.8"/>
-                                    <text x="72" y="42" text-anchor="middle" fill="#FFB612" font-size="1.8">Skukuza</text>
-                                    
-                                    <!-- Addo -->
-                                    <ellipse cx="78" cy="75" rx="8" ry="6" fill="#FFB612" opacity="0.3" stroke="#FFB612" stroke-width="1.5"/>
-                                    <text x="78" y="76" text-anchor="middle" fill="#FFB612" font-size="2.5" font-weight="bold">ADDO</text>
-                                    
+                                    <circle cx="68" cy="30" r="1.5" fill="#FFB612" opacity="0.9"/>
+                                    <text x="68" y="28" text-anchor="middle" fill="#FFB612" font-size="1.8" font-family="VT323">Satara</text>
+                                    <circle cx="72" cy="38" r="1.5" fill="#FFB612" opacity="0.9"/>
+                                    <text x="72" y="42" text-anchor="middle" fill="#FFB612" font-size="1.8" font-family="VT323">Skukuza</text>
+                                    <circle cx="75" cy="32" r="1" fill="#FFB612" opacity="0.7"/>
+                                    <text x="75" y="30" text-anchor="middle" fill="#FFB612" font-size="1.5" font-family="VT323">Pafuri</text>
+
+                                    <!-- Addo Elephant Park -->
+                                    <ellipse cx="78" cy="75" rx="9" ry="7" fill="#FFB612" opacity="0.2" stroke="#FFB612" stroke-width="2" class="park-zone"/>
+                                    <text x="78" y="76" text-anchor="middle" fill="#FFB612" font-size="2.5" font-weight="bold" font-family="VT323" class="park-label">ADDO</text>
+                                    <text x="78" y="79" text-anchor="middle" fill="#FFB612" font-size="1.5" font-family="VT323">Big 7 Park</text>
+
                                     <!-- Kgalagadi -->
-                                    <ellipse cx="25" cy="25" rx="10" ry="12" fill="#DE3831" opacity="0.3" stroke="#DE3831" stroke-width="1.5"/>
-                                    <text x="25" y="23" text-anchor="middle" fill="#DE3831" font-size="2.5" font-weight="bold">KGALAGADI</text>
-                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="1.8">Transfrontier</text>
-                                    
+                                    <ellipse cx="25" cy="25" rx="12" ry="14" fill="#DE3831" opacity="0.2" stroke="#DE3831" stroke-width="2" class="park-zone"/>
+                                    <text x="25" y="23" text-anchor="middle" fill="#DE3831" font-size="2.5" font-weight="bold" font-family="VT323" class="park-label">KGALAGADI</text>
+                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="1.5" font-family="VT323">Transfrontier Park</text>
+
                                     <!-- Table Mountain -->
-                                    <ellipse cx="20" cy="85" rx="6" ry="5" fill="#002395" opacity="0.3" stroke="#002395" stroke-width="1.5"/>
-                                    <text x="20" y="86" text-anchor="middle" fill="#002395" font-size="2" font-weight="bold">TABLE MTN</text>
-                                    
+                                    <ellipse cx="20" cy="85" rx="7" ry="6" fill="#002395" opacity="0.2" stroke="#002395" stroke-width="2" class="park-zone"/>
+                                    <text x="20" y="86" text-anchor="middle" fill="#002395" font-size="2" font-weight="bold" font-family="VT323" class="park-label">TABLE MTN</text>
+
+                                    <!-- Hluhluwe-iMfolozi -->
+                                    <ellipse cx="75" cy="62" rx="8" ry="6" fill="#FF6B35" opacity="0.2" stroke="#FF6B35" stroke-width="2" class="park-zone"/>
+                                    <text x="75" y="63" text-anchor="middle" fill="#FF6B35" font-size="2" font-weight="bold" font-family="VT323" class="park-label">Hluhluwe-iMfolozi</text>
+
+                                    <!-- Pilanesberg -->
+                                    <ellipse cx="48" cy="42" rx="6" ry="5" fill="#8B4513" opacity="0.2" stroke="#8B4513" stroke-width="2" class="park-zone"/>
+                                    <text x="48" y="43" text-anchor="middle" fill="#8B4513" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Pilanesberg</text>
+
+                                    <!-- iSimangaliso -->
+                                    <ellipse cx="80" cy="65" rx="7" ry="5" fill="#00CED1" opacity="0.2" stroke="#00CED1" stroke-width="2" class="park-zone"/>
+                                    <text x="80" y="66" text-anchor="middle" fill="#00CED1" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">iSimangaliso</text>
+
+                                    <!-- Mountain Zebra -->
+                                    <ellipse cx="58" y="78" rx="6" ry="5" fill="#9B59B6" opacity="0.2" stroke="#9B59B6" stroke-width="2" class="park-zone"/>
+                                    <text x="58" y="79" text-anchor="middle" fill="#9B59B6" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Mountain Zebra</text>
+
+                                    <!-- Karoo -->
+                                    <ellipse cx="38" y="65" rx="8" ry="6" fill="#D2691E" opacity="0.2" stroke="#D2691E" stroke-width="2" class="park-zone"/>
+                                    <text x="38" y="66" text-anchor="middle" fill="#D2691E" font-size="2" font-weight="bold" font-family="VT323" class="park-label">Karoo NP</text>
+
+                                    <!-- Augrabies -->
+                                    <ellipse cx="28" y="35" rx="5" ry="6" fill="#E74C3C" opacity="0.2" stroke="#E74C3C" stroke-width="2" class="park-zone"/>
+                                    <text x="28" y="36" text-anchor="middle" fill="#E74C3C" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Augrabies</text>
+
+                                    <!-- Marakele -->
+                                    <ellipse cx="52" y="22" rx="6" ry="5" fill="#27AE60" opacity="0.2" stroke="#27AE60" stroke-width="2" class="park-zone"/>
+                                    <text x="52" y="23" text-anchor="middle" fill="#27AE60" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Marakele</text>
+
                                     <!-- Scale -->
-                                    <line x1="75" y1="105" x2="90" y2="105" stroke="#666" stroke-width="1"/>
-                                    <line x1="75" y1="104" x2="75" y2="106" stroke="#666" stroke-width="1"/>
-                                    <line x1="90" y1="104" x2="90" y2="106" stroke="#666" stroke-width="1"/>
-                                    <text x="82.5" y="108" text-anchor="middle" fill="#666" font-size="2">300 km</text>
+                                    <line x1="75" y1="115" x2="90" y2="115" stroke="#666" stroke-width="1"/>
+                                    <line x1="75" y1="114" x2="75" y2="116" stroke="#666" stroke-width="1"/>
+                                    <line x1="90" y1="114" x2="90" y2="116" stroke="#666" stroke-width="1"/>
+                                    <text x="82.5" y="118" text-anchor="middle" fill="#666" font-size="2" font-family="VT323">300 km</text>
+
+                                    <!-- Compass -->
+                                    <circle cx="88" cy="12" r="4" fill="none" stroke="#FFB612" stroke-width="1"/>
+                                    <text x="88" y="10" text-anchor="middle" fill="#FFB612" font-size="3" font-family="VT323">N</text>
+                                    <line x1="88" y1="12" x2="88" y2="8" stroke="#FFB612" stroke-width="1"/>
                                 </svg>
 
                                 <!-- City markers -->
                                 ${this.cities.map(city => `
                                     <div class="city-marker" style="left: ${city.x}%; top: ${city.y}%;" onclick="app.showCityInfo('${city.name}')">
                                         <div class="city-dot"></div>
-                                        <div class="city-label">${city.name}</div>
+                                        <div class="city-label">${city.name}${city.oldName ? ` <span style="font-size:0.6rem;opacity:0.7">(${city.oldName})</span>` : ''}</div>
                                     </div>
                                 `).join('')}
 
@@ -1825,44 +2219,57 @@
                                         <div class="marker-tooltip">
                                             <strong>${animal.name}</strong><br>
                                             📍 ${animal.camp}<br>
-                                            🕐 ${animal.bestTime}
+                                            🕐 ${animal.bestTime}<br>
+                                            ${animal.threat ? `⚠️ ${animal.threat}` : ''}
                                         </div>
                                     </div>
                                 `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Elevation Legend -->
+                        <div class="bg-[#111] border border-[#333] p-3 rounded">
+                            <h4 class="text-white font-bold text-sm mb-2">🏔️ Elevation & Terrain</h4>
+                            <div class="elevation-legend"></div>
+                            <div class="flex justify-between text-xs text-gray-400 mt-1">
+                                <span>Lowland</span>
+                                <span>Highland</span>
+                                <span>Mountain</span>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="map-legend">
-                                <h4 class="text-[#FFB612] font-bold mb-2 text-sm">🏕️ PARKS</h4>
-                                ${this.saRegions.map(region => `
-                                    <div class="legend-item">
-                                        <div class="w-3 h-3 rounded-full" style="background: ${region.color}"></div>
-                                        <div>
-                                            <span class="text-white font-bold text-xs">${region.name}</span>
+                                <h4 class="text-[#FFB612] font-bold mb-2 text-sm">🏕️ NATIONAL PARKS (12)</h4>
+                                <div class="max-h-32 overflow-y-auto space-y-1">
+                                    ${this.saRegions.map(region => `
+                                        <div class="legend-item cursor-pointer hover:bg-[#222] p-1 rounded" onclick="app.showRegionDetail('${region.name}')">
+                                            <div class="w-3 h-3 rounded-full shrink-0" style="background: ${region.color}"></div>
+                                            <div class="min-w-0">
+                                                <span class="text-white font-bold text-xs truncate block">${region.name}</span>
+                                                <span class="text-gray-500 text-[10px]">${region.size}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                `).join('')}
+                                    `).join('')}
+                                </div>
                             </div>
                             <div class="map-legend">
-                                <h4 class="text-[#007749] font-bold mb-2 text-sm">🏙️ CITIES</h4>
-                                <div class="legend-item">
-                                    <div class="w-2 h-2 rounded-full bg-white"></div>
-                                    <span class="text-gray-300 text-xs">Major Cities</span>
+                                <h4 class="text-[#007749] font-bold mb-2 text-sm">🦒 ANIMALS (15)</h4>
+                                <div class="grid grid-cols-2 gap-1 text-xs">
+                                    ${[...new Set(this.animalLocations.map(a => a.name))].map(animal => {
+                                        const emoji = this.animalLocations.find(a => a.name === animal).emoji;
+                                        return `<div class="flex items-center gap-1 text-gray-300"><span>${emoji}</span><span class="truncate">${animal}</span></div>`;
+                                    }).join('')}
                                 </div>
-                                <div class="legend-item">
-                                    <div class="w-3 h-0.5 bg-blue-400"></div>
-                                    <span class="text-gray-300 text-xs">Rivers</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="w-3 h-3 bg-gray-600" style="clip-path: polygon(50% 0%, 100% 100%, 0% 100%)"></div>
-                                    <span class="text-gray-300 text-xs">Mountains</span>
+                                <h4 class="text-[#007749] font-bold mb-2 text-sm mt-3">🏙️ CITIES (12)</h4>
+                                <div class="text-xs text-gray-400">
+                                    Including Gqeberha (formerly PE), Mbombela, and more!
                                 </div>
                             </div>
                         </div>
 
                         <div class="region-info" id="region-info" style="display: none;">
-                            <h4 class="text-[#007749] font-bold mb-2">ℹ️ REGION INFO</h4>
+                            <h4 class="text-[#007749] font-bold mb-2">ℹ️ DETAILED INFORMATION</h4>
                             <p class="text-gray-300 text-sm" id="region-text">Tap on a park, city, or animal to learn more!</p>
                         </div>
 
@@ -1876,7 +2283,28 @@
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
                             <h2 class="text-2xl text-[#FFB612] font-bold">🚙 GAME DRIVE ADVENTURE 🦓</h2>
-                            <p class="text-gray-400 text-sm">Learn about South Africa's amazing animals!</p>
+                            <p class="text-gray-400 text-sm">15 Amazing Animals across 12 National Parks!</p>
+                        </div>
+
+                        <div class="bg-[#111] border-2 border-[#007749] p-3 rounded mb-4">
+                            <h3 class="text-[#FFB612] font-bold mb-2">🎯 QUICK STATS</h3>
+                            <div class="grid grid-cols-3 gap-2 text-center">
+                                <div class="bg-[#0a0a0a] p-2 rounded">
+                                    <div class="text-2xl">🦁</div>
+                                    <div class="text-white font-bold">Big Five</div>
+                                    <div class="text-gray-500 text-xs">All parks</div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 rounded">
+                                    <div class="text-2xl">🦏</div>
+                                    <div class="text-white font-bold">Rhinos</div>
+                                    <div class="text-gray-500 text-xs">Black & White</div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 rounded">
+                                    <div class="text-2xl">🐧</div>
+                                    <div class="text-white font-bold">Marine</div>
+                                    <div class="text-gray-500 text-xs">Big 7 parks</div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="space-y-3">
@@ -1884,17 +2312,17 @@
                                 <div class="animal-card rounded-lg p-4" onclick="app.showAnimalDetail(${idx})">
                                     <div class="flex items-center gap-3 mb-2">
                                         <span class="text-4xl">${animal.emoji}</span>
-                                        <div>
+                                        <div class="flex-grow">
                                             <h3 class="text-white font-bold text-lg">${animal.name}</h3>
                                             <span class="text-[#007749] text-xs">📍 ${animal.region}</span>
                                             <span class="text-[#FFB612] text-xs ml-2">🏕️ ${animal.camp}</span>
                                         </div>
+                                        ${animal.threat ? `<span class="text-xs px-2 py-1 rounded ${animal.threat === 'Critically Endangered' ? 'bg-red-900 text-red-200' : animal.threat === 'Endangered' ? 'bg-orange-900 text-orange-200' : 'bg-yellow-900 text-yellow-200'}">${animal.threat}</span>` : ''}
                                     </div>
                                     <p class="text-gray-300 text-sm mb-2">${animal.fact}</p>
                                     <div class="flex gap-2 flex-wrap">
                                         <span class="bg-[#FFB612]/20 text-[#FFB612] px-2 py-1 rounded text-xs">🕐 ${animal.bestTime}</span>
                                         <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">🍽️ ${animal.diet}</span>
-                                        <span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">Tap for map!</span>
                                     </div>
                                 </div>
                             `).join('')}
@@ -1911,11 +2339,14 @@
                             <div class="fact-box rounded">
                                 <p class="text-gray-300 text-sm">📸 <strong>Bring Binoculars:</strong> Animals might be far away. Binoculars help you see them better!</p>
                             </div>
+                            <div class="fact-box rounded">
+                                <p class="text-gray-300 text-sm">🎨 <strong>Camouflage:</strong> Wear neutral colors (khaki, brown, green) - bright colors scare wildlife!</p>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
                             <button onclick="app.navigate('map')" class="mc-btn mc-btn-blue py-3 rounded">
-                                🗺️ View Map
+                                🗺️ View Full Map
                             </button>
                             <button onclick="app.navigate('home')" class="mc-btn py-3 rounded">
                                 ← Back Home
@@ -2146,7 +2577,6 @@
                 for (let row = 0; row < 3; row++) {
                     for (let col = 0; col < 3; col++) {
                         if (recipe.pattern[row][col] === 'x') {
-                            // Determine which item goes here based on position and recipe
                             let item = null;
                             if (recipeKey.includes('pickaxe')) {
                                 if (row === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : recipeKey.includes('iron') ? 'iron' : 'diamond';
@@ -2161,17 +2591,6 @@
                                 else if (row === 1 && col === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : 'iron';
                                 else if (row === 1 && col === 1) item = 'stick';
                                 else if (row === 2 && col === 1) item = 'stick';
-                            }
-                            else if (recipeKey.includes('shovel')) {
-                                if (row === 0 && col === 1) item = recipeKey.includes('wood') ? 'planks' : 'stone';
-                                else if (row > 0 && col === 1) item = 'stick';
-                            }
-                            else if (recipeKey === 'torch') {
-                                if (row === 0 && col === 1) item = 'coal';
-                                else if (row === 1 && col === 1) item = 'stick';
-                            }
-                            else if (recipeKey === 'chest') {
-                                if (!(row === 1 && col === 1)) item = 'planks';
                             }
                             
                             if (item) this.craftingGrid[row][col] = item;
@@ -2223,26 +2642,6 @@
                 document.getElementById('successPopup').classList.remove('visible');
             },
 
-            closeHelper() {
-                document.getElementById('craftingHelper').classList.remove('visible');
-            },
-
-            showRecipeGuide() {
-                alert(`📖 MINECRAFT CRAFTING GUIDE 📖\n\n` +
-                      `PICKAXES (3 top + 2 sticks middle):\n` +
-                      `⛏️ Wood: 3 planks + 2 sticks\n` +
-                      `⛏️ Stone: 3 cobblestone + 2 sticks\n` +
-                      `⛏️ Iron: 3 iron + 2 sticks\n` +
-                      `⛏️ Diamond: 3 diamonds + 2 sticks\n\n` +
-                      `SWORDS (middle column):\n` +
-                      `🗡️ 2 materials + 1 stick below\n\n` +
-                      `AXES (L-shape + stick):\n` +
-                      `🪓 3 planks + 2 sticks\n\n` +
-                      `CHEST (ring of 8):\n` +
-                      `📦 8 planks in circle\n\n` +
-                      `Tap any recipe above to auto-fill!`);
-            },
-
             showBlockInfo(idx) {
                 const block = this.minecraftBlocks[idx];
                 alert(`🧱 ${block.name}\n\n${block.desc}\n\n🔨 Best tool: ${block.tool}\n\n💡 Tip: Use the right tool to mine faster!`);
@@ -2257,6 +2656,7 @@
                                `📍 ${animal.region} - ${animal.camp}<br>` +
                                `🕐 Best time: ${animal.bestTime}<br>` +
                                `🍽️ Diet: ${animal.diet}<br>` +
+                               `${animal.threat ? `⚠️ Status: ${animal.threat}<br>` : ''}` +
                                `💡 ${animal.fact}`;
                 info.style.display = 'block';
             },
@@ -2266,8 +2666,10 @@
                 const info = document.getElementById('region-info');
                 const text = document.getElementById('region-text');
                 
-                text.innerHTML = `<strong>🏙️ ${city.name}</strong><br>` +
+                text.innerHTML = `<strong>🏙️ ${city.name}</strong>${city.oldName ? ` <span style="color:#888">(formerly ${city.oldName})</span>` : ''}<br>` +
                                `📍 Province: ${city.province}<br>` +
+                               `👥 Population: ~${city.population}<br>` +
+                               `${city.note ? `ℹ️ ${city.note}<br>` : ''}` +
                                `🌍 Major city in South Africa`;
                 info.style.display = 'block';
             },
@@ -2277,17 +2679,35 @@
                 const text = document.getElementById('region-text');
                 
                 if (regionId === 'south-africa') {
-                    text.innerHTML = '<strong>🇿🇦 South Africa</strong><br>Home to the Big Five and many amazing animals! Tap animal icons to see where they live, or tap cities to learn about them.';
+                    text.innerHTML = '<strong>🇿🇦 South Africa</strong><br>Home to the Big Five and many amazing animals! 12 national parks, 15 animal species marked on this map. Tap animal icons to see where they live, or tap cities to learn about them.';
                     info.style.display = 'block';
                 }
             },
 
+            showRegionDetail(regionName) {
+                const region = this.saRegions.find(r => r.name === regionName);
+                if (!region) return;
+                
+                const info = document.getElementById('region-info');
+                const text = document.getElementById('region-text');
+                
+                text.innerHTML = `<strong style="color:${region.color}">${region.name}</strong><br>` +
+                               `📍 ${region.province}<br>` +
+                               `📏 Size: ${region.size}<br>` +
+                               `📅 Established: ${region.established}<br>` +
+                               `🦁 Animals: ${region.animals.join(', ')}<br>` +
+                               `🏕️ Camps: ${region.camps.slice(0, 3).join(', ')}${region.camps.length > 3 ? '...' : ''}<br>` +
+                               `ℹ️ ${region.description}`;
+                info.style.display = 'block';
+            },
+
             showAnimalDetail(idx) {
                 const animal = this.animalLocations[idx];
-                alert(`🦁 ${animal.name} - ${animal.region}\n\n` +
+                alert(`${animal.emoji} ${animal.name} - ${animal.region}\n\n` +
                       `🏕️ Best camp: ${animal.camp}\n` +
                       `🕐 Best time: ${animal.bestTime}\n` +
-                      `🍽️ Diet: ${animal.diet}\n\n` +
+                      `🍽️ Diet: ${animal.diet}\n` +
+                      `${animal.threat ? `⚠️ Conservation Status: ${animal.threat}\n\n` : ''}` +
                       `${animal.fact}\n\n` +
                       `🗺️ Check the Map to see where ${animal.name}s live!`);
             },
@@ -2534,10 +2954,6 @@
                 
                 while (chatContainer.children.length > 50) {
                     chatContainer.removeChild(chatContainer.firstChild);
-                }
-                
-                if (this.currentView !== 'chat') {
-                    document.getElementById('chat-badge')?.classList.remove('hidden');
                 }
             },
 
