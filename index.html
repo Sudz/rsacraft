@@ -547,6 +547,108 @@
             font-size: 3rem;
             filter: drop-shadow(0 0 10px rgba(255, 182, 18, 0.5));
         }
+
+        /* Map Styles */
+        .sa-map-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            border: 4px solid;
+            border-color: #007749 #002d14 #002d14 #007749;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sa-map-svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(0, 119, 73, 0.3));
+        }
+
+        .map-region {
+            fill: #1a1a1a;
+            stroke: #007749;
+            stroke-width: 2;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .map-region:hover {
+            fill: #007749;
+            filter: drop-shadow(0 0 10px rgba(0, 119, 73, 0.6));
+        }
+
+        .map-region.active {
+            fill: #FFB612;
+            stroke: #FFD700;
+        }
+
+        .animal-marker {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .animal-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 20;
+        }
+
+        .animal-marker .marker-icon {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            border: 2px solid #FFB612;
+            margin-bottom: 8px;
+        }
+
+        .animal-marker:hover .marker-tooltip {
+            opacity: 1;
+        }
+
+        .map-legend {
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .region-info {
+            background: linear-gradient(135deg, #111 0%, #0a0a0a 100%);
+            border: 2px solid #007749;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col relative selection:bg-green-500 selection:text-black">
@@ -592,11 +694,17 @@
                 </svg>
                 <span class="text-xs">Servers</span>
             </button>
-            <button onclick="app.navigate('safari')" class="nav-item" data-nav="safari">
+            <button onclick="app.navigate('map')" class="nav-item" data-nav="map">
+                <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs">Map</span>
+            </button>
+            <button onclick="app.navigate('gamedrive')" class="nav-item" data-nav="gamedrive">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
                 </svg>
-                <span class="text-xs">Safari</span>
+                <span class="text-xs">Game Drive</span>
             </button>
             <button onclick="app.navigate('chat')" class="nav-item" data-nav="chat">
                 <svg class="w-6 h-6 mb-1" fill="currentColor" viewBox="0 0 20 20">
@@ -669,13 +777,13 @@
                             <input type="checkbox" id="feat-fynbos" checked class="w-4 h-4 accent-[#007749]">
                             <span class="text-gray-300">Fynbos Biome</span>
                         </label>
-                        <label class="checkbox" class="flex items-center gap-2">
+                        <label class="flex items-center gap-2">
                             <input type="checkbox" id="feat-braai" checked class="w-4 h-4 accent-[#007749]">
                             <span class="text-gray-300">Braai Stands</span>
                         </label>
                         <label class="flex items-center gap-2">
-                            <input type="checkbox" id="feat-safari" class="w-4 h-4 accent-[#007749]">
-                            <span class="text-gray-300">Safari Tours</span>
+                            <input type="checkbox" id="feat-gamedrive" class="w-4 h-4 accent-[#007749]">
+                            <span class="text-gray-300">Game Drive Tours</span>
                         </label>
                     </div>
                 </div>
@@ -934,68 +1042,99 @@
                 }
             },
 
-            safariAnimals: [
+            saRegions: [
+                {
+                    name: 'Kruger National Park',
+                    province: 'Limpopo & Mpumalanga',
+                    animals: ['Lion', 'Leopard', 'Elephant', 'Rhino', 'Buffalo'],
+                    description: 'Famous Big Five reserve! 20,000 km² of wild bush.',
+                    color: '#007749'
+                },
+                {
+                    name: 'Addo Elephant Park',
+                    province: 'Eastern Cape',
+                    animals: ['Elephant', 'Buffalo', 'Lion', 'Black Rhino', 'Penguin'],
+                    description: 'Home to over 550 elephants! Also has the Big 7 including whales and sharks.',
+                    color: '#FFB612'
+                },
+                {
+                    name: 'Kgalagadi Transfrontier Park',
+                    province: 'Northern Cape',
+                    animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah'],
+                    description: 'Red sand dunes and desert animals. Springbok antelope live here!',
+                    color: '#DE3831'
+                },
+                {
+                    name: 'Table Mountain National Park',
+                    province: 'Western Cape',
+                    animals: ['Penguin', 'Dassie', 'Baboon', 'Eland'],
+                    description: 'Famous flat-top mountain! Boulders Beach has African penguins.',
+                    color: '#002395'
+                }
+            ],
+
+            animalLocations: [
                 {
                     name: 'Lion',
                     emoji: '🦁',
-                    fact: 'Lions are the only cats that live in groups called prides! Female lions do most of the hunting.',
-                    location: 'Kruger National Park',
-                    diet: 'Carnivore',
-                    funFact: 'A lion\'s roar can be heard from 8 kilometers away!'
+                    x: 65, y: 35,
+                    region: 'Kruger National Park',
+                    fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions!',
+                    bestTime: 'Dawn or dusk'
                 },
                 {
                     name: 'Elephant',
                     emoji: '🐘',
-                    fact: 'Elephants are the largest land animals! They use their trunks like hands to eat and drink.',
-                    location: 'Addo Elephant Park',
-                    diet: 'Herbivore',
-                    funFact: 'Elephants can live up to 70 years and have amazing memories!'
+                    x: 70, y: 40,
+                    region: 'Kruger National Park',
+                    fact: 'Also found at Addo! Drink 200 liters of water per day.',
+                    bestTime: 'Early morning'
                 },
                 {
                     name: 'Springbok',
                     emoji: '🦌',
-                    fact: 'The Springbok is South Africa\'s national animal! They can run up to 88 km/h.',
-                    location: 'Kalahari Desert',
-                    diet: 'Herbivore',
-                    funFact: 'Springboks can jump 3 meters high when excited - called "pronking"!'
+                    x: 25, y: 25,
+                    region: 'Kgalagadi Transfrontier Park',
+                    fact: 'National animal! Can jump 3 meters high - called "pronking".',
+                    bestTime: 'All day'
                 },
                 {
                     name: 'Penguin',
                     emoji: '🐧',
-                    fact: 'African Penguins live on the Cape coast! They are also called "jackass penguins" because of their braying sound.',
-                    location: 'Boulders Beach, Cape Town',
-                    diet: 'Fish & squid',
-                    funFact: 'They have pink glands above their eyes to cool down!'
+                    x: 20, y: 85,
+                    region: 'Table Mountain National Park',
+                    fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa!',
+                    bestTime: 'Morning (fewer crowds)'
                 },
                 {
                     name: 'Meerkat',
                     emoji: '🦦',
-                    fact: 'Meerkats live in underground burrows and work together to find food and watch for danger.',
-                    location: 'Kalahari',
-                    diet: 'Insects & small animals',
-                    funFact: 'One meerkat always stands guard while others eat!'
+                    x: 30, y: 30,
+                    region: 'Kgalagadi Transfrontier Park',
+                    fact: 'Live in families called "mobs". One always stands guard!',
+                    bestTime: 'Early morning'
                 },
                 {
                     name: 'Rhino',
                     emoji: '🦏',
-                    fact: 'Rhinos have thick skin but are gentle giants! They love mud baths to cool off.',
-                    location: 'Hluhluwe-Imfolozi Park',
-                    diet: 'Herbivore',
-                    funFact: 'A rhino\'s horn is made of keratin - same as your fingernails!'
+                    x: 60, y: 45,
+                    region: 'Kruger National Park',
+                    fact: '85% of white rhinos live in southern Kruger. Love mud baths!',
+                    bestTime: 'Early morning'
+                },
+                {
+                    name: 'African Penguin',
+                    emoji: '🐧',
+                    x: 75, y: 75,
+                    region: 'Addo Elephant Park',
+                    fact: 'Marine section has penguins! Addo is the only Big 7 park.',
+                    bestTime: 'All year'
                 }
-            ],
-
-            saLandmarks: [
-                { name: 'Table Mountain', emoji: '⛰️', city: 'Cape Town', fact: 'One of the New7Wonders of Nature! Flat top looks like a table.' },
-                { name: 'Kruger National Park', emoji: '🏞️', city: 'Limpopo/MP', fact: 'Bigger than the whole of Israel! Home to the Big Five.' },
-                { name: 'Union Buildings', emoji: '🏛️', city: 'Pretoria', fact: 'Where the President works! Beautiful gardens to visit.' },
-                { name: 'Valley of Desolation', emoji: '🌄', city: 'Graaff-Reinet', fact: 'Amazing rock formations in the Camdeboo National Park.' },
-                { name: 'Cradle of Humankind', emoji: '🦴', city: 'Johannesburg', fact: 'Where early humans lived! UNESCO World Heritage Site.' }
             ],
 
             init() {
                 this.servers = [
-                    { id: '1', name: '🇿🇦 KrugerCraft SA', type: 'spigot', mode: 'Safari Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
+                    { id: '1', name: '🇿🇦 KrugerCraft SA', type: 'spigot', mode: 'Game Drive Survival', players: 1247, max: 5000, status: 'Online', ip: 'kruger.craft.co.za', region: 'jhb' },
                     { id: '2', name: '🇿🇦 Table Mountain SMP', type: 'paper', mode: 'Survival', players: 89, max: 200, status: 'Online', ip: 'tablemtn.co.za', region: 'cpt' },
                     { id: '3', name: '🇿🇦 Springbok Creative', type: 'vanilla', mode: 'Creative', players: 34, max: 100, status: 'Online', ip: 'springbok.build', region: 'cpt' },
                     { id: '4', name: '🇿🇦 Durban Diving', type: 'spigot', mode: 'Adventure', players: 12, max: 50, status: 'Online', ip: 'durban.dive', region: 'dur' }
@@ -1021,8 +1160,11 @@
                     case 'servers':
                         container.innerHTML = this.renderServers();
                         break;
-                    case 'safari':
-                        container.innerHTML = this.renderSafari();
+                    case 'map':
+                        container.innerHTML = this.renderMap();
+                        break;
+                    case 'gamedrive':
+                        container.innerHTML = this.renderGameDrive();
                         break;
                     case 'chat':
                         container.innerHTML = this.renderChat();
@@ -1128,12 +1270,19 @@
                         </div>
 
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-white text-sm font-bold mb-3">LEARN ABOUT SOUTH AFRICA!</h3>
+                            <h3 class="text-white text-sm font-bold mb-3">EXPLORE SOUTH AFRICA!</h3>
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('safari')">
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('map')">
+                                    <span class="text-2xl">🗺️</span>
+                                    <div>
+                                        <div class="text-white text-sm font-bold">Animal Map</div>
+                                        <div class="text-gray-500 text-xs">Where animals live!</div>
+                                    </div>
+                                </div>
+                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('gamedrive')">
                                     <span class="text-2xl">🦁</span>
                                     <div>
-                                        <div class="text-white text-sm font-bold">Big Five</div>
+                                        <div class="text-white text-sm font-bold">Game Drive</div>
                                         <div class="text-gray-500 text-xs">Meet the animals!</div>
                                     </div>
                                 </div>
@@ -1149,13 +1298,6 @@
                                     <div>
                                         <div class="text-white text-sm font-bold">Yummy Food</div>
                                         <div class="text-gray-500 text-xs">Bobotie & more!</div>
-                                    </div>
-                                </div>
-                                <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.showLanguage()">
-                                    <span class="text-2xl">🇿🇦</span>
-                                    <div>
-                                        <div class="text-white text-sm font-bold">SA Words</div>
-                                        <div class="text-gray-500 text-xs">Learn slang!</div>
                                     </div>
                                 </div>
                             </div>
@@ -1188,41 +1330,129 @@
                 `;
             },
 
-            renderSafari() {
+            renderMap() {
                 return `
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
-                            <h2 class="text-2xl text-[#FFB612] font-bold">🦁 SA SAFARI ADVENTURE 🦓</h2>
+                            <h2 class="text-2xl text-[#FFB612] font-bold">🗺️ SOUTH AFRICA ANIMAL MAP 🗺️</h2>
+                            <p class="text-gray-400 text-sm">Tap animals to see where they live!</p>
+                        </div>
+
+                        <div class="sa-map-container rounded-lg p-4">
+                            <div class="relative" style="padding-bottom: 120%;">
+                                <svg class="sa-map-svg absolute inset-0 w-full h-full" viewBox="0 0 100 120" preserveAspectRatio="xMidYMid meet">
+                                    <!-- South Africa outline -->
+                                    <path class="map-region" d="M20,10 L80,10 L85,30 L90,50 L85,70 L80,90 L70,100 L60,110 L40,115 L30,110 L20,100 L15,80 L10,60 L15,40 L20,10 Z" 
+                                          fill="#1a1a1a" stroke="#007749" stroke-width="2"
+                                          onclick="app.showRegionInfo('south-africa')"/>
+                                    
+                                    <!-- Province boundaries (simplified) -->
+                                    <path d="M20,10 L50,10 L50,40 L20,40 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
+                                    <path d="M50,10 L80,10 L85,30 L50,40 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
+                                    <path d="M20,40 L50,40 L55,60 L20,60 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
+                                    <path d="M50,40 L85,30 L90,50 L55,60 Z" fill="none" stroke="#333" stroke-width="0.5" opacity="0.5"/>
+                                    
+                                    <!-- Kruger National Park area -->
+                                    <ellipse cx="70" cy="35" rx="12" ry="8" fill="#007749" opacity="0.3" stroke="#007749" stroke-width="1"/>
+                                    <text x="70" y="37" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323">Kruger NP</text>
+                                    
+                                    <!-- Addo area -->
+                                    <ellipse cx="78" cy="75" rx="8" ry="6" fill="#FFB612" opacity="0.3" stroke="#FFB612" stroke-width="1"/>
+                                    <text x="78" y="77" text-anchor="middle" fill="#FFB612" font-size="3" font-family="VT323">Addo</text>
+                                    
+                                    <!-- Kgalagadi area -->
+                                    <ellipse cx="25" cy="25" rx="10" ry="8" fill="#DE3831" opacity="0.3" stroke="#DE3831" stroke-width="1"/>
+                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="3" font-family="VT323">Kgalagadi</text>
+                                    
+                                    <!-- Table Mountain area -->
+                                    <ellipse cx="20" cy="85" rx="6" ry="5" fill="#002395" opacity="0.3" stroke="#002395" stroke-width="1"/>
+                                    <text x="20" y="87" text-anchor="middle" fill="#002395" font-size="3" font-family="VT323">Table Mtn</text>
+                                </svg>
+
+                                <!-- Animal markers positioned absolutely -->
+                                ${this.animalLocations.map((animal, idx) => `
+                                    <div class="animal-marker" style="left: ${animal.x}%; top: ${animal.y}%;" onclick="app.showAnimalOnMap(${idx})">
+                                        <div class="marker-icon">${animal.emoji}</div>
+                                        <div class="marker-tooltip">
+                                            <strong>${animal.name}</strong><br>
+                                            ${animal.region}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="map-legend">
+                            <h4 class="text-[#FFB612] font-bold mb-2">📍 PARKS & REGIONS</h4>
+                            ${this.saRegions.map(region => `
+                                <div class="legend-item">
+                                    <div class="w-3 h-3 rounded-full" style="background: ${region.color}"></div>
+                                    <div>
+                                        <span class="text-white font-bold">${region.name}</span>
+                                        <span class="text-gray-400 text-xs"> - ${region.province}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="region-info" id="region-info" style="display: none;">
+                            <h4 class="text-[#007749] font-bold mb-2">ℹ️ REGION INFO</h4>
+                            <p class="text-gray-300 text-sm" id="region-text">Tap on a park region to learn more!</p>
+                        </div>
+
+                        <button onclick="app.navigate('home')" class="mc-btn w-full py-3 rounded mt-4">← Back to Home</button>
+                    </div>
+                `;
+            },
+
+            renderGameDrive() {
+                return `
+                    <div class="slide-in space-y-4 pt-2">
+                        <div class="text-center mb-4">
+                            <h2 class="text-2xl text-[#FFB612] font-bold">🚙 GAME DRIVE ADVENTURE 🦓</h2>
                             <p class="text-gray-400 text-sm">Learn about South Africa's amazing animals!</p>
                         </div>
 
                         <div class="space-y-3">
-                            ${this.safariAnimals.map((animal, idx) => `
+                            ${this.animalLocations.map((animal, idx) => `
                                 <div class="animal-card rounded-lg p-4" onclick="app.showAnimalDetail(${idx})">
                                     <div class="flex items-center gap-3 mb-2">
                                         <span class="text-4xl">${animal.emoji}</span>
                                         <div>
                                             <h3 class="text-white font-bold text-lg">${animal.name}</h3>
-                                            <span class="text-[#007749] text-xs">📍 ${animal.location}</span>
+                                            <span class="text-[#007749] text-xs">📍 ${animal.region}</span>
                                         </div>
                                     </div>
                                     <p class="text-gray-300 text-sm mb-2">${animal.fact}</p>
                                     <div class="flex gap-2">
-                                        <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">${animal.diet}</span>
-                                        <span class="bg-[#FFB612]/20 text-[#FFB612] px-2 py-1 rounded text-xs">Tap for more!</span>
+                                        <span class="bg-[#FFB612]/20 text-[#FFB612] px-2 py-1 rounded text-xs">🕐 ${animal.bestTime}</span>
+                                        <span class="bg-[#007749]/20 text-[#007749] px-2 py-1 rounded text-xs">Tap for map!</span>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
 
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded mt-4">
-                            <h3 class="text-white text-sm font-bold mb-2">🎯 DID YOU KNOW?</h3>
+                            <h3 class="text-white text-sm font-bold mb-2">🎯 GAME DRIVE TIPS</h3>
                             <div class="fact-box rounded">
-                                <p class="text-gray-300 text-sm">South Africa is home to the <strong class="text-[#FFB612]">Big Five</strong>: Lion, Leopard, Rhino, Elephant, and Buffalo! This name comes from being the hardest animals to hunt on foot (but we just take photos now!).</p>
+                                <p class="text-gray-300 text-sm">🌅 <strong>Best Time:</strong> Early morning (6-9 AM) or late afternoon (4-6 PM) when animals are most active!</p>
+                            </div>
+                            <div class="fact-box rounded">
+                                <p class="text-gray-300 text-sm">🤫 <strong>Be Quiet:</strong> Loud noises scare animals away. Whisper and stay in your vehicle!</p>
+                            </div>
+                            <div class="fact-box rounded">
+                                <p class="text-gray-300 text-sm">📸 <strong>Bring Binoculars:</strong> Animals might be far away. Binoculars help you see them better!</p>
                             </div>
                         </div>
 
-                        <button onclick="app.navigate('home')" class="mc-btn w-full py-3 rounded mt-4">← Back to Home</button>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="app.navigate('map')" class="mc-btn mc-btn-blue py-3 rounded">
+                                🗺️ View Map
+                            </button>
+                            <button onclick="app.navigate('home')" class="mc-btn py-3 rounded">
+                                ← Back Home
+                            </button>
+                        </div>
                     </div>
                 `;
             },
@@ -1262,7 +1492,7 @@
                         
                         <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
                             <button class="mc-btn active-green px-3 py-1 text-sm whitespace-nowrap rounded">All</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Safari</button>
+                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Game Drive</button>
                             <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Creative</button>
                             <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Survival</button>
                         </div>
@@ -1441,37 +1671,24 @@
                 }
             },
 
+            showAnimalOnMap(idx) {
+                const animal = this.animalLocations[idx];
+                alert(`🦁 ${animal.name} - ${animal.region}\n\n${animal.fact}\n\n🕐 Best time to see: ${animal.bestTime}`);
+            },
+
+            showRegionInfo(regionId) {
+                const info = document.getElementById('region-info');
+                const text = document.getElementById('region-text');
+                
+                if (regionId === 'south-africa') {
+                    text.innerHTML = '<strong>South Africa</strong> has many national parks! The Big Five (Lion, Leopard, Rhino, Elephant, Buffalo) live in Kruger National Park. Tap the animal icons to see where each animal lives!';
+                    info.style.display = 'block';
+                }
+            },
+
             showAnimalDetail(idx) {
-                const animal = this.safariAnimals[idx];
-                alert(`🦁 ${animal.name} Fun Fact! 🦁\n\n${animal.funFact}\n\nLocation: ${animal.location}\nDiet: ${animal.diet}`);
-            },
-
-            showLandmark() {
-                const lm = this.saLandmarks[Math.floor(Math.random() * this.saLandmarks.length)];
-                alert(`⛰️ ${lm.name} ⛰️\n\n${lm.fact}\n\nLocation: ${lm.city}`);
-            },
-
-            showFoodFact() {
-                const foods = [
-                    { name: 'Bobotie', desc: 'A yummy dish with spiced minced meat and egg custard on top! Like a shepherd\'s pie but South African style.' },
-                    { name: 'Biltong', desc: 'Dried meat snacks - like beef jerky but better! Made with special spices.' },
-                    { name: 'Boerewors', desc: 'Special South African sausage - the name means "farmer\'s sausage" in Afrikaans!' },
-                    { name: 'Malva Pudding', desc: 'A sweet, sticky sponge cake served warm with custard. Delicious!' }
-                ];
-                const food = foods[Math.floor(Math.random() * foods.length)];
-                alert(`🍽️ ${food.name} 🍽️\n\n${food.desc}`);
-            },
-
-            showLanguage() {
-                const words = [
-                    { word: 'Howzit', meaning: 'Hello! How are you?' },
-                    { word: 'Lekker', meaning: 'Nice, good, or tasty!' },
-                    { word: 'Braai', meaning: 'BBQ or grill - very important in SA!' },
-                    { word: 'Eish', meaning: 'Oh no! / Wow! (expression of surprise)' },
-                    { word: 'Yebo', meaning: 'Yes!' }
-                ];
-                const word = words[Math.floor(Math.random() * words.length)];
-                alert(`🇿🇦 South African Slang 🇿🇦\n\n"${word.word}" means:\n${word.meaning}`);
+                const animal = this.animalLocations[idx];
+                alert(`🦁 ${animal.name} - ${animal.region}\n\n${animal.fact}\n\n🕐 Best time to see: ${animal.bestTime}\n\n🗺️ Check the Map to see where ${animal.name}s live!`);
             },
 
             showCreateModal() {
@@ -1657,18 +1874,18 @@
                 
                 setTimeout(() => {
                     if (cmd === 'help') {
-                        this.log('Commands: help, stop, list, safari, braai', 'info');
+                        this.log('Commands: help, stop, list, gamedrive, braai', 'info');
                     } else if (cmd === 'stop') {
                         this.stopServer();
                     } else if (cmd === 'list') {
                         const list = this.currentServer.playerList.join(', ') || 'No players';
                         this.log(`Players: ${list}`, 'info');
-                    } else if (cmd === 'safari') {
-                        this.log('🦁 Welcome to the RSA Safari! Watch for the Big Five!', 'success');
+                    } else if (cmd === 'gamedrive') {
+                        this.log('🦁 Welcome to the RSA Game Drive! Watch for the Big Five!', 'success');
                     } else if (cmd === 'braai') {
                         this.log('🔥 Time for a braai! Bring the boerewors!', 'success');
                     } else {
-                        this.log('Unknown command. Try: help, safari, braai', 'error');
+                        this.log('Unknown command. Try: help, gamedrive, braai', 'error');
                     }
                 }, 200);
             },
@@ -1747,7 +1964,7 @@
                 input.value = '';
                 
                 setTimeout(() => {
-                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that', 'Check the Big Five!'];
+                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that', 'Check the Big Five!', 'Going on a game drive?'];
                     const reply = replies[Math.floor(Math.random() * replies.length)];
                     const user = this.chatUsers[Math.floor(Math.random() * this.chatUsers.length)];
                     
@@ -1766,6 +1983,26 @@
                     chatContainer.appendChild(replyDiv);
                     chatContainer.scrollTop = chatContainer.scrollHeight;
                 }, 1000);
+            },
+
+            showLandmark() {
+                const landmarks = [
+                    { name: 'Table Mountain', emoji: '⛰️', fact: 'One of the New7Wonders of Nature! The flat top looks like a table.' },
+                    { name: 'Kruger National Park', emoji: '🏞️', fact: 'Bigger than the whole country of Israel! 20,000 km² of wild animals.' },
+                    { name: 'Boulders Beach', emoji: '🏖️', fact: 'Home to 3,000 African penguins! You can swim near them (but don\'t touch!).' }
+                ];
+                const lm = landmarks[Math.floor(Math.random() * landmarks.length)];
+                alert(`⛰️ ${lm.name} ⛰️\n\n${lm.fact}`);
+            },
+
+            showFoodFact() {
+                const foods = [
+                    { name: 'Bobotie', desc: 'A yummy dish with spiced minced meat and egg custard on top! Like a shepherd\'s pie but South African style.' },
+                    { name: 'Biltong', desc: 'Dried meat snacks - like beef jerky but better! Made with special spices.' },
+                    { name: 'Boerewors', desc: 'Special South African sausage - the name means "farmer\'s sausage" in Afrikaans!' }
+                ];
+                const food = foods[Math.floor(Math.random() * foods.length)];
+                alert(`🍽️ ${food.name} 🍽️\n\n${food.desc}`);
             }
         };
 
