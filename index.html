@@ -703,72 +703,6 @@
             border: 1px solid #007749;
         }
 
-        .crafting-helper {
-            position: fixed;
-            bottom: 100px;
-            right: 16px;
-            background: rgba(0,0,0,0.95);
-            border: 2px solid #FFB612;
-            border-radius: 12px;
-            padding: 16px;
-            max-width: 280px;
-            z-index: 30;
-            display: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-
-        .crafting-helper.visible {
-            display: block;
-            animation: slideInUp 0.3s ease-out;
-        }
-
-        .helper-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .helper-title {
-            color: #FFB612;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .close-helper {
-            background: #b91c1c;
-            border: none;
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .quick-craft-btn {
-            background: linear-gradient(135deg, #007749 0%, #005a37 100%);
-            border: 2px solid #FFB612;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            margin-top: 8px;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .quick-craft-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 119, 73, 0.4);
-        }
-
         .tutorial-step {
             background: rgba(255, 182, 18, 0.1);
             border-left: 3px solid #FFB612;
@@ -960,6 +894,28 @@
             height: 8px;
             border-radius: 4px;
             margin-top: 8px;
+        }
+
+        /* Quick Recipe Cards */
+        .quick-recipe-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-recipe-card:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #FFB612;
+            transform: translateY(-2px);
+        }
+
+        .quick-recipe-card.active {
+            background: rgba(0, 119, 73, 0.3);
+            border-color: #007749;
         }
     </style>
 </head>
@@ -1227,7 +1183,7 @@
                     name: 'Wooden Pickaxe', 
                     desc: 'Basic mining tool - good for stone!', 
                     items: ['planks', 'planks', 'planks', 'stick', 'stick'],
-                    hint: '3 planks on top row, 2 sticks in middle column below'
+                    hint: '3 planks top, 2 sticks below'
                 },
                 'pickaxe_stone': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1235,7 +1191,7 @@
                     name: 'Stone Pickaxe', 
                     desc: 'Better than wood - mine iron ore!', 
                     items: ['stone', 'stone', 'stone', 'stick', 'stick'],
-                    hint: '3 stone on top, 2 sticks below in middle'
+                    hint: '3 stone top, 2 sticks below'
                 },
                 'pickaxe_iron': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1243,7 +1199,7 @@
                     name: 'Iron Pickaxe', 
                     desc: 'Strong tool - can mine diamonds!', 
                     items: ['iron', 'iron', 'iron', 'stick', 'stick'],
-                    hint: '3 iron on top, 2 sticks below'
+                    hint: '3 iron top, 2 sticks below'
                 },
                 'pickaxe_diamond': { 
                     pattern: ['xxx', ' s ', ' s '], 
@@ -1251,7 +1207,7 @@
                     name: 'Diamond Pickaxe', 
                     desc: 'The best! Mine obsidian!', 
                     items: ['diamond', 'diamond', 'diamond', 'stick', 'stick'],
-                    hint: '3 diamonds on top, 2 sticks below'
+                    hint: '3 diamonds top, 2 sticks below'
                 },
                 'sword_wood': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1259,7 +1215,7 @@
                     name: 'Wooden Sword', 
                     desc: 'Basic protection from mobs!', 
                     items: ['planks', 'planks', 'stick'],
-                    hint: '2 planks in middle column, stick at bottom'
+                    hint: '2 planks middle, stick bottom'
                 },
                 'sword_stone': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1267,7 +1223,7 @@
                     name: 'Stone Sword', 
                     desc: 'Better damage than wood!', 
                     items: ['stone', 'stone', 'stick'],
-                    hint: '2 stone in middle column, stick at bottom'
+                    hint: '2 stone middle, stick bottom'
                 },
                 'sword_iron': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1275,7 +1231,7 @@
                     name: 'Iron Sword', 
                     desc: 'Strong and durable!', 
                     items: ['iron', 'iron', 'stick'],
-                    hint: '2 iron in middle column, stick at bottom'
+                    hint: '2 iron middle, stick bottom'
                 },
                 'sword_diamond': { 
                     pattern: [' x ', ' x ', ' s '], 
@@ -1283,7 +1239,7 @@
                     name: 'Diamond Sword', 
                     desc: 'Very powerful weapon!', 
                     items: ['diamond', 'diamond', 'stick'],
-                    hint: '2 diamonds in middle column, stick at bottom'
+                    hint: '2 diamonds middle, stick bottom'
                 },
                 'axe_wood': { 
                     pattern: ['xx ', 'xs ', ' s '], 
@@ -1291,7 +1247,7 @@
                     name: 'Wooden Axe', 
                     desc: 'Chop trees faster!', 
                     items: ['planks', 'planks', 'stick', 'planks'],
-                    hint: '2 planks top-left, 1 plank+stick middle-left, stick bottom'
+                    hint: '2 planks top-left, 1 plank middle, 2 sticks'
                 },
                 'axe_stone': { 
                     pattern: ['xx ', 'xs ', ' s '], 
@@ -1299,7 +1255,7 @@
                     name: 'Stone Axe', 
                     desc: 'Better than wooden axe!', 
                     items: ['stone', 'stone', 'stick', 'stone'],
-                    hint: '2 stone top-left, 1 stone+stick middle-left, stick bottom'
+                    hint: '2 stone top-left, 1 stone middle, 2 sticks'
                 },
                 'axe_iron': { 
                     pattern: ['xx ', 'xs ', ' s '], 
@@ -1307,7 +1263,7 @@
                     name: 'Iron Axe', 
                     desc: 'Fast tree chopping!', 
                     items: ['iron', 'iron', 'stick', 'iron'],
-                    hint: '2 iron top-left, 1 iron+stick middle-left, stick bottom'
+                    hint: '2 iron top-left, 1 iron middle, 2 sticks'
                 },
                 'shovel_wood': { 
                     pattern: [' x ', ' s ', ' s '], 
@@ -1315,7 +1271,7 @@
                     name: 'Wooden Shovel', 
                     desc: 'Dig dirt, sand, and gravel!', 
                     items: ['planks', 'stick', 'stick'],
-                    hint: '1 plank on top, 2 sticks below in middle column'
+                    hint: '1 plank top, 2 sticks below'
                 },
                 'shovel_stone': { 
                     pattern: [' x ', ' s ', ' s '], 
@@ -1323,7 +1279,7 @@
                     name: 'Stone Shovel', 
                     desc: 'Faster digging!', 
                     items: ['stone', 'stick', 'stick'],
-                    hint: '1 stone on top, 2 sticks below'
+                    hint: '1 stone top, 2 sticks below'
                 },
                 'torch': { 
                     pattern: [' c ', ' s ', '   '], 
@@ -1331,7 +1287,7 @@
                     name: 'Torch', 
                     desc: 'Light up dark places!', 
                     items: ['coal', 'stick'],
-                    hint: 'Coal on top, stick below it'
+                    hint: 'Coal on top, stick below'
                 },
                 'chest': { 
                     pattern: ['xxx', 'x x', 'xxx'], 
@@ -1339,19 +1295,18 @@
                     name: 'Chest', 
                     desc: 'Store your items safely!', 
                     items: ['planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks', 'planks'],
-                    hint: 'Ring of 8 planks - leave center empty'
+                    hint: 'Ring of 8 planks'
                 }
             },
 
-            // Expanded SA Regions with more parks
             saRegions: [
                 {
                     name: 'Kruger National Park',
                     province: 'Limpopo & Mpumalanga',
                     animals: ['Lion', 'Leopard', 'Elephant', 'Rhino', 'Buffalo', 'Wild Dog', 'Cheetah'],
-                    description: 'Famous Big Five reserve! 19,623 km² of wild bush. Part of Greater Limpopo Transfrontier Park.',
-                    camps: ['Skukuza', 'Satara', 'Lower Sabie', 'Letaba', 'Olifants', 'Berg-en-Dal', 'Crocodile Bridge'],
-                    gates: ['Paul Kruger', 'Phalaborwa', 'Orpen', 'Crocodile Bridge', 'Malelane', 'Numbi'],
+                    description: 'Famous Big Five reserve! 19,623 km² of wild bush.',
+                    camps: ['Skukuza', 'Satara', 'Lower Sabie', 'Letaba', 'Olifants'],
+                    gates: ['Paul Kruger', 'Phalaborwa', 'Orpen', 'Crocodile Bridge'],
                     color: '#007749',
                     size: '19,623 km²',
                     established: '1926'
@@ -1360,8 +1315,8 @@
                     name: 'Addo Elephant National Park',
                     province: 'Eastern Cape',
                     animals: ['Elephant', 'Buffalo', 'Lion', 'Black Rhino', 'Penguin', 'Great White Shark', 'Whale'],
-                    description: 'Home to over 600 elephants! Also has the Big 7 including marine life.',
-                    camps: ['Main Camp', 'Camp Matyholweni', 'Narina Bush Camp', 'Woody Cape'],
+                    description: 'Home to over 600 elephants! Also has the Big 7.',
+                    camps: ['Main Camp', 'Camp Matyholweni', 'Narina Bush Camp'],
                     gates: ['Addo', 'Matyholweni', 'Colchester'],
                     color: '#FFB612',
                     size: '1,640 km²',
@@ -1370,9 +1325,9 @@
                 {
                     name: 'Kgalagadi Transfrontier Park',
                     province: 'Northern Cape',
-                    animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah', 'Gemsbok', 'Eland', 'Blue Wildebeest'],
-                    description: 'Red sand dunes and desert animals. Springbok antelope live here! Cross-border with Botswana.',
-                    camps: ['Twee Rivieren', 'Mata-Mata', '!Xaus', 'Kieliekrankie'],
+                    animals: ['Springbok', 'Meerkat', 'Lion', 'Cheetah', 'Gemsbok', 'Eland'],
+                    description: 'Red sand dunes and desert animals. Springbok antelope live here!',
+                    camps: ['Twee Rivieren', 'Mata-Mata', '!Xaus'],
                     gates: ['Twee Rivieren'],
                     color: '#DE3831',
                     size: '38,000 km²',
@@ -1382,8 +1337,8 @@
                     name: 'Table Mountain National Park',
                     province: 'Western Cape',
                     animals: ['Penguin', 'Dassie', 'Baboon', 'Eland', 'Bontebok', 'Cape Leopard'],
-                    description: 'Famous flat-top mountain! Boulders Beach has African penguins. Part of Cape Floral Kingdom.',
-                    camps: ['Orangekloof', 'Smitswinkel', 'Table Mountain'],
+                    description: 'Famous flat-top mountain! Boulders Beach has African penguins.',
+                    camps: ['Orangekloof', 'Smitswinkel'],
                     gates: ['Silvermine', 'Cape Point', 'Boulders'],
                     color: '#002395',
                     size: '221 km²',
@@ -1392,10 +1347,10 @@
                 {
                     name: 'Hluhluwe-iMfolozi Park',
                     province: 'KwaZulu-Natal',
-                    animals: ['Big Five', 'Wild Dog', 'Cheetah', 'Nyala', 'Sunset'],
+                    animals: ['Big Five', 'Wild Dog', 'Cheetah', 'Nyala'],
                     description: 'Oldest proclaimed park in Africa! Saved the white rhino from extinction.',
                     camps: ['Hilltop', 'Mpila', 'Munywaneni'],
-                    gates: ['Memorial Gate', 'Nyalazi Gate', 'Cengeni Gate'],
+                    gates: ['Memorial Gate', 'Nyalazi Gate'],
                     color: '#FF6B35',
                     size: '960 km²',
                     established: '1895'
@@ -1403,83 +1358,16 @@
                 {
                     name: 'Pilanesberg National Park',
                     province: 'North West',
-                    animals: ['Big Five', 'Brown Hyena', 'Sable', 'Tsessebe', 'Wild Dog'],
-                    description: 'Ancient volcanic crater! Malaria-free and near Sun City. 200km of roads.',
-                    camps: ['Bakgatla', 'Manyane', 'Bakubung', 'Kwa Maritane'],
+                    animals: ['Big Five', 'Brown Hyena', 'Sable', 'Tsessebe'],
+                    description: 'Ancient volcanic crater! Malaria-free and near Sun City.',
+                    camps: ['Bakgatla', 'Manyane', 'Bakubung'],
                     gates: ['Bakubung', 'Kwa Maritane', 'Manyane'],
                     color: '#8B4513',
                     size: '572 km²',
                     established: '1979'
-                },
-                {
-                    name: 'iSimangaliso Wetland Park',
-                    province: 'KwaZulu-Natal',
-                    animals: ['Elephant', 'Leopard', 'Hippo', 'Crocodile', 'Whale', 'Turtle', 'Flamingo'],
-                    description: 'UNESCO World Heritage Site! Lakes, forests, coral reefs, and dunes.',
-                    camps: ['Cape Vidal', 'St Lucia', 'Sodwana Bay', 'Makakatana'],
-                    gates: ['St Lucia', 'Sodwana', 'Cape Vidal'],
-                    color: '#00CED1',
-                    size: '3,280 km²',
-                    established: '1895'
-                },
-                {
-                    name: 'Mountain Zebra National Park',
-                    province: 'Eastern Cape',
-                    animals: ['Cape Mountain Zebra', 'Cheetah', 'Lion', 'Buffalo', 'Black Wildebeest'],
-                    description: 'Saved the Cape Mountain Zebra from extinction! Now home to lions and cheetahs.',
-                    camps: ['Main Rest Camp', 'Mountain Cottages'],
-                    gates: ['Cradock', 'Bloemhof'],
-                    color: '#9B59B6',
-                    size: '284 km²',
-                    established: '1937'
-                },
-                {
-                    name: 'Karoo National Park',
-                    province: 'Western Cape',
-                    animals: ['Springbok', 'Gemsbok', 'Cape Mountain Zebra', 'Black Rhino', 'Lion'],
-                    description: 'Vast open spaces and fossil trails. Semi-desert landscape with unique adaptations.',
-                    camps: ['Main Rest Camp', 'Embizweni Cottage'],
-                    gates: ['Beaufort West'],
-                    color: '#D2691E',
-                    size: '767 km²',
-                    established: '1979'
-                },
-                {
-                    name: 'Augrabies Falls National Park',
-                    province: 'Northern Cape',
-                    animals: ['Springbok', 'Gemsbok', 'Eland', 'Klipspringer', 'Giraffe', 'Leopard'],
-                    description: 'Place of Great Noise! 90m waterfall on Orange River. Moon Rock viewpoint.',
-                    camps: ['Main Rest Camp', 'Augrabies Falls'],
-                    gates: ['Kakamas'],
-                    color: '#E74C3C',
-                    size: '820 km²',
-                    established: '1966'
-                },
-                {
-                    name: 'Madikwe Game Reserve',
-                    province: 'North West',
-                    animals: ['Big Five', 'Wild Dog', 'Cheetah', 'Brown Hyena', 'Aardwolf'],
-                    description: 'Malaria-free luxury safari! One of South Africa\'s largest reserves.',
-                    camps: ['Buffalo Ridge', 'Impodimo', 'Jamala', 'Jaci\'s'],
-                    gates: ['Derdepoort', 'Wonderboom'],
-                    color: '#F39C12',
-                    size: '750 km²',
-                    established: '1991'
-                },
-                {
-                    name: 'Marakele National Park',
-                    province: 'Limpopo',
-                    animals: ['Big Five', 'Cape Vulture', 'Tsessebe', 'Sable', 'Wild Dog'],
-                    description: 'Place of Sanctuary! Home to one of world\'s largest Cape Vulture colonies.',
-                    camps: ['Bontle', 'Tlopi', 'Motswere'],
-                    gates: ['Bontle'],
-                    color: '#27AE60',
-                    size: '670 km²',
-                    established: '1994'
                 }
             ],
 
-            // Expanded animal locations with more species and accurate positioning
             animalLocations: [
                 {
                     name: 'Lion',
@@ -1487,7 +1375,7 @@
                     x: 65, y: 35,
                     region: 'Kruger National Park',
                     camp: 'Satara',
-                    fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions! Kruger has 1,600+ lions.',
+                    fact: 'Best seen at Satara camp area. Live in prides of up to 20 lions!',
                     bestTime: 'Dawn or dusk',
                     diet: 'Carnivore',
                     threat: 'Vulnerable'
@@ -1498,7 +1386,7 @@
                     x: 70, y: 40,
                     region: 'Kruger National Park',
                     camp: 'Letaba',
-                    fact: 'Also found at Addo! Drink 200 liters of water per day. Tusks grow their whole life.',
+                    fact: 'Also found at Addo! Drink 200 liters of water per day.',
                     bestTime: 'Early morning',
                     diet: 'Herbivore',
                     threat: 'Endangered'
@@ -1509,7 +1397,7 @@
                     x: 25, y: 25,
                     region: 'Kgalagadi Transfrontier Park',
                     camp: 'Twee Rivieren',
-                    fact: 'National animal! Can jump 3 meters high - called "pronking". Adapted to desert life.',
+                    fact: 'National animal! Can jump 3 meters high - called "pronking".',
                     bestTime: 'All day',
                     diet: 'Herbivore',
                     threat: 'Least Concern'
@@ -1520,8 +1408,8 @@
                     x: 20, y: 85,
                     region: 'Table Mountain National Park',
                     camp: 'Boulders Beach',
-                    fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa! Donkeys bray to communicate.',
-                    bestTime: 'Morning (fewer crowds)',
+                    fact: 'Boulders Beach near Simon\'s Town. Only penguins in Africa!',
+                    bestTime: 'Morning',
                     diet: 'Fish & squid',
                     threat: 'Endangered'
                 },
@@ -1531,7 +1419,7 @@
                     x: 30, y: 30,
                     region: 'Kgalagadi Transfrontier Park',
                     camp: 'Mata-Mata',
-                    fact: 'Live in families called "mobs". One always stands guard! Immune to scorpion venom.',
+                    fact: 'Live in families called "mobs". One always stands guard!',
                     bestTime: 'Early morning',
                     diet: 'Insects & small animals',
                     threat: 'Least Concern'
@@ -1542,9 +1430,9 @@
                     x: 60, y: 45,
                     region: 'Kruger National Park',
                     camp: 'Pretoriuskop',
-                    fact: '85% of white rhinos live in southern Kruger. Love mud baths! Actually grey in color.',
+                    fact: '85% of white rhinos live in southern Kruger. Love mud baths!',
                     bestTime: 'Early morning',
-                    diet: 'Herbivore (grass)',
+                    diet: 'Herbivore',
                     threat: 'Near Threatened'
                 },
                 {
@@ -1553,116 +1441,35 @@
                     x: 75, y: 75,
                     region: 'Addo Elephant National Park',
                     camp: 'Main Camp',
-                    fact: 'Shy browser with hooked lip. Addo has one of the densest populations!',
+                    fact: 'Shy browser with hooked lip. Addo has dense populations!',
                     bestTime: 'Dusk',
-                    diet: 'Herbivore (leaves)',
+                    diet: 'Herbivore',
                     threat: 'Critically Endangered'
                 },
                 {
                     name: 'Cheetah',
                     emoji: '🐆',
                     x: 45, y: 55,
-                    region: 'Mountain Zebra National Park',
-                    camp: 'Main Rest Camp',
-                    camp: 'Main Rest Camp',
-                    fact: 'Fastest land animal! 0-100km/h in 3 seconds. Recently reintroduced here.',
+                    region: 'Hluhluwe-iMfolozi Park',
+                    camp: 'Mpila',
+                    fact: 'Fastest land animal! 0-100km/h in 3 seconds.',
                     bestTime: 'Early morning',
                     diet: 'Carnivore',
                     threat: 'Vulnerable'
-                },
-                {
-                    name: 'Wild Dog',
-                    emoji: '🐕',
-                    x: 68, y: 32,
-                    region: 'Kruger National Park',
-                    camp: 'Pafuri',
-                    fact: 'Most successful hunters! 80% success rate. Live in packs with strong bonds.',
-                    bestTime: 'Early morning',
-                    diet: 'Carnivore',
-                    threat: 'Endangered'
-                },
-                {
-                    name: 'Gemsbok',
-                    emoji: '🦌',
-                    x: 22, y: 28,
-                    region: 'Kgalagadi Transfrontier Park',
-                    camp: 'Kieliekrankie',
-                    fact: 'Can survive without water! Gets moisture from food. Long straight horns.',
-                    bestTime: 'Early morning',
-                    diet: 'Herbivore',
-                    threat: 'Least Concern'
-                },
-                {
-                    name: 'Cape Vulture',
-                    emoji: '🦅',
-                    x: 52, y: 20,
-                    region: 'Marakele National Park',
-                    camp: 'Tlopi',
-                    fact: 'One of world\'s largest colonies here! 800+ breeding pairs. Wingspan up to 2.6m.',
-                    bestTime: 'Midday (thermals)',
-                    diet: 'Carrion',
-                    threat: 'Endangered'
-                },
-                {
-                    name: 'Hippo',
-                    emoji: '🦛',
-                    x: 78, y: 68,
-                    region: 'iSimangaliso Wetland Park',
-                    camp: 'St Lucia',
-                    fact: 'Kill more people than any other African animal! Stay in water by day, graze by night.',
-                    bestTime: 'Sunset boat cruise',
-                    diet: 'Herbivore (grass)',
-                    threat: 'Vulnerable'
-                },
-                {
-                    name: 'Cape Buffalo',
-                    emoji: '🐃',
-                    x: 63, y: 38,
-                    region: 'Kruger National Park',
-                    camp: 'Lower Sabie',
-                    fact: 'Most dangerous of Big Five! Never corner one. Herds of up to 1,000 animals.',
-                    bestTime: 'Early morning',
-                    diet: 'Herbivore',
-                    threat: 'Near Threatened'
-                },
-                {
-                    name: 'Leopard',
-                    emoji: '🐆',
-                    x: 66, y: 42,
-                    region: 'Kruger National Park',
-                    camp: 'Skukuza',
-                    fact: 'Most elusive Big Five! Drag prey up trees. Spots are called rosettes.',
-                    bestTime: 'Night drives',
-                    diet: 'Carnivore',
-                    threat: 'Vulnerable'
-                },
-                {
-                    name: 'Southern Right Whale',
-                    emoji: '🐋',
-                    x: 22, y: 90,
-                    region: 'Table Mountain National Park',
-                    camp: 'Hermanus',
-                    fact: 'Come to Hermanus to calve! Best land-based whale watching in the world.',
-                    bestTime: 'June-November',
-                    diet: 'Krill & plankton',
-                    threat: 'Least Concern'
                 }
             ],
 
-            // Updated cities with new names
             cities: [
                 { name: 'Johannesburg', x: 55, y: 45, province: 'Gauteng', population: '5.6M' },
                 { name: 'Cape Town', x: 18, y: 88, province: 'Western Cape', population: '4.6M' },
                 { name: 'Durban', x: 72, y: 65, province: 'KwaZulu-Natal', population: '3.9M' },
                 { name: 'Pretoria', x: 58, y: 40, province: 'Gauteng', population: '2.4M' },
-                { name: 'Gqeberha', x: 70, y: 78, province: 'Eastern Cape', population: '1.2M', oldName: 'Port Elizabeth' },
+                { name: 'Gqeberha', x: 70, y: 78, province: 'Eastern Cape', population: '1.2M' },
                 { name: 'Bloemfontein', x: 45, y: 60, province: 'Free State', population: '560K' },
                 { name: 'Kimberley', x: 35, y: 50, province: 'Northern Cape', population: '250K' },
                 { name: 'Polokwane', x: 60, y: 25, province: 'Limpopo', population: '630K' },
-                { name: 'Nelspruit', x: 68, y: 45, province: 'Mpumalanga', population: '110K', note: 'Gateway to Kruger' },
-                { name: 'Rustenburg', x: 48, y: 42, province: 'North West', population: '550K', note: 'Near Pilanesberg' },
-                { name: 'East London', x: 75, y: 82, province: 'Eastern Cape', population: '480K' },
-                { name: 'Mbombela', x: 68, y: 45, province: 'Mpumalanga', population: '110K', oldName: 'Nelspruit' }
+                { name: 'Mbombela', x: 68, y: 45, province: 'Mpumalanga', population: '110K' },
+                { name: 'Rustenburg', x: 48, y: 42, province: 'North West', population: '550K' }
             ],
 
             minecraftBlocks: [
@@ -1738,8 +1545,9 @@
                                 <p class="text-[#FFB612] text-sm">Craft real Minecraft tools! Tap items, then tap grid slots.</p>
                             </div>
 
+                            <!-- Side by Side Layout -->
                             <div class="flex flex-col sm:flex-row gap-4 items-start justify-center relative z-10">
-                                <!-- Crafting Grid -->
+                                <!-- Left: Crafting Grid -->
                                 <div class="flex items-center gap-3">
                                     <div class="crafting-grid-container">
                                         <div class="grid grid-cols-3 gap-1">
@@ -1757,13 +1565,13 @@
                                     </div>
                                 </div>
 
-                                <!-- Inventory -->
-                                <div class="bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10 w-full sm:w-auto">
+                                <!-- Right: Inventory -->
+                                <div class="bg-[#8b8b8b] border-4 border-[#fff_#373737_#373737_#fff] p-3 relative z-10">
                                     <div class="flex items-center justify-between mb-2">
                                         <p class="text-[#373737] text-xs font-bold">INVENTORY</p>
                                         <span class="text-[#373737] text-xs">Tap to select</span>
                                     </div>
-                                    <div class="flex gap-2 flex-wrap justify-center">
+                                    <div class="flex gap-2 flex-wrap justify-center max-w-[200px]">
                                         ${this.inventoryItems.map(item => `
                                             <button onclick="app.selectItem('${item.id}', '${item.name}')" 
                                                 class="inventory-slot" data-item="${item.id}">
@@ -1781,24 +1589,24 @@
 
                             <button onclick="app.clearGrid()" class="clear-btn" title="Clear grid">🗑️</button>
 
-                            <!-- Quick Recipes - One of each type -->
+                            <!-- Quick Recipes - Only 3 Essential Tools -->
                             <div class="mt-4 bg-[#111] border-2 border-[#333] p-3 rounded">
                                 <h4 class="text-[#FFB612] font-bold mb-3 text-center">⚡ QUICK RECIPES ⚡</h4>
                                 <div class="grid grid-cols-3 gap-2">
-                                    <button onclick="app.loadRecipe('pickaxe_wood')" class="recipe-item flex-col text-center p-3">
-                                        <span class="text-2xl mb-1">⛏️</span>
+                                    <button onclick="app.loadRecipe('pickaxe_wood')" class="quick-recipe-card" id="recipe-pickaxe">
+                                        <div class="text-2xl mb-1">⛏️</div>
                                         <div class="text-white font-bold text-xs">Pickaxe</div>
-                                        <div class="text-gray-400 text-[10px]">3 top + 2 sticks</div>
+                                        <div class="text-gray-400 text-[10px] mt-1">3 top + 2 sticks</div>
                                     </button>
-                                    <button onclick="app.loadRecipe('sword_wood')" class="recipe-item flex-col text-center p-3">
-                                        <span class="text-2xl mb-1">🗡️</span>
+                                    <button onclick="app.loadRecipe('sword_wood')" class="quick-recipe-card" id="recipe-sword">
+                                        <div class="text-2xl mb-1">🗡️</div>
                                         <div class="text-white font-bold text-xs">Sword</div>
-                                        <div class="text-gray-400 text-[10px]">2 middle + stick</div>
+                                        <div class="text-gray-400 text-[10px] mt-1">2 middle + stick</div>
                                     </button>
-                                    <button onclick="app.loadRecipe('axe_wood')" class="recipe-item flex-col text-center p-3">
-                                        <span class="text-2xl mb-1">🪓</span>
-                                        <div class="text-white font-bold text-xs">Axe</span>
-                                        <div class="text-gray-400 text-[10px]">L-shape + stick</div>
+                                    <button onclick="app.loadRecipe('axe_wood')" class="quick-recipe-card" id="recipe-axe">
+                                        <div class="text-2xl mb-1">🪓</div>
+                                        <div class="text-white font-bold text-xs">Axe</div>
+                                        <div class="text-gray-400 text-[10px] mt-1">L-shape + sticks</div>
                                     </button>
                                 </div>
                             </div>
@@ -1849,7 +1657,7 @@
                                     <span class="text-2xl">🗺️</span>
                                     <div>
                                         <div class="text-white text-sm font-bold">Animal Map</div>
-                                        <div class="text-gray-500 text-xs">12 parks, 15 animals!</div>
+                                        <div class="text-gray-500 text-xs">10 cities, 6 parks!</div>
                                     </div>
                                 </div>
                                 <div class="bg-[#0a0a0a] p-2 border border-[#222] rounded flex items-center gap-2 active:scale-95 transition-transform" onclick="app.navigate('gamedrive')">
@@ -1872,22 +1680,6 @@
                                         <div class="text-white text-sm font-bold">Yummy Food</div>
                                         <div class="text-gray-500 text-xs">Bobotie & more!</div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#111] border-2 border-[#333] p-3 rounded">
-                            <h3 class="text-[#007749] text-sm font-bold mb-2">📰 RSA NEWS</h3>
-                            <div class="space-y-2">
-                                <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#FFB612] rounded">
-                                    <div class="text-white text-sm font-bold">New Springbok Skin Pack!</div>
-                                    <div class="text-gray-400 text-xs">Free for all South African players</div>
-                                    <div class="text-gray-600 text-xs mt-1">Just now</div>
-                                </div>
-                                <div class="bg-[#0a0a0a] p-2 border-l-2 border-[#007749] rounded">
-                                    <div class="text-white text-sm font-bold">Table Mountain Build Contest</div>
-                                    <div class="text-gray-400 text-xs">Build the famous flat-top mountain!</div>
-                                    <div class="text-gray-600 text-xs mt-1">1 day ago</div>
                                 </div>
                             </div>
                         </div>
@@ -1965,7 +1757,7 @@
                                     <h4 class="text-white font-bold mb-2 flex items-center gap-2">
                                         <span>🪓</span> Axes (Wood Cutting)
                                     </h4>
-                                    <p class="text-gray-400 text-xs mb-2">Pattern: 2 materials top-left + 1 material + stick middle-left + stick bottom</p>
+                                    <p class="text-gray-400 text-xs mb-2">Pattern: 2 materials top-left + 1 material middle-left + 2 sticks</p>
                                     <div class="grid grid-cols-2 gap-2 text-xs">
                                         <div class="flex items-center gap-2 bg-[#111] p-2 rounded">
                                             ${mcIcons.planks}
@@ -2011,13 +1803,6 @@
                                             </div>
                                             <span class="text-[#FFB612]">3 Wool + 3 Planks</span>
                                         </div>
-                                        <div class="flex items-center justify-between bg-[#111] p-2 rounded">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-xl">🚪</span>
-                                                <span class="text-gray-300">Door</span>
-                                            </div>
-                                            <span class="text-[#FFB612]">6 Planks (2x3)</span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -2058,10 +1843,6 @@
                                     <span>💎</span>
                                     <span><strong>Diamond:</strong> Best speed & durability. Durability: 1,562</span>
                                 </div>
-                                <div class="flex items-center gap-2 text-[#FFB612] bg-[#0a0a0a] p-2 rounded">
-                                    <span>✨</span>
-                                    <span><strong>Netherite:</strong> Upgrade diamond at smithing table!</span>
-                                </div>
                             </div>
                         </div>
 
@@ -2075,7 +1856,7 @@
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
                             <h2 class="text-2xl text-[#FFB612] font-bold">🗺️ 3D SOUTH AFRICA MAP 🗺️</h2>
-                            <p class="text-gray-400 text-sm">12 National Parks • 15 Animal Species • 12 Cities</p>
+                            <p class="text-gray-400 text-sm">10 Cities • 6 National Parks • 8 Animal Species</p>
                         </div>
 
                         <div class="sa-map-container rounded-lg p-4">
@@ -2104,7 +1885,6 @@
                                     <ellipse cx="25" cy="25" rx="15" ry="12" fill="url(#highland)" class="terrain-layer"/>
                                     <ellipse cx="20" cy="85" rx="10" ry="8" fill="url(#highland)" class="terrain-layer"/>
                                     <ellipse cx="55" cy="45" rx="12" ry="10" fill="url(#lowland)" class="terrain-layer"/>
-                                    <ellipse cx="72" y="65" rx="8" ry="6" fill="url(#lowland)" class="terrain-layer"/>
 
                                     <!-- Province backgrounds -->
                                     <path class="map-region" d="M45,20 L65,15 L75,25 L70,40 L50,45 L40,35 Z" fill="#1a2f1a" opacity="0.5"/>
@@ -2125,20 +1905,15 @@
                                     <!-- Major Rivers -->
                                     <path class="river-path" d="M60,20 Q65,40 62,60 Q60,80 65,100" stroke-width="3"/>
                                     <path class="river-path" d="M30,50 Q40,55 50,50 Q60,45 70,50" />
-                                    <path class="river-path" d="M45,60 Q50,70 48,85" opacity="0.5"/>
                                     <text x="62" y="75" fill="#4a90e2" font-size="2.5" opacity="0.8" font-family="VT323">Orange River</text>
-                                    <text x="35" y="52" fill="#4a90e2" font-size="2" opacity="0.7" font-family="VT323">Limpopo River</text>
                                     
-                                    <!-- Mountain ranges with 3D peaks -->
+                                    <!-- Mountain ranges -->
                                     <path class="mountain-range" d="M15,85 L18,80 L21,85 L24,80 L27,85 L25,88 L20,90 L15,88 Z" />
                                     <path class="mountain-range" d="M55,15 L58,10 L61,15 L64,10 L67,15 L65,18 L60,20 L55,18 Z" />
-                                    <path class="mountain-range" d="M40,85 L43,78 L46,85 L49,78 L52,85 L50,88 L45,90 L40,88 Z" />
-                                    <text x="25" y="88" fill="#718096" font-size="2" font-family="VT323">Cape Fold Mountains</text>
-                                    <text x="65" y="25" fill="#718096" font-size="2" font-family="VT323">Soutpansberg</text>
+                                    <text x="25" y="88" fill="#718096" font-size="2" font-family="VT323">Cape Mountains</text>
 
-                                    <!-- Kruger National Park - Enhanced -->
+                                    <!-- Kruger National Park -->
                                     <ellipse cx="70" cy="35" rx="14" ry="12" fill="#007749" opacity="0.2" stroke="#007749" stroke-width="2" class="park-zone"/>
-                                    <ellipse cx="70" cy="35" rx="12" ry="10" fill="none" stroke="#007749" stroke-width="1" stroke-dasharray="2,2"/>
                                     <text x="70" y="32" text-anchor="middle" fill="#007749" font-size="3" font-family="VT323" font-weight="bold" class="park-label">KRUGER NATIONAL PARK</text>
                                     <text x="70" y="36" text-anchor="middle" fill="#007749" font-size="2" font-family="VT323">19,623 km² • Est. 1926</text>
                                     
@@ -2147,18 +1922,14 @@
                                     <text x="68" y="28" text-anchor="middle" fill="#FFB612" font-size="1.8" font-family="VT323">Satara</text>
                                     <circle cx="72" cy="38" r="1.5" fill="#FFB612" opacity="0.9"/>
                                     <text x="72" y="42" text-anchor="middle" fill="#FFB612" font-size="1.8" font-family="VT323">Skukuza</text>
-                                    <circle cx="75" cy="32" r="1" fill="#FFB612" opacity="0.7"/>
-                                    <text x="75" y="30" text-anchor="middle" fill="#FFB612" font-size="1.5" font-family="VT323">Pafuri</text>
 
-                                    <!-- Addo Elephant Park -->
+                                    <!-- Addo -->
                                     <ellipse cx="78" cy="75" rx="9" ry="7" fill="#FFB612" opacity="0.2" stroke="#FFB612" stroke-width="2" class="park-zone"/>
                                     <text x="78" y="76" text-anchor="middle" fill="#FFB612" font-size="2.5" font-weight="bold" font-family="VT323" class="park-label">ADDO</text>
-                                    <text x="78" y="79" text-anchor="middle" fill="#FFB612" font-size="1.5" font-family="VT323">Big 7 Park</text>
 
                                     <!-- Kgalagadi -->
                                     <ellipse cx="25" cy="25" rx="12" ry="14" fill="#DE3831" opacity="0.2" stroke="#DE3831" stroke-width="2" class="park-zone"/>
                                     <text x="25" y="23" text-anchor="middle" fill="#DE3831" font-size="2.5" font-weight="bold" font-family="VT323" class="park-label">KGALAGADI</text>
-                                    <text x="25" y="27" text-anchor="middle" fill="#DE3831" font-size="1.5" font-family="VT323">Transfrontier Park</text>
 
                                     <!-- Table Mountain -->
                                     <ellipse cx="20" cy="85" rx="7" ry="6" fill="#002395" opacity="0.2" stroke="#002395" stroke-width="2" class="park-zone"/>
@@ -2172,43 +1943,20 @@
                                     <ellipse cx="48" cy="42" rx="6" ry="5" fill="#8B4513" opacity="0.2" stroke="#8B4513" stroke-width="2" class="park-zone"/>
                                     <text x="48" y="43" text-anchor="middle" fill="#8B4513" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Pilanesberg</text>
 
-                                    <!-- iSimangaliso -->
-                                    <ellipse cx="80" cy="65" rx="7" ry="5" fill="#00CED1" opacity="0.2" stroke="#00CED1" stroke-width="2" class="park-zone"/>
-                                    <text x="80" y="66" text-anchor="middle" fill="#00CED1" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">iSimangaliso</text>
-
-                                    <!-- Mountain Zebra -->
-                                    <ellipse cx="58" y="78" rx="6" ry="5" fill="#9B59B6" opacity="0.2" stroke="#9B59B6" stroke-width="2" class="park-zone"/>
-                                    <text x="58" y="79" text-anchor="middle" fill="#9B59B6" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Mountain Zebra</text>
-
-                                    <!-- Karoo -->
-                                    <ellipse cx="38" y="65" rx="8" ry="6" fill="#D2691E" opacity="0.2" stroke="#D2691E" stroke-width="2" class="park-zone"/>
-                                    <text x="38" y="66" text-anchor="middle" fill="#D2691E" font-size="2" font-weight="bold" font-family="VT323" class="park-label">Karoo NP</text>
-
-                                    <!-- Augrabies -->
-                                    <ellipse cx="28" y="35" rx="5" ry="6" fill="#E74C3C" opacity="0.2" stroke="#E74C3C" stroke-width="2" class="park-zone"/>
-                                    <text x="28" y="36" text-anchor="middle" fill="#E74C3C" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Augrabies</text>
-
-                                    <!-- Marakele -->
-                                    <ellipse cx="52" y="22" rx="6" ry="5" fill="#27AE60" opacity="0.2" stroke="#27AE60" stroke-width="2" class="park-zone"/>
-                                    <text x="52" y="23" text-anchor="middle" fill="#27AE60" font-size="1.8" font-weight="bold" font-family="VT323" class="park-label">Marakele</text>
-
                                     <!-- Scale -->
                                     <line x1="75" y1="115" x2="90" y2="115" stroke="#666" stroke-width="1"/>
-                                    <line x1="75" y1="114" x2="75" y2="116" stroke="#666" stroke-width="1"/>
-                                    <line x1="90" y1="114" x2="90" y2="116" stroke="#666" stroke-width="1"/>
                                     <text x="82.5" y="118" text-anchor="middle" fill="#666" font-size="2" font-family="VT323">300 km</text>
 
                                     <!-- Compass -->
                                     <circle cx="88" cy="12" r="4" fill="none" stroke="#FFB612" stroke-width="1"/>
                                     <text x="88" y="10" text-anchor="middle" fill="#FFB612" font-size="3" font-family="VT323">N</text>
-                                    <line x1="88" y1="12" x2="88" y2="8" stroke="#FFB612" stroke-width="1"/>
                                 </svg>
 
                                 <!-- City markers -->
                                 ${this.cities.map(city => `
                                     <div class="city-marker" style="left: ${city.x}%; top: ${city.y}%;" onclick="app.showCityInfo('${city.name}')">
                                         <div class="city-dot"></div>
-                                        <div class="city-label">${city.name}${city.oldName ? ` <span style="font-size:0.6rem;opacity:0.7">(${city.oldName})</span>` : ''}</div>
+                                        <div class="city-label">${city.name}</div>
                                     </div>
                                 `).join('')}
 
@@ -2219,8 +1967,7 @@
                                         <div class="marker-tooltip">
                                             <strong>${animal.name}</strong><br>
                                             📍 ${animal.camp}<br>
-                                            🕐 ${animal.bestTime}<br>
-                                            ${animal.threat ? `⚠️ ${animal.threat}` : ''}
+                                            🕐 ${animal.bestTime}
                                         </div>
                                     </div>
                                 `).join('')}
@@ -2229,7 +1976,7 @@
 
                         <!-- Elevation Legend -->
                         <div class="bg-[#111] border border-[#333] p-3 rounded">
-                            <h4 class="text-white font-bold text-sm mb-2">🏔️ Elevation & Terrain</h4>
+                            <h4 class="text-white font-bold text-sm mb-2">🏔️ Terrain</h4>
                             <div class="elevation-legend"></div>
                             <div class="flex justify-between text-xs text-gray-400 mt-1">
                                 <span>Lowland</span>
@@ -2240,36 +1987,31 @@
 
                         <div class="grid grid-cols-2 gap-2">
                             <div class="map-legend">
-                                <h4 class="text-[#FFB612] font-bold mb-2 text-sm">🏕️ NATIONAL PARKS (12)</h4>
-                                <div class="max-h-32 overflow-y-auto space-y-1">
+                                <h4 class="text-[#FFB612] font-bold mb-2 text-sm">🏕️ NATIONAL PARKS</h4>
+                                <div class="space-y-1">
                                     ${this.saRegions.map(region => `
                                         <div class="legend-item cursor-pointer hover:bg-[#222] p-1 rounded" onclick="app.showRegionDetail('${region.name}')">
                                             <div class="w-3 h-3 rounded-full shrink-0" style="background: ${region.color}"></div>
                                             <div class="min-w-0">
                                                 <span class="text-white font-bold text-xs truncate block">${region.name}</span>
-                                                <span class="text-gray-500 text-[10px]">${region.size}</span>
                                             </div>
                                         </div>
                                     `).join('')}
                                 </div>
                             </div>
                             <div class="map-legend">
-                                <h4 class="text-[#007749] font-bold mb-2 text-sm">🦒 ANIMALS (15)</h4>
+                                <h4 class="text-[#007749] font-bold mb-2 text-sm">🦒 ANIMALS</h4>
                                 <div class="grid grid-cols-2 gap-1 text-xs">
                                     ${[...new Set(this.animalLocations.map(a => a.name))].map(animal => {
                                         const emoji = this.animalLocations.find(a => a.name === animal).emoji;
                                         return `<div class="flex items-center gap-1 text-gray-300"><span>${emoji}</span><span class="truncate">${animal}</span></div>`;
                                     }).join('')}
                                 </div>
-                                <h4 class="text-[#007749] font-bold mb-2 text-sm mt-3">🏙️ CITIES (12)</h4>
-                                <div class="text-xs text-gray-400">
-                                    Including Gqeberha (formerly PE), Mbombela, and more!
-                                </div>
                             </div>
                         </div>
 
                         <div class="region-info" id="region-info" style="display: none;">
-                            <h4 class="text-[#007749] font-bold mb-2">ℹ️ DETAILED INFORMATION</h4>
+                            <h4 class="text-[#007749] font-bold mb-2">ℹ️ INFORMATION</h4>
                             <p class="text-gray-300 text-sm" id="region-text">Tap on a park, city, or animal to learn more!</p>
                         </div>
 
@@ -2283,28 +2025,7 @@
                     <div class="slide-in space-y-4 pt-2">
                         <div class="text-center mb-4">
                             <h2 class="text-2xl text-[#FFB612] font-bold">🚙 GAME DRIVE ADVENTURE 🦓</h2>
-                            <p class="text-gray-400 text-sm">15 Amazing Animals across 12 National Parks!</p>
-                        </div>
-
-                        <div class="bg-[#111] border-2 border-[#007749] p-3 rounded mb-4">
-                            <h3 class="text-[#FFB612] font-bold mb-2">🎯 QUICK STATS</h3>
-                            <div class="grid grid-cols-3 gap-2 text-center">
-                                <div class="bg-[#0a0a0a] p-2 rounded">
-                                    <div class="text-2xl">🦁</div>
-                                    <div class="text-white font-bold">Big Five</div>
-                                    <div class="text-gray-500 text-xs">All parks</div>
-                                </div>
-                                <div class="bg-[#0a0a0a] p-2 rounded">
-                                    <div class="text-2xl">🦏</div>
-                                    <div class="text-white font-bold">Rhinos</div>
-                                    <div class="text-gray-500 text-xs">Black & White</div>
-                                </div>
-                                <div class="bg-[#0a0a0a] p-2 rounded">
-                                    <div class="text-2xl">🐧</div>
-                                    <div class="text-white font-bold">Marine</div>
-                                    <div class="text-gray-500 text-xs">Big 7 parks</div>
-                                </div>
-                            </div>
+                            <p class="text-gray-400 text-sm">8 Amazing Animals across 6 National Parks!</p>
                         </div>
 
                         <div class="space-y-3">
@@ -2331,26 +2052,16 @@
                         <div class="bg-[#111] border-2 border-[#333] p-3 rounded mt-4">
                             <h3 class="text-white text-sm font-bold mb-2">🎯 GAME DRIVE TIPS</h3>
                             <div class="fact-box rounded">
-                                <p class="text-gray-300 text-sm">🌅 <strong>Best Time:</strong> Early morning (6-9 AM) or late afternoon (4-6 PM) when animals are most active!</p>
+                                <p class="text-gray-300 text-sm">🌅 <strong>Best Time:</strong> Early morning (6-9 AM) or late afternoon (4-6 PM)</p>
                             </div>
                             <div class="fact-box rounded">
-                                <p class="text-gray-300 text-sm">🤫 <strong>Be Quiet:</strong> Loud noises scare animals away. Whisper and stay in your vehicle!</p>
-                            </div>
-                            <div class="fact-box rounded">
-                                <p class="text-gray-300 text-sm">📸 <strong>Bring Binoculars:</strong> Animals might be far away. Binoculars help you see them better!</p>
-                            </div>
-                            <div class="fact-box rounded">
-                                <p class="text-gray-300 text-sm">🎨 <strong>Camouflage:</strong> Wear neutral colors (khaki, brown, green) - bright colors scare wildlife!</p>
+                                <p class="text-gray-300 text-sm">🤫 <strong>Be Quiet:</strong> Loud noises scare animals away!</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="app.navigate('map')" class="mc-btn mc-btn-blue py-3 rounded">
-                                🗺️ View Full Map
-                            </button>
-                            <button onclick="app.navigate('home')" class="mc-btn py-3 rounded">
-                                ← Back Home
-                            </button>
+                            <button onclick="app.navigate('map')" class="mc-btn mc-btn-blue py-3 rounded">🗺️ View Map</button>
+                            <button onclick="app.navigate('home')" class="mc-btn py-3 rounded">← Back Home</button>
                         </div>
                     </div>
                 `;
@@ -2388,14 +2099,6 @@
                             <h2 class="text-xl text-white">All Servers</h2>
                             <span class="text-gray-500 text-sm">${this.servers.length} total</span>
                         </div>
-                        
-                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                            <button class="mc-btn active-green px-3 py-1 text-sm whitespace-nowrap rounded">All</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Game Drive</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Creative</button>
-                            <button class="mc-btn px-3 py-1 text-sm whitespace-nowrap rounded">Survival</button>
-                        </div>
-
                         <div class="space-y-2">
                             ${this.servers.map(s => this.renderServerCard(s)).join('')}
                         </div>
@@ -2413,17 +2116,12 @@
                                 1,247 online
                             </span>
                         </div>
-                        
-                        <div id="chat-container" class="flex-grow overflow-y-auto space-y-2 mb-2 pr-1">
-                        </div>
-
+                        <div id="chat-container" class="flex-grow overflow-y-auto space-y-2 mb-2 pr-1"></div>
                         <div class="shrink-0 flex gap-2">
                             <input type="text" id="chat-input" placeholder="Say something..." 
                                 class="mc-input flex-grow px-3 py-3 text-base rounded"
                                 onkeydown="if(event.key==='Enter') app.sendChat()">
-                            <button onclick="app.sendChat()" class="mc-btn active-green px-4 py-2 rounded">
-                                ➤
-                            </button>
+                            <button onclick="app.sendChat()" class="mc-btn active-green px-4 py-2 rounded">➤</button>
                         </div>
                     </div>
                 `;
@@ -2440,9 +2138,7 @@
             },
 
             selectItem(id, name) {
-                document.querySelectorAll('.inventory-slot').forEach(el => {
-                    el.classList.remove('selected');
-                });
+                document.querySelectorAll('.inventory-slot').forEach(el => el.classList.remove('selected'));
                 
                 const slot = document.querySelector(`.inventory-slot[data-item="${id}"]`);
                 if (this.selectedItemId === id) {
@@ -2456,23 +2152,7 @@
                     this.selectedItemId = id;
                     this.selectedItemName = name;
                     slot.classList.add('selected');
-                    this.updateHint(`Placing ${name}. Tap grid slots to place it! Tap again to remove.`);
-                    this.highlightCompatibleSlots(id);
-                }
-            },
-
-            highlightCompatibleSlots(itemId) {
-                document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
-                
-                if (itemId === 'stick') {
-                    [1, 4, 7].forEach(i => {
-                        document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
-                    });
-                }
-                else if (['planks', 'stone', 'iron', 'diamond'].includes(itemId)) {
-                    [0, 1, 2].forEach(i => {
-                        document.querySelector(`.crafting-slot[data-slot="${i}"]`)?.classList.add('highlight');
-                    });
+                    this.updateHint(`Placing ${name}. Tap grid slots to place it!`);
                 }
             },
 
@@ -2521,6 +2201,7 @@
                 const craftBtn = document.getElementById('craft-btn');
                 const craftBtnContainer = document.getElementById('craft-btn-container');
                 
+                // Convert grid to pattern for comparison
                 const pattern = this.craftingGrid.map(row => 
                     row.map(cell => cell ? 'x' : ' ').join('')
                 );
@@ -2553,7 +2234,7 @@
                     
                     const hasItems = this.craftingGrid.some(row => row.some(cell => cell));
                     if (hasItems) {
-                        this.updateHint('🤔 Pattern doesn\'t match a recipe. Check the Quick Recipes guide above!');
+                        this.updateHint('🤔 Pattern doesn\'t match a recipe. Check the Quick Recipes guide!');
                     } else {
                         this.updateHint('👆 Select an item from inventory, then tap grid slots to place it!');
                     }
@@ -2561,6 +2242,7 @@
             },
 
             matchesPattern(grid, pattern) {
+                // Strict comparison of each row
                 for (let i = 0; i < 3; i++) {
                     if (grid[i] !== pattern[i]) return false;
                 }
@@ -2571,26 +2253,46 @@
                 const recipe = this.craftingRecipes[recipeKey];
                 if (!recipe) return;
                 
+                // Clear grid first
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 
-                // Parse pattern and fill grid
+                // Parse pattern and fill grid based on recipe type
                 for (let row = 0; row < 3; row++) {
                     for (let col = 0; col < 3; col++) {
                         if (recipe.pattern[row][col] === 'x') {
                             let item = null;
+                            
                             if (recipeKey.includes('pickaxe')) {
-                                if (row === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : recipeKey.includes('iron') ? 'iron' : 'diamond';
-                                else if (col === 1) item = 'stick';
+                                // Pickaxe: 3 materials on top (row 0), 2 sticks in middle column below
+                                if (row === 0) {
+                                    item = recipeKey.includes('wood') ? 'planks' : 
+                                           recipeKey.includes('stone') ? 'stone' : 
+                                           recipeKey.includes('iron') ? 'iron' : 'diamond';
+                                } else if (col === 1) {
+                                    item = 'stick';
+                                }
                             }
                             else if (recipeKey.includes('sword')) {
-                                if (row < 2 && col === 1) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : recipeKey.includes('iron') ? 'iron' : 'diamond';
-                                else if (row === 2 && col === 1) item = 'stick';
+                                // Sword: 2 materials in middle column (rows 0-1), stick at bottom
+                                if (col === 1 && row < 2) {
+                                    item = recipeKey.includes('wood') ? 'planks' : 
+                                           recipeKey.includes('stone') ? 'stone' : 
+                                           recipeKey.includes('iron') ? 'iron' : 'diamond';
+                                } else if (col === 1 && row === 2) {
+                                    item = 'stick';
+                                }
                             }
                             else if (recipeKey.includes('axe')) {
-                                if (row === 0 && col < 2) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : 'iron';
-                                else if (row === 1 && col === 0) item = recipeKey.includes('wood') ? 'planks' : recipeKey.includes('stone') ? 'stone' : 'iron';
-                                else if (row === 1 && col === 1) item = 'stick';
-                                else if (row === 2 && col === 1) item = 'stick';
+                                // Axe: L-shape pattern
+                                if (row === 0 && col < 2) {
+                                    item = recipeKey.includes('wood') ? 'planks' : 
+                                           recipeKey.includes('stone') ? 'stone' : 'iron';
+                                } else if (row === 1 && col === 0) {
+                                    item = recipeKey.includes('wood') ? 'planks' : 
+                                           recipeKey.includes('stone') ? 'stone' : 'iron';
+                                } else if ((row === 1 && col === 1) || (row === 2 && col === 1)) {
+                                    item = 'stick';
+                                }
                             }
                             
                             if (item) this.craftingGrid[row][col] = item;
@@ -2602,24 +2304,25 @@
                 this.checkRecipe();
                 this.updateHint(`🎯 Auto-filled: ${recipe.name}! Click CRAFT ITEM to make it.`);
                 
-                document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
-                event.currentTarget.classList.add('active');
+                // Highlight active recipe
+                document.querySelectorAll('.quick-recipe-card').forEach(el => el.classList.remove('active'));
+                const recipeEl = document.getElementById(`recipe-${recipeKey.split('_')[0]}`);
+                if (recipeEl) recipeEl.classList.add('active');
             },
 
             clearGrid() {
                 this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                 this.updateCraftingGrid();
                 this.checkRecipe();
-                this.updateHint('Grid cleared. Try making a Pickaxe or Sword! Tap a recipe above to auto-fill.');
-                document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
-                document.querySelectorAll('.crafting-slot').forEach(el => el.classList.remove('highlight'));
+                this.updateHint('Grid cleared. Try making a Pickaxe, Sword, or Axe!');
+                document.querySelectorAll('.quick-recipe-card').forEach(el => el.classList.remove('active'));
             },
 
             updateHint(text) {
                 const hintEl = document.getElementById('recipe-hint');
                 const hintText = document.getElementById('hint-text');
-                hintText.textContent = text;
-                hintEl.classList.add('visible');
+                if (hintText) hintText.textContent = text;
+                if (hintEl) hintEl.classList.add('visible');
             },
 
             craftServer() {
@@ -2630,11 +2333,12 @@
                 text.textContent = `You crafted a ${this.currentRecipe.name}! ${this.currentRecipe.desc}`;
                 popup.classList.add('visible');
                 
+                // Clear grid after crafting
                 setTimeout(() => {
                     this.craftingGrid = [['', '', ''], ['', '', ''], ['', '', '']];
                     this.updateCraftingGrid();
                     this.checkRecipe();
-                    document.querySelectorAll('.recipe-item').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.quick-recipe-card').forEach(el => el.classList.remove('active'));
                 }, 300);
             },
 
@@ -2644,7 +2348,7 @@
 
             showBlockInfo(idx) {
                 const block = this.minecraftBlocks[idx];
-                alert(`🧱 ${block.name}\n\n${block.desc}\n\n🔨 Best tool: ${block.tool}\n\n💡 Tip: Use the right tool to mine faster!`);
+                alert(`🧱 ${block.name}\n\n${block.desc}\n\n🔨 Best tool: ${block.tool}`);
             },
 
             showAnimalOnMap(idx) {
@@ -2652,13 +2356,15 @@
                 const info = document.getElementById('region-info');
                 const text = document.getElementById('region-text');
                 
-                text.innerHTML = `<strong>${animal.emoji} ${animal.name}</strong><br>` +
-                               `📍 ${animal.region} - ${animal.camp}<br>` +
-                               `🕐 Best time: ${animal.bestTime}<br>` +
-                               `🍽️ Diet: ${animal.diet}<br>` +
-                               `${animal.threat ? `⚠️ Status: ${animal.threat}<br>` : ''}` +
-                               `💡 ${animal.fact}`;
-                info.style.display = 'block';
+                if (info && text) {
+                    text.innerHTML = `<strong>${animal.emoji} ${animal.name}</strong><br>` +
+                                   `📍 ${animal.region} - ${animal.camp}<br>` +
+                                   `🕐 Best time: ${animal.bestTime}<br>` +
+                                   `🍽️ Diet: ${animal.diet}<br>` +
+                                   `${animal.threat ? `⚠️ Status: ${animal.threat}<br>` : ''}` +
+                                   `💡 ${animal.fact}`;
+                    info.style.display = 'block';
+                }
             },
 
             showCityInfo(cityName) {
@@ -2666,20 +2372,21 @@
                 const info = document.getElementById('region-info');
                 const text = document.getElementById('region-text');
                 
-                text.innerHTML = `<strong>🏙️ ${city.name}</strong>${city.oldName ? ` <span style="color:#888">(formerly ${city.oldName})</span>` : ''}<br>` +
-                               `📍 Province: ${city.province}<br>` +
-                               `👥 Population: ~${city.population}<br>` +
-                               `${city.note ? `ℹ️ ${city.note}<br>` : ''}` +
-                               `🌍 Major city in South Africa`;
-                info.style.display = 'block';
+                if (info && text && city) {
+                    text.innerHTML = `<strong>🏙️ ${city.name}</strong><br>` +
+                                   `📍 Province: ${city.province}<br>` +
+                                   `👥 Population: ~${city.population}<br>` +
+                                   `🌍 Major city in South Africa`;
+                    info.style.display = 'block';
+                }
             },
 
             showRegionInfo(regionId) {
                 const info = document.getElementById('region-info');
                 const text = document.getElementById('region-text');
                 
-                if (regionId === 'south-africa') {
-                    text.innerHTML = '<strong>🇿🇦 South Africa</strong><br>Home to the Big Five and many amazing animals! 12 national parks, 15 animal species marked on this map. Tap animal icons to see where they live, or tap cities to learn about them.';
+                if (info && text && regionId === 'south-africa') {
+                    text.innerHTML = '<strong>🇿🇦 South Africa</strong><br>Home to the Big Five and many amazing animals! 6 national parks, 8 animal species marked on this map.';
                     info.style.display = 'block';
                 }
             },
@@ -2691,14 +2398,15 @@
                 const info = document.getElementById('region-info');
                 const text = document.getElementById('region-text');
                 
-                text.innerHTML = `<strong style="color:${region.color}">${region.name}</strong><br>` +
-                               `📍 ${region.province}<br>` +
-                               `📏 Size: ${region.size}<br>` +
-                               `📅 Established: ${region.established}<br>` +
-                               `🦁 Animals: ${region.animals.join(', ')}<br>` +
-                               `🏕️ Camps: ${region.camps.slice(0, 3).join(', ')}${region.camps.length > 3 ? '...' : ''}<br>` +
-                               `ℹ️ ${region.description}`;
-                info.style.display = 'block';
+                if (info && text) {
+                    text.innerHTML = `<strong style="color:${region.color}">${region.name}</strong><br>` +
+                                   `📍 ${region.province}<br>` +
+                                   `📏 Size: ${region.size}<br>` +
+                                   `📅 Established: ${region.established}<br>` +
+                                   `🦁 Animals: ${region.animals.slice(0, 5).join(', ')}<br>` +
+                                   `ℹ️ ${region.description}`;
+                    info.style.display = 'block';
+                }
             },
 
             showAnimalDetail(idx) {
@@ -2708,8 +2416,7 @@
                       `🕐 Best time: ${animal.bestTime}\n` +
                       `🍽️ Diet: ${animal.diet}\n` +
                       `${animal.threat ? `⚠️ Conservation Status: ${animal.threat}\n\n` : ''}` +
-                      `${animal.fact}\n\n` +
-                      `🗺️ Check the Map to see where ${animal.name}s live!`);
+                      `${animal.fact}`);
             },
 
             showCreateModal() {
@@ -2794,21 +2501,25 @@
                 document.getElementById('player-count').textContent = `${s.players}/${s.max}`;
                 
                 const pList = document.getElementById('player-list');
-                if (s.playerList.length === 0) {
-                    pList.innerHTML = '<span class="text-gray-600 text-xs">No players</span>';
-                } else {
-                    pList.innerHTML = s.playerList.map(p => `
-                        <div class="flex items-center gap-1 bg-[#222] px-2 py-1 rounded text-xs">
-                            <img src="https://mc-heads.net/avatar/${p}/16" class="w-4 h-4 rounded">
-                            <span class="text-gray-300">${p}</span>
-                        </div>
-                    `).join('');
+                if (pList) {
+                    if (s.playerList.length === 0) {
+                        pList.innerHTML = '<span class="text-gray-600 text-xs">No players</span>';
+                    } else {
+                        pList.innerHTML = s.playerList.map(p => `
+                            <div class="flex items-center gap-1 bg-[#222] px-2 py-1 rounded text-xs">
+                                <img src="https://mc-heads.net/avatar/${p}/16" class="w-4 h-4 rounded">
+                                <span class="text-gray-300">${p}</span>
+                            </div>
+                        `).join('');
+                    }
                 }
             },
 
             renderConsole() {
                 const output = document.getElementById('console-output');
                 const logs = this.currentServer.consoleLogs;
+                
+                if (!output) return;
                 
                 if (logs.length === 0) {
                     output.innerHTML = '<div class="text-gray-600">Server offline. Press START to boot.</div>';
@@ -2981,7 +2692,7 @@
                 input.value = '';
                 
                 setTimeout(() => {
-                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that', 'Check the Big Five!', 'Going on a game drive?'];
+                    const replies = ['Lekker!', 'Sharp!', 'Yoh, nice one', 'Howzit bru!', 'Eish, true that'];
                     const reply = replies[Math.floor(Math.random() * replies.length)];
                     const user = this.chatUsers[Math.floor(Math.random() * this.chatUsers.length)];
                     
@@ -3004,9 +2715,9 @@
 
             showFoodFact() {
                 const foods = [
-                    { name: 'Bobotie', desc: 'A yummy dish with spiced minced meat and egg custard on top! Like a shepherd\'s pie but South African style.' },
-                    { name: 'Biltong', desc: 'Dried meat snacks - like beef jerky but better! Made with special spices.' },
-                    { name: 'Boerewors', desc: 'Special South African sausage - the name means "farmer\'s sausage" in Afrikaans!' }
+                    { name: 'Bobotie', desc: 'A yummy dish with spiced minced meat and egg custard on top!' },
+                    { name: 'Biltong', desc: 'Dried meat snacks - like beef jerky but better!' },
+                    { name: 'Boerewors', desc: 'Special South African sausage - means "farmer\'s sausage"!' }
                 ];
                 const food = foods[Math.floor(Math.random() * foods.length)];
                 alert(`🍽️ ${food.name} 🍽️\n\n${food.desc}`);
